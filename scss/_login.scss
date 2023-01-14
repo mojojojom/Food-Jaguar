@@ -1,0 +1,124 @@
+.l__login {
+    &-form-wrap {
+        padding: 50px;
+        width: 100%;
+        @include media('<lg-phone') {
+            padding: 50px 20px;
+        }
+    }
+    &-heading {
+        font-weight: bolder;
+    }
+    &-sub-heading {
+        margin: 5px 0 20px 0;
+        font-size: 18px;
+        color: $desc-col;
+    }
+    &-username {
+        display: block;
+        width: 100%;
+        font-size: 18px;
+        color: $desc-col;
+        padding: 5px;
+        border: 1px solid $gray-col;
+        border-radius: 5px;
+        outline: none;
+        transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        box-shadow: 0px 0px 20px -18px;
+        &-wrap {
+            label {
+                font-size: 18px;
+                color: $desc-col;
+            }
+        }
+        &:hover {
+            border: 1px solid $desc-col;
+            box-shadow: 0px 0px 20px -17px;
+        }
+        &:focus {
+            border: 2px solid $desc-col;
+        }
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+    &-password {
+        display: block;
+        width: 100%;
+        font-size: 18px;
+        color: $desc-col;
+        padding: 5px;
+        border: 1px solid $gray-col;
+        border-radius: 5px;
+        outline: none;
+        transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        box-shadow: 0px 0px 20px -18px;
+        &-wrap {
+            label {
+                font-size: 18px;
+                color: $desc-col;
+            }
+        }
+        &:hover {
+            border: 1px solid $desc-col;
+            box-shadow: 0px 0px 20px -17px;
+        }
+        &:focus {
+            border: 2px solid $desc-col;
+        }
+        &:active {
+            transform: scale(0.95);
+        }
+    }
+    &-btn {
+        &-wrap {
+            input {
+                width: 100%;
+                display: inline-flex;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    }
+    &-signup {
+        color: $desc-col;
+        font-size: 16px;
+        a {
+            color: $primary-col;
+            transition: all ease-in-out 300ms;
+            &:hover {
+                color: $secondary-col;
+            }
+        }
+    }
+    &-right {
+        &-wrap {
+            height: 600px;
+            max-height: 600px;
+            position: relative;
+            @include media('<tablet') {
+                height: 200px!important;
+            }
+            @include media('>=tablet') {
+                height: 100%!important;
+            }
+        }
+        &-img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+// RESET PASSWORD
+.r__reset-wrap {
+    @include media('<desktop') {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+    @include media('<=lg-phone') {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}

@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    background-color: $light-col;
+    scroll-behavior: smooth;
+    font-family: $secondary-font;
+}
+::selection {
+    background-color: $secondary-col;
+    color: $light-col;
+}
+a {
+    text-decoration: none;
+    transition: all ease-in-out 300ms;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid $desc-col;
+}
+
+/* CUSTOM CLASSES */
+.p-font {
+    font-family: $primary-font;
+}
+.s-font {
+    font-family: $secondary-font;
+}
+
+.c-btn {
+    &-1 {
+        padding: 10px 30px;
+        color: $secondary-col;
+        border: 1px solid $secondary-col;
+        font-size: 18px;
+        background-color: unset;
+        border-radius: 5px;
+        transition: all ease-in-out 300ms;
+        font-weight: 600;
+        font-family: $secondary-font;
+        &:hover {
+            color: $light-col;
+            background-color: $secondary-col;
+        }
+        &.active {
+            cursor: progress;
+        }
+        @include media('<=phone') {
+            font-size: 16px;
+        }
+    }
+    &-2 {
+        padding: 10px 30px;
+        color: $primary-col;
+        border: 1px solid $primary-col;
+        font-size: 18px;
+        background-color: unset;
+        border-radius: 5px;
+        transition: all ease-in-out 300ms;
+        font-weight: 600;
+        font-family: $secondary-font;
+        &:hover {
+            color: $light-col;
+            background-color: $primary-col;
+        }
+        &.active {
+            cursor: progress;
+        }
+        @include media('<=phone') {
+            font-size: 16px;
+        }
+    }
+    &-3 {
+        padding: 10px 30px;
+        color: $light-col;
+        border: 1px solid $primary-col;
+        font-size: 18px;
+        background-color: $primary-col;
+        border-radius: 5px;
+        transition: all ease-in-out 300ms;
+        font-weight: 600;
+        font-family: $secondary-font;
+        &:hover {
+            color: $light-col;
+            background-color: $p-hover;
+        }
+        &.active {
+            cursor: progress;
+        }
+        @include media('<=phone') {
+            font-size: 16px;
+        }
+    }
+    &-4 {
+        padding: 10px 30px;
+        color: $light-col;
+        border: 1px solid $secondary-col;
+        font-size: 18px;
+        background-color: $secondary-col;
+        border-radius: 5px;
+        transition: all ease-in-out 300ms;
+        font-weight: 600;
+        font-family: $secondary-font;
+        &:hover {
+            color: $light-col;
+            background-color: $s-hover;
+        }
+        &.active {
+            cursor: progress;
+        }
+        @include media('<=phone') {
+            font-size: 16px;
+        }
+    }
+    &-5 {
+        padding: 10px 30px;
+        color: $dark-col;
+        border: 1px solid $gray-col;
+        font-size: 18px;
+        background-color: $gray-col;
+        border-radius: 5px;
+        transition: all ease-in-out 300ms;
+        font-weight: 600;
+        font-family: $secondary-font;
+        &:hover {
+            color: $dark-col;
+            background-color: $desc-col;
+        }
+        &.active {
+            cursor: progress;
+        }
+        @include media('<=phone') {
+            font-size: 16px;
+        }
+    }
+}
+
+.sec-pad {
+    padding: 50px 0;
+    &-2 {
+        padding: 75px 0;
+    }
+    &-3 {
+        padding: 100px 0;
+    }
+}
+
+.disabled {
+    background-color: $p-hover;
+    border: 1px solid $p-hover;
+    cursor: not-allowed;
+}
+
+.ls-1 {
+    letter-spacing: 1.5px;
+}
+
+.fj__ {
+    &overlay {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        display: block;
+        background-color: $bg-overlay;
+    }
+    &logo-overlay {
+        position: absolute;
+        height: 300px;
+        width: 300px;
+        display: block;
+        z-index: 999;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        @include media('<desktop') {
+            height: 150px;
+            width: 150px;
+        }
+    }
+}
+
+.b-b-solid {
+    border-bottom: 1px solid $desc-col;
+    padding: 15px 0;
+}
+
+// FORM INPUTS
+.fj-input {
+    z-index: 99;
+    position: relative;
+    &-wrap {
+        label {
+            font-size: 18px;
+            color: $desc-col;
+        }
+        textarea {
+            display: block;
+            width: 100%;
+            font-size: 18px;
+            color: $desc-col;
+            padding: 5px;
+            border: 1px solid $gray-col;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0px 0px 20px -18px;
+            &:hover {
+                border: 1px solid $desc-col;
+                box-shadow: 0px 0px 20px -17px;
+            }
+        }
+    }
+    display: block;
+    width: 100%;
+    font-size: 18px;
+    color: $desc-col;
+    padding: 5px;
+    border: 1px solid $gray-col;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    box-shadow: 0px 0px 20px -18px;
+    &:hover {
+        border: 1px solid $desc-col;
+        box-shadow: 0px 0px 20px -17px;
+    }
+    &.active {
+        transform: scale(0.95);
+    }
+    &:focus {
+        border: 2px solid $desc-col;
+    }
+}
+
+/* ==========================
+*   Helpers
+============================*/
+
+.space-xs {
+    padding-bottom: 15px;
+    padding-top: 15px;
+}
+
+.space-sm {
+    padding-bottom: 30;
+    padding-top: 30px;
+}
+
+.space-md {
+    padding-top: 90px;
+    padding-bottom: 90px;
+}
+
+.m-b-10 {
+    margin-bottom: 10px;
+}
+
+.m-b-20 {
+    margin-bottom: 20px;
+}
+
+.m-b-30 {
+    margin-bottom: 30px;
+}
+
+.m-t-10 {
+    margin-top: 10px;
+}
+
+.m-t-20 {
+    margin-top: 20px;
+}
+
+.m-t-30 {
+    margin-top: 30px;
+}
+
+.b {
+    &-l {
+        border-left: 1px solid $gray-col;
+        &-0 {
+            border-left: none !important;
+        }
+    }
+    &-r {
+        border-right: 1px solid $gray-col;
+        &-0 {
+            border-right: none !important;
+        }
+    }
+    &-t {
+        border-top: 1px solid $gray-col;
+        &-0 {
+            border-top: none !important;
+        }
+    }
+    &-b {
+        border-bottom: 1px solid $gray-col;
+        &-0 {
+            border-bottom: none !important;
+        }
+    }
+}
+
+.align{
+    &-wrap {
+    display: inline-table;
+    min-height: 100%;
+    }
+    &-vertical {
+        display: table-cell;
+        vertical-align: middle;
+    }
+}
+
+
+
+// SCROLLBAR
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: $gray-col;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $desc-col;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: $dark-col;
+}

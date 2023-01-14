@@ -1,0 +1,111 @@
+
+// PAGE BANNERS
+.fj__banner {
+    &-wrap {
+        padding: 150px 0 20px 0;
+        background: url('../images/header-bg.png');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        @include media('<desktop') {
+            padding-top: 100px;
+        }
+        @include media('<=lg-phone') {
+            background-size: auto;
+        }
+    }
+    &-heading {
+        color: $light-col;
+        font-size: 80px;
+        font-weight: bolder;
+        margin-bottom: 0;
+        @include media('<desktop') {
+            font-size: 65px;
+        }
+        @include media('<=lg-phone') {
+            font-size: 40px;
+        }
+    }
+    &-sub-heading {
+        color: $light-col;
+        font-size: 20px;
+        margin-bottom: 0;
+        font-weight: bold;
+    }
+}
+
+// MAIN HEADER
+.site__nav {
+    background-color: unset;
+    transition: background-color 0.5s;
+    transition: all ease-in-out 300ms;
+    @include media('<desktop') {
+        background-color: $bg-col!important;
+        backdrop-filter: blur(5px);
+
+        nav#nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .navbar-toggler {
+                padding: 10px;
+            }
+            .navbar-collapse {
+                .navbar-nav {
+                    display: flex;
+                    .nav-item {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+
+    }
+    &.header-scroll {
+        background-color: $bg-col!important;
+        backdrop-filter: blur(5px);
+    }
+    .nav-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .nav-link {
+            color: $light-col;
+            font-weight: 400;
+            &:hover {
+                color: $secondary-col;
+            }
+            &.active {
+                color: $secondary-col;
+            }
+        }
+        .m__menu-header {
+            &-cart {
+                i {
+                    font-size: 16px;
+                }
+            }
+            &-order {
+                left: 120% !important;
+                top: -40% !important;
+                height: 22px;
+                width: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+            }
+        }
+        @include media(">tablet") {
+            line-height: 80px;
+        }
+        @include media("<=tablet") {
+            line-height: 20px;
+        }
+    }
+    .navbar-brand {
+        .nav__icon {
+            height: 50px!important;
+        }
+    }
+}

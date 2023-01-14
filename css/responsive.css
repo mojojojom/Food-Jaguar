@@ -1,0 +1,46 @@
+@media only screen and (max-width: 1024px) {
+
+}
+
+
+@media only screen and (max-width: 1000px) {
+    /********************* REGISTER *********************/
+
+
+    /********************* FOOTER *********************/
+
+
+    /********************* PASSWORD RESET CODE *********************/
+    .r__reset-wrap {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+
+
+}
+
+
+
+@media only screen and (max-width: 580px) {
+
+
+    /********************* PASSWORD RESET CODE *********************/
+    .r__reset-wrap {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}
+
+
+@media only screen and (max-width: 426px) {
+
+    /********************* PASSWORD RESET CODE *********************/
+    .r__reset-wrap {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .reset_code_btn,
+    .reset_cancel-btn {
+        padding: 5px 20px;
+    }
+}

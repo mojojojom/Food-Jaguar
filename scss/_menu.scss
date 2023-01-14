@@ -1,0 +1,154 @@
+.m__menu {
+    &-header-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+    &-heading {
+        font-weight: bolder;
+        font-size: 35px;
+        color: $primary-col;
+        text-transform: uppercase;
+        @include media('<=lg-phone') {
+            font-size: 25px;
+        }
+    }
+    &-cat-wrap {
+        margin-bottom: 40px;
+        border-bottom: 1px solid $gray-col;
+    }
+    &-filter {
+        &-list {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            margin-bottom: 0;
+            @include media('<=lg-phone') {
+                flex-wrap: wrap;
+            }
+        }
+        &-link {
+            color: $desc-col;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: capitalize;
+            transition: all ease-in-out 300ms;
+            &:hover, &.selected {
+                color: $light-col;
+                background-color: $secondary-col;
+                padding: 5px 10px;
+                border-radius: 5px;
+            }
+            @include media('<=phone') {
+                font-size: 14px;
+            }
+        }
+        &-item {
+            @include media('<=lg-phone') {
+                padding: 10px!important;
+            }
+            @include media('<=phone') {
+                padding: 5px!important;
+            }
+        }
+    }
+    &-list {
+        &-card {
+            border-top: 2px dashed $gray-col;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            @include media('<=phone') {
+                display: block;
+            }
+        }
+        &-img {
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+            border-radius: 100%;
+            margin-right: 10px;
+        }
+        &-name {
+            font-weight: bold;
+            font-size: 20px;
+            max-width: 300px;
+            color: $dark-col;
+            &-wrap {
+                display: flex;
+                align-items: center;
+                @include media('<=phone') {
+                    justify-content: center;
+                }
+            }
+            @include media('<=lg-phone') {
+                font-size: 18px;
+            }
+            @include media('<=phone') {
+                font-size: 16px;
+            }
+        }
+    }
+    &-price {
+        color: $dark-col;
+        font-size: 18px;
+        font-weight: bold;
+        @include media('<=lg-phone') {
+            font-size: 16px;
+        }
+        @include media('<=phone') {
+            font-size: 14px;
+        }
+        &-wrap {
+            @include media('<=phone') {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+    }
+    &-header-cart {
+        @include media('<=lg-phone') {
+            padding: 5px 20px!important;
+        }
+        span.cart_num {
+            height: 30px;
+            width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+    }
+    &-cart {
+        color: $primary-col;
+        &-btn {
+            border: 2px dashed $primary-col;
+            background-color: unset;
+            color: $primary-col;
+            padding: 5px 20px;
+            transition: all ease-in-out 300ms;
+            &:hover {
+                border: 2px solid $primary-col;
+                background-color: $primary-col;
+                color: $light-col;
+            }
+            @include media('<=lg-phone') {
+                padding: 5px 10px;
+            }
+        }
+    }
+    &-qty {
+        width: 40px;
+        outline: none;
+        border: 1px dashed $gray-col;
+        &-wrap {
+            margin: 15px 0;
+            display: flex;
+            justify-content: end;
+        }
+    }
+}

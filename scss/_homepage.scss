@@ -1,0 +1,205 @@
+// BANNER
+.h__banner {
+    &-wrap {
+        background: linear-gradient(180deg,#171C1A8C 0%,$dark-col 96%),url('../imgs/banner-bg.jpg');
+        background-position: top center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+        padding: 0 40px;
+        height: 100vh;
+        @include media('<lg-phone') {
+            padding: 0 20px;
+        }
+        @include media('<=phone') {
+            padding: 0;
+        }
+    }
+    &-content-wrap {
+        padding-top: 100px;
+    }
+    &-heading {
+        color: $light-col;
+        font-size: 80px;
+        @include media('<=lg-phone') {
+            font-size: 60px;
+            line-height: 1em;
+        }
+        @include media('<=phone') {
+            font-size: 55px;
+        }
+    }
+    &-sub-heading {
+        color: $light-col;
+        margin-bottom: 40px;
+        @include media('<=lg-phone') {
+            font-size: 14px;
+        }
+    }
+}
+
+// ABOUT
+.h__about {
+    &-content {
+        &-heading {
+            color: $dark-col;
+            font-weight: bolder;
+            font-size: 50px;
+            @include media('<=phone') {
+                font-size: 40px;
+            }
+        }
+        &-sub-heading {
+            color: $secondary-col;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        &-desc {
+            color: $desc-col;
+            font-size: 16px;
+            @include media('<=phone') {
+                font-size: 14px;
+            }
+        }
+        &-btn {
+            font-size: 16px;
+        }
+    }
+    &-img-wrap {
+        img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+    }
+    &-inner-content-wrap {
+        @include media('<desktop') {
+            padding: 20px 0;
+        }
+        @include media('<=lg-phone') {
+            text-align: center;
+        }
+    }
+}
+
+// MENU
+.h__menu {
+    &-heading {
+        color: $dark-col;
+        font-size: 80px;
+        font-weight: bolder;
+        &-wrap {
+            text-align: center;
+        }
+        @include media('<desktop') {
+            font-size: 50px;
+        }
+        @include media('<=phone') {
+            font-size: 30px;
+        }
+    }
+    &-sub-heading {
+        color: $secondary-col;
+        font-weight: bold;
+        font-size: 25px;
+        @include media('<=phone') {
+            font-size: 20px;
+        }
+    }
+    &-divider {
+        background-color: $gray-col;
+        height: 80px;
+        width: 1.5px;
+        display: block;
+        &-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        @include media('<desktop') {
+            height: 40px;
+        }
+    }
+    // CARD
+    &-card {
+        &-img {
+            height: 300px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            &-wrap {
+                margin-bottom: -60px;
+                padding: 20px;
+            }
+            @include media('<=lg-phone') {
+                height: 200px;
+            }
+        }
+        &-name {
+            font-size: 25px;
+            font-weight: bolder;
+            text-align: center;
+            @include media('<desktop') {
+                min-height: 40px;
+                font-size: 20px;
+            }
+        }
+        &-price {
+            font-size: 18px;
+            text-align: center;
+            font-weight: bolder;
+            color: $primary-col;
+        }
+        &-desc {
+            font-size: 14px;
+            font-weight: normal;
+            color: $desc-col;
+            &-wrap {
+                min-height: 120px;
+                text-align: center;
+            }
+        }
+        &-btn {
+            padding: 10px;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+            background-color: $primary-col;
+            i {
+                color: $light-col;
+            }
+            &-wrap {
+                text-align: center;
+                position: absolute;
+                left: 0; 
+                right: 0; 
+                margin-left: auto; 
+                margin-right: auto; 
+                width: 100px;
+            }
+        }
+        &-inner-wrap {
+            position: relative;
+            margin-bottom: 30px;
+            padding-top: 80px!important;
+            border-radius: 10px;
+            &:hover {
+                box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+                transition: all ease-in-out 300ms;
+            }
+            @include media('<desktop') {
+                padding-top: 60px!important;
+            }
+        }
+    }
+    &-list-card {
+        &:hover {
+            .h__menu-card-inner-wrap {
+                box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
+                transition: all ease-in-out 300ms;
+            }
+        }
+    }
+}
