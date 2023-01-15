@@ -69,10 +69,8 @@
                         <div class="col-12 col-sm-12 col-md- 12 col-lg-6 all <?=$product['f_catname']?>">
 
                             <form id="menu_form" method="POST">
-                            <!-- <form method="post" action='menu?res_id=<?php echo $_GET['res_id'];?>&action=add&id=<?php echo $rows['d_id']; ?>'> -->
                                 <div class="m__menu-list-card">
-                                    <input type="hidden" name="cat_id" value="<?= $rows['res_id']?>">
-                                    <input type="hidden" name="dish_id" value="<?= $rows['d_id']?>">
+                                    <input type="hidden" name="dish_id" data-product-id="<?=$rows['d_id']?>" value="<?= $rows['d_id']?>">
 
                                     <div class="m__menu-list-name-wrap">
                                         <img class="m__menu-list-img" src="admin/Res_img/dishes/<?=$rows['img']?>" alt="">
@@ -85,12 +83,11 @@
                                     <div class="m__menu-price-wrap text-end">
                                         <div class="m__menu-qty-wrap">
                                             <p class="m__menu-qty-name mb-0 me-2">Qty: </p>
-                                            <input class="m__menu-qty" type="number" name="quantity"  value="1" size="2" min="1"/>
+                                            <input class="m__menu-qty" type="number" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required/>
                                         </div>
                                         <div class="m__menu-cart-wrap text-center">
                                             <input type="hidden" name="action" value="add_cart">
-                                            <!-- <input type="hidden" name="action" value="add"> -->
-                                            <input type="submit" class="m__menu-cart-btn addCartBtn" name="submit" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add To Cart" />
+                                            <input type="submit" class="m__menu-cart-btn addCartBtn add_cart_btn" name="submit" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add To Cart" />
                                         </div>
                                     </div>
 
@@ -121,26 +118,31 @@
 <script>
     // ADD TO CART
     jQuery(function($) {
-        $(document).on('submit', '#menu_form', function(e) {
+        // NEWWWWW
+        $(document).on('click', '.add_cart_btn', function(e) {
             e.preventDefault();
-            var formData = $(this).serialize();
-
+            var addCartBtn = $(this);
+            var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
+            var productId = $(this).attr('data-dish-id');
+            // FIRST SECTION
             $.ajax({
                 type: "POST",
                 url: "add_cart.php",
-                data: formData,
+                data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
+                // data: menu_form,
                 beforeSend: function() {
-                    $('input.add_cart_btn').val('Adding to Cart');
-                    $('input.add_cart_btn').addClass('disabled');
-                    $('input.add_cart_btn').prop('disabled', true);
+                    addCartBtn.val('Adding to Cart');
+                    addCartBtn.addClass('disabled');
+                    addCartBtn.prop('disabled', true);
                 },
                 success: function (response) {
                     if(response == 'success') 
                     {
-                        $('input.add_cart_btn').val('Add to Cart');
-                        $('input.add_cart_btn').removeClass('disabled');
-                        $('input.add_cart_btn').prop('disabled', false);
-
+                        // SECOND SECTION
+                        updateCartItems();
+                        addCartBtn.val('Add to Cart');
+                        addCartBtn.removeClass('disabled');
+                        addCartBtn.prop('disabled', false);
                         const Toast = Swal.mixin({
                             toast: true,
                             position: 'top-end',
@@ -150,24 +152,34 @@
                         })
                         Toast.fire({
                             icon: 'success',
-                            title: 'Added to cart!'
+                            title: 'Added to Cart!'
                         })
-                        setInterval(updateCart, 1000);
+                        updateCart();
+                        updateCartPrice();
                     }
-                    else 
+                    else
                     {
-                        $('input.add_cart_btn').val('Add to Cart');
-                        $('input.add_cart_btn').removeClass('disabled');
-                        $('input.add_cart_btn').prop('disabled', false);
+                        addCartBtn.val('Add to Cart');
+                        addCartBtn.removeClass('disabled');
+                        addCartBtn.prop('disabled', false);
                         Swal.fire(
                             'Something Went Wrong!',
                             'Can\'t Add to Cart!',
                             'error'
                         );
-                        alert(response);
                     }
                 }
             });
         })
+        // NEW FUNCTION
+        function updateCartItems() {
+            $.ajax({
+                type: "GET",
+                url: "get_cart.php",
+                success: function (response) {
+                    $('.offcanvas-body').empty().html(response);
+                }
+            });
+        }
     })
 </script>

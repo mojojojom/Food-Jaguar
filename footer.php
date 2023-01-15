@@ -42,6 +42,7 @@
                         {
                             $item_total = $item['quantity']*$item['price'];
                 ?>
+                <!-- CART -->
                     <div id="cart-items-product-<?=$item['d_id']?>-<?=$item['title']?>" class="cart-items-product" data-product-id="<?=$item['d_id']?>">
                         <div class="card mb-2 product-card-wrap">
                             <div class="card-body">
@@ -58,7 +59,8 @@
                                             <div class="cart__item-info-wrap">
                                                 <p class="cart__item-title"><?=$item['title']?></p>
                                                 <p class="cart__item-price">₱ <?=$item['price']?></p>
-                                                <input class="cart__item-qty" type="number" min="1" step="1" value="<?=$item['quantity']?>">
+                                                <!-- <input class="cart__item-qty" type="number" min="1" step="1" value="<?=$item['quantity']?>"> -->
+                                                <p class="cart__item-qty text-center"><?=$item['quantity']?></p>
                                             </div>
                                         </div>
                                         <div class="cart__item-remove-wrap">
@@ -91,7 +93,8 @@
                     ?>
                     <label for="cart__item-checkbox">All</label>
                 </div>
-                <div class="cart__item-footer-btn-wrap">
+                <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
+                    <p class="total-price mb-0 fw-semibold">₱0</p>
                     <form id="cart_checkout">
                         <?php
                         if(isset($_SESSION['cart_item'])) 
@@ -169,55 +172,7 @@
                         $('.cart__item-footer-btn').val(checkedNum);
                     })
 
-                    // EMPTY CART -WORKING
-                    // emptyBtn.addEventListener('click', function(e) {
-                    //     e.preventDefault();
-                    //     var emptyForm = $('#empty_form').serialize();
-                    //     var action = $('input[data-action-id="empty"]').val();
-                    //     emptyCart(emptyForm, action);
-                    // })
-                    // EMPTY CART FUNCTION - WORKING
-                    // function emptyCart(emptyForm) {
-                    //     $.ajax({
-                    //         type: "POST",
-                    //         url: "add_cart.php",
-                    //         data: {emptyForm, action: 'empty'},
-                    //         success: function (response) {
-                    //             if(response == 'success') 
-                    //             {
-                    //                 const Toast = Swal.mixin({
-                    //                     toast: true,
-                    //                     position: 'top-end',
-                    //                     showConfirmButton: false,
-                    //                     timer: 1000,
-                    //                     timerProgressBar: true
-                    //                 })
-                    //                 Toast.fire({
-                    //                     icon: 'success',
-                    //                     title: 'Cart Cleared!'
-                    //                 })
-                    //                 updateCart()
-                    //             }
-                    //             else if(response == 'error_cart') 
-                    //             {
-                    //                 Swal.fire(
-                    //                     'Something Went Wrong!',
-                    //                     'Cart Is Already Empty!',
-                    //                     'error'
-                    //                 );
-                    //             }
-                    //             else
-                    //             {
-                    //                 Swal.fire(
-                    //                     'Something Went Wrong!',
-                    //                     'Unable To Clear Cart!',
-                    //                     'error'
-                    //                 );
-                    //             }
-                    //         }
-                    //     });
-                    // }
-                    // NEWWWW
+                    // NEWWWW EMPTY ACTION
                     $(document).on('click', '.m__cart-empty-btn', function(e) {
                         e.preventDefault();
                         var emptyForm = $('#empty_form').serialize();
@@ -245,10 +200,12 @@
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
-                                            $('.cart-items-product').empty().html(response);
+                                            // $('.cart-items-product').empty().html(response);
+                                            $('.offcanvas-body').empty().html(response);
                                         }
                                     });
-                                    updateCart()
+                                    updateCart();
+                                    updateCartPrice();
                                 }
                                 else if(response == 'error_cart') 
                                 {
@@ -270,13 +227,7 @@
                         });
                     })
 
-                    // REMOVE ITEM - WORKING
-                    // removeBtn.addEventListener('click', function(e) {
-                    //     e.preventDefault();
-                    //     var productId = $(this).attr('product-id');
-                    //     removeItem(productId);
-                    // });
-                    // NEWWWWW
+                    // NEWWWWW REMOVE ACTION
                     $('.cart-items-product').on('click', '.remove-item', function(e) {
                         e.preventDefault();
                         var productId = $(this).attr('product-id');
@@ -303,57 +254,18 @@
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
-                                            $('.cart-items-product').empty().html(response);
+                                            // $('.cart-items-product').empty().html(response); 
+                                            $('.offcanvas-body').empty().html(response); 
                                         }
                                     });
                                     updateCart();
+                                    updateCartPrice();
                                 } else {
                                     alert('error');
                                 }
                             }
                         });
                     })
-                    //REMOVE ITEM ACTION - WORKING
-                    // function removeItem(productId) {
-                    //     $.ajax({
-                    //         type: "POST",
-                    //         url: "add_cart.php",
-                    //         data: {productId: productId, action: 'remove'},
-                    //         success: function (response) {
-                    //         if(response == 'success') 
-                    //             {
-                    //                 const Toast = Swal.mixin({
-                    //                     toast: true,
-                    //                     position: 'top-end',
-                    //                     showConfirmButton: false,
-                    //                     timer: 1000,
-                    //                     timerProgressBar: true
-                    //                 })
-                    //                 Toast.fire({
-                    //                     icon: 'success',
-                    //                     title: 'Item Removed!'
-                    //                 })
-                    //                 setInterval(updateCart(), 1000);
-                    //             }
-                    //             else if(response == 'error_cart')
-                    //             {
-                    //                 Swal.fire(
-                    //                     'Something Went Wrong!',
-                    //                     'Error',
-                    //                     'error'
-                    //                 );
-                    //             }
-                    //             else
-                    //             {
-                    //                 Swal.fire(
-                    //                     'Something Went Wrong!',
-                    //                     'Unable To Remove Item From Your Cart!',
-                    //                     'error'
-                    //                 );
-                    //             }
-                    //         }
-                    //     });
-                    // }
                     
                     // CHECKOUT SESSION - working
                     checkout.addEventListener('click', function(e) {
@@ -362,7 +274,6 @@
                         var action = $('input[data-action-id="check"]').val();
                         checkOutOrders(cartForm, action);
                     })
-
                     // CHECKOUT ACTION - working
                     function checkOutOrders(cartForm) {
                         $.ajax({
@@ -399,10 +310,21 @@
                     }
 
                     updateCart();
-
+                    updateCartPrice();
                 })
             })
 
+            // UPDATE CART PRICE
+            function updateCartPrice()
+            {
+                $.ajax({
+                    type: "GET",
+                    url: "get_cart_total.php",
+                    success: function (response) {
+                        $('.total-price').text('₱'+response);
+                    }
+                });
+            }
             // UPDATE CART NUMBER
             function updateCart() {
                 $.ajax({

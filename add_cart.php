@@ -29,13 +29,14 @@
 
                 $fetch = mysqli_fetch_object($get_order);
                 $orig_price = $fetch->price;
-                $item_price = $orig_price*$quantity;
+                // $item_price = $orig_price*$quantity;
                 $itemArray = array(
                                     $fetch->d_id=>array(
                                                         'title'=>$fetch->title,
                                                         'd_id'=>$fetch->d_id,
                                                         'quantity'=>$quantity,
-                                                        'price'=>$item_price,
+                                                        // 'price'=>$item_price,
+                                                        'price'=>$fetch->price,
                                                         'img'=>$fetch->img)
                             );
                 if(!empty($_SESSION['cart_item']))
@@ -44,9 +45,6 @@
                     {
                         foreach($_SESSION['cart_item'] as $key => $value)
                         {
-                            // if($value['checked'] == true ){
-                            //     unset($_SESSION['cart_item'][$key]);
-                            // }
                             if($fetch->d_id == $key)
                             {
                                 if(empty($_SESSION['cart_item'][$key]['quantity']))
@@ -159,21 +157,5 @@
                 echo 'error';
             }
         }
-
-        // CHECKOUT 2
-        // if($_POST['action'] == 'checkout')
-        // {
-        //     if(!empty($_POST['cartItems']))
-        //     {
-        //         $cartItems = $_POST['cartItems'];
-        //         // do something with the cart items, such as adding them to a database or sending them to a payment gateway
-        //         // ...
-        //         echo 'success';
-        //     }
-        //     else
-        //     {
-        //         echo 'error';
-        //     }
-        // }
 
     }

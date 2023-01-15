@@ -98,8 +98,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body py-4">
-                                            <input type="hidden" name="cat_id" value="<?= $rows['res_id']?>">
-                                            <input type="hidden" name="dish_id" class="add__cart-dish-id" data-product-id="<?=$rows['d_id']?>" value="<?= $rows['d_id']?>">
+                                            <input type="hidden" class="add__cart-dish-id" data-product-id="<?=$rows['d_id']?>" value="<?= $rows['d_id']?>">
                                             <div class="card py-2">
                                                 <div class="card-body">
                                                     <div class="add__cart-dish-name-wrap mb-4">
@@ -107,7 +106,7 @@
                                                     </div>
 
                                                     <div class="add__cart-dish-qty-wrap d-block text-center">
-                                                        <input class="add__cart-dish-qty pe-0" type="number" name="quantity" size="2" min="1" value="1"/>
+                                                        <input class="add__cart-dish-qty pe-0" type="number" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required/>
                                                         <p class="mb-0 mt-2">ENTER QUANTITY</p>
                                                     </div>
                                                 </div>
@@ -138,35 +137,6 @@
         </div>
     </section>
 
-    <div class="container">
-        <?php
-            if(isset($_SESSION['check_cart_item'])) {
-                foreach ($_SESSION["check_cart_item"] as $item) 
-                {
-                    $dfee = 5;
-                    $item_fee += ($item["price"]*$item["quantity"]);
-                    $item_total = $item_fee + $dfee;
-        
-                    if($_POST['submit'])
-                    {
-                        $SQL="INSERT INTO users_orders(u_id,title,quantity,price, mop) VALUES('".$_SESSION["user_id"]."','".$item["title"]."','".$item["quantity"]."','".$item["price"]."','".$_POST["mode"]."')";
-                        mysqli_query($db,$SQL);
-        
-                        unset($_SESSION["check_cart_item"]);
-                        unset($item["title"]);
-                        unset($item["quantity"]);
-                        unset($item["price"]);
-                        header('Location: your_orders');
-                    }
-
-                    ?>
-                    <p><?=$item['title']?></p>
-                    <?php
-                }
-            }
-        ?>
-    </div>
-
     <script>
         document.title = "Food Jaguar"
     </script>
@@ -175,18 +145,74 @@
 ?>
 
 <script>
-    // ADD TO CART
-    jQuery(function($) {
-        $(document).on('submit', '#menu_form', function(e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
-            var productId = $('input.add__cart-dish-id').val();
-            var quantity = $('input.add__cart-dish-qty').val();
+    // ADD TO CART ORIGINAL
 
+    // jQuery(function($) {
+    //     $(document).on('submit', '#menu_form', function(e) {
+    //         e.preventDefault();
+    //         var formData = $(this).serialize();
+    //         var productId = $('input.add__cart-dish-id').val();
+    //         var quantity = $('input.add__cart-dish-qty').val();
+
+    //         $.ajax({
+    //             type: "POST",
+    //             url: "add_cart.php",
+    //             data: formData,
+    //             beforeSend: function() {
+    //                 $('input.add_cart_btn').val('Adding to Cart');
+    //                 $('input.add_cart_btn').addClass('disabled');
+    //                 $('input.add_cart_btn').prop('disabled', true);
+    //             },
+    //             success: function (response) {
+    //                 if(response == 'success') 
+    //                 {
+    //                     $('input.add_cart_btn').val('Add to Cart');
+    //                     $('input.add_cart_btn').removeClass('disabled');
+    //                     $('input.add_cart_btn').prop('disabled', false);
+
+    //                     const Toast = Swal.mixin({
+    //                         toast: true,
+    //                         position: 'top-end',
+    //                         showConfirmButton: false,
+    //                         timer: 1000,
+    //                         timerProgressBar: true
+    //                     })
+    //                     Toast.fire({
+    //                         icon: 'success',
+    //                         title: 'Added to cart!'
+    //                     })
+    //                     setInterval(updateCart, 1000);
+    //                 }
+    //                 else 
+    //                 {
+    //                     $('input.add_cart_btn').val('Add to Cart');
+    //                     $('input.add_cart_btn').removeClass('disabled');
+    //                     $('input.add_cart_btn').prop('disabled', false);
+    //                     Swal.fire(
+    //                         'Something Went Wrong!',
+    //                         'Can\'t Add to Cart!',
+    //                         'error'
+    //                     );
+    //                 }
+    //             }
+    //         });
+
+    //     })
+    // })
+
+    jQuery(function($) {
+
+        // NEWWWWW
+        $(document).on('click', '.add_cart_btn', function(e) {
+            e.preventDefault();
+            var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
+            var productId = $(this).attr('data-dish-id');
+            // FIRST SECTION
             $.ajax({
                 type: "POST",
                 url: "add_cart.php",
-                data: formData,
+                data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
+                // data: menu_form,
                 beforeSend: function() {
                     $('input.add_cart_btn').val('Adding to Cart');
                     $('input.add_cart_btn').addClass('disabled');
@@ -195,10 +221,11 @@
                 success: function (response) {
                     if(response == 'success') 
                     {
+                        // SECOND SECTION
+                        updateCartItems();
                         $('input.add_cart_btn').val('Add to Cart');
                         $('input.add_cart_btn').removeClass('disabled');
                         $('input.add_cart_btn').prop('disabled', false);
-
                         const Toast = Swal.mixin({
                             toast: true,
                             position: 'top-end',
@@ -208,20 +235,12 @@
                         })
                         Toast.fire({
                             icon: 'success',
-                            title: 'Added to cart!'
+                            title: 'Added to Cart!'
                         })
-                        setInterval(updateCart, 1000);
-                        // updateCartItem(productId, quantity);
-                        // $.ajax({
-                        //     type: 'POST',
-                        //     url: 'update-cart.php',
-                        //     data: formData,
-                        //     success: function(response) {
-                        //         $('.modal-body.cart_body').append(response);
-                        //     }
-                        // })
+                        updateCart();
+                        updateCartPrice();
                     }
-                    else 
+                    else
                     {
                         $('input.add_cart_btn').val('Add to Cart');
                         $('input.add_cart_btn').removeClass('disabled');
@@ -234,26 +253,18 @@
                     }
                 }
             });
-
         })
+        // NEW FUNCTION
+        function updateCartItems() {
+            $.ajax({
+                type: "GET",
+                url: "get_cart.php",
+                success: function (response) {
+                    $('.offcanvas-body').empty().html(response);
+                }
+            });
+        }
     })
-
-    // // UPDATE CART FUNCTION
-    // function updateCartItem(productId, quantity) {
-    //     $.ajax({
-    //         type: "POST",
-    //         url: "update-cart.php",
-    //         data: {productId: productId, quantity: quantity, action: 'add' },
-    //         success: function (data) {
-    //             updateCartDisplay(data);
-    //         }
-    //     });
-    // }
-
-    // // CART DISPLAY DATA
-    // function updateCartDisplay(data) {
-    //     $('.modal-body.cart_body').append(data);
-    // }
 
 
 </script>
