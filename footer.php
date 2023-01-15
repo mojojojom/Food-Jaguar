@@ -49,7 +49,7 @@
                                 <div class="cart__item-wrap">
                                     <label for="cart-checkbox-<?=$item['d_id']?>-<?=$item['title']?>">
                                         <div class="cart__item-checkbox-wrap">
-                                            <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-id="<?=$item['d_id']?>">
+                                            <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-check="check-box" data-id="<?=$item['d_id']?>">
                                             <label for="cbx" class="cbx"></label>
                                         </div>
                                         <div class="cart__item-inner-wrap">
@@ -116,9 +116,15 @@
                             <input type="submit" class="cart__item-footer-btn border-0 disabled" disabled data-action-id="check" id="cart__item-footer-btn" value="Checkout(0)">
                         <?php
                         } else {
+                            if(empty($_SESSION['user_id'])) {
                         ?>
                             <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check" data-item-id="check" id="cart__item-footer-btn" value="Checkout(0)">
                         <?php
+                            } else {
+                        ?>
+                            <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
+                        <?php
+                            }
                         }
                         ?>
                     </form>
@@ -163,6 +169,7 @@
                     var removeBtn = document.querySelector('.remove-item');
                     var allCheck = document.getElementById('cart__item-footer-checkbox');
                     var checkout = document.getElementById('cart__item-footer-btn');
+                    var checkBox = document.querySelectorAll('[data-check="check-box"]');
 
                     // ALL CHECKBOX - WORKING
                     allCheck.addEventListener('click', function() {
@@ -170,7 +177,30 @@
                         $('.cart__item-checkbox').prop('checked', checkStatus);
                         var checkedNum = $('.cart__item-checkbox:checked').length;
                         $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+
+                        // UPDATE TOTAL OF CHECKED ITEMS
+                        $('.cart__item-checkbox').on('change', function() {
+                            var totalPrice = 0;
+                            $('.cart__item-checkbox:checked').each(function() {
+                                var checkedNum = $('.cart__item-checkbox:checked').length;
+                                $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                                var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
+                                totalPrice += parseFloat(itemPrice.substring(1));
+                            });
+                            $('.total-price').text('₱'+totalPrice);
+                            // $.ajax({
+                            //     type: "POST",
+                            //     url: "get_cart_total.php",
+                            //     dataType: "json",
+                            //     success: function (response) {
+                            //         totalPrice += response.totalPrice;
+                            //         $('.total-price').text('₱'+totalPrice);
+                            //         alert(totalPrice);
+                            //     }
+                            // });
+                        });
                     })
+
 
                     // NEWWWW EMPTY ACTION
                     $(document).on('click', '.m__cart-empty-btn', function(e) {
@@ -351,17 +381,17 @@
                 })
             })
 
-            // UPDATE CART PRICE
-            function updateCartPrice()
-            {
-                $.ajax({
-                    type: "GET",
-                    url: "get_cart_total.php",
-                    success: function (response) {
-                        $('.total-price').text('₱'+response);
-                    }
-                });
-            }
+            // // UPDATE CART PRICE
+            // function updateCartPrice()
+            // {
+            //     $.ajax({
+            //         type: "GET",
+            //         url: "get_cart_total.php",
+            //         success: function (response) {
+            //             $('.total-price').text('₱'+response);
+            //         }
+            //     });
+            // }
             // UPDATE CART NUMBER
             function updateCart() {
                 $.ajax({
