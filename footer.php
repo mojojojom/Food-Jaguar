@@ -47,7 +47,7 @@
                         <div class="card mb-2 product-card-wrap">
                             <div class="card-body">
                                 <div class="cart__item-wrap">
-                                    <label for="cart-checkbox<?=$item['d_id']?>-<?=$item['title']?>">
+                                    <label for="cart-checkbox-<?=$item['d_id']?>-<?=$item['title']?>">
                                         <div class="cart__item-checkbox-wrap">
                                             <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-id="<?=$item['d_id']?>">
                                             <label for="cbx" class="cbx"></label>
@@ -59,7 +59,6 @@
                                             <div class="cart__item-info-wrap">
                                                 <p class="cart__item-title"><?=$item['title']?></p>
                                                 <p class="cart__item-price">₱ <?=$item['price']?></p>
-                                                <!-- <input class="cart__item-qty" type="number" min="1" step="1" value="<?=$item['quantity']?>"> -->
                                                 <p class="cart__item-qty text-center"><?=$item['quantity']?></p>
                                             </div>
                                         </div>
@@ -103,21 +102,22 @@
                             foreach($_SESSION['cart_item'] as $item)
                             {
                         ?>
-                        <input type="hidden" name="cart_qty" value="<?=$item['quantity']?>">
+                        <input type="hidden" data-qty-id="cart_qty_val-<?=$item['d_id']?>" name="cart_qty" value="<?=$item['quantity']?>">
                         <input type="hidden" name="cart_dish_id" value="<?=$item['d_id']?>">
                         <?php
                             }
                         }
                         ?>
-                        <input type="hidden" name="action" value="check">
+                        <!-- <input type="hidden" name="action" value="check"> -->
+                        <input type="hidden" name="action" value="checkOutOrder">
                         <?php
                         if(empty($_SESSION['cart_item'])) {
                         ?>
-                            <input type="submit" class="cart__item-footer-btn border-0 disabled" disabled data-action-id="check" id="cart__item-footer-btn" value="Checkout">
+                            <input type="submit" class="cart__item-footer-btn border-0 disabled" disabled data-action-id="check" id="cart__item-footer-btn" value="Checkout(0)">
                         <?php
                         } else {
                         ?>
-                            <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check" data-item-id="check" id="cart__item-footer-btn" value="Checkout">
+                            <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check" data-item-id="check" id="cart__item-footer-btn" value="Checkout(0)">
                         <?php
                         }
                         ?>
@@ -168,8 +168,8 @@
                     allCheck.addEventListener('click', function() {
                         var checkStatus = $(this).is(':checked');
                         $('.cart__item-checkbox').prop('checked', checkStatus);
-                        var checkedNum = $('.cart__item-checkbox:checked').length();
-                        $('.cart__item-footer-btn').val(checkedNum);
+                        var checkedNum = $('.cart__item-checkbox:checked').length;
+                        $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
                     })
 
                     // NEWWWW EMPTY ACTION
@@ -271,15 +271,35 @@
                     checkout.addEventListener('click', function(e) {
                         e.preventDefault();
                         var cartForm = $('#cart_checkout').serialize();
-                        var action = $('input[data-action-id="check"]').val();
-                        checkOutOrders(cartForm, action);
+
+                        // NEWWWWW CHECKBOX FUNCTION
+                        var selectedItems = [];
+                        $('.cart__item-checkbox:checked').each(function() {
+                            var dish_id = $(this).data('id');
+                            var items_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                            selectedItems.push({
+                                'id': $(this).data('id'),
+                                'quantity': items_qty
+                            });
+                        });
+                        if(selectedItems.length > 0) {
+                            let selectedItemsJson = JSON.stringify(selectedItems);
+                            console.log(selectedItemsJson);
+                            checkOutOrders(selectedItemsJson, 'checkOutOrder');
+                        } else {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable To Checkout!<br><b>Please select an item to checkout.</b>',
+                                'error'
+                            );
+                        }
                     })
                     // CHECKOUT ACTION - working
-                    function checkOutOrders(cartForm) {
+                    function checkOutOrders(selectedItemsJson) {
                         $.ajax({
                             type: "POST",
                             url: "add_cart.php",
-                            data: cartForm,
+                            data: {selectedItems: selectedItemsJson, action: 'checkOutOrder'},
                             success: function (response) {
                                 if(response == 'success') 
                                 {
@@ -294,7 +314,25 @@
                                         icon: 'success',
                                         title: 'Redirecting you to Checkout Form!'
                                     })
+                                    // updateCartItems();
+                                    updateCart();
+                                    updateCartPrice();
                                     setTimeout(' window.location.href = "checkout"; ', 1500);
+                                }
+                                else if(response == 'error_x_empty') {
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Unable To Checkout!<br><b>Empty!</b>',
+                                        'error'
+                                    );
+                                }
+                                else if(response == 'error_login') {
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Unable To Checkout!<br><b>Please Login Before Checking Out!</b>',
+                                        'error'
+                                    );
+                                    setTimeout(' window.location.href = "login"; ', 1500);
                                 }
                                 else
                                 {
@@ -303,7 +341,6 @@
                                         'Unable To Checkout!',
                                         'error'
                                     );
-                                    alert(response);
                                 }
                             }
                         });
