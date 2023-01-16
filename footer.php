@@ -407,21 +407,6 @@
                                     );
                                 }
                                 else if(response == 'error_login') {
-                                    // Swal.fire({
-                                    //     title: 'Unable To Checkout!',
-                                    //     html: 'Please Login Before Checking Out!<br><b>Redirecting You To Login Form.</b><br>Please Wait.',
-                                    //     timer: 3000,
-                                    //     showCancelButton: false,
-                                    //     showConfirmButton: false
-                                    //     }).then(
-                                    //     function () {},
-                                    //     function (dismiss) {
-                                    //         if (dismiss === 'timer') {
-                                    //             window.location.href = 'login';
-                                    //         }
-                                    //     }
-                                    // )
-
                                     let timerInterval
                                     Swal.fire({
                                     title: 'Unable To Checkout!',
@@ -438,8 +423,6 @@
                                             window.location.href = 'login';
                                         }
                                     })
-
-                                    // setTimeout(' window.location.href = "login"; ', 2000);
                                 }
                                 else
                                 {

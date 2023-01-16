@@ -183,7 +183,7 @@
                     {
                         // SECOND SECTION
                         // updateCartItems();
-                        setInterval(updateCartItems, 1500);
+                        // setInterval(updateCartItems, 1500);
                         $('input.add_cart_btn').val('Add to Cart');
                         $('input.add_cart_btn').removeClass('disabled');
                         $('input.add_cart_btn').prop('disabled', false);
