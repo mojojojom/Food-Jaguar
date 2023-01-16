@@ -152,7 +152,8 @@
                     var emptyBtn = document.getElementById('empty-cart');
                     var removeBtn = document.querySelector('.remove-item');
                     var allCheck = document.getElementById('cart__item-footer-checkbox');
-                    var checkout = document.getElementById('cart__item-footer-btn');
+                    // var checkout = document.getElementById('cart__item-footer-btn');
+                    var checkout = $('#cart__item-footer-btn');
 
                     // ALL CHECKBOX - WORKING
                     // allCheck.addEventListener('click', function() {
@@ -183,54 +184,54 @@
                     //         // });
                     //     });
                     // })
-                    $(allCheck).on('click', function() {
-                        var checkStatus = $(this).is(':checked');
-                        $('.cart__item-checkbox').prop('checked', checkStatus);
-                        var checkedNum = $('.cart__item-checkbox:checked').length;
-                        $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                    // $(allCheck).on('click', function() {
+                    //     var checkStatus = $(this).is(':checked');
+                    //     $('.cart__item-checkbox').prop('checked', checkStatus);
+                    //     var checkedNum = $('.cart__item-checkbox:checked').length;
+                    //     $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
 
-                        // CHECK CART
-                        $.ajax({
-                            type: "GET",
-                            url: "check_session.php",
-                            data: {session: 'cart_item'},
-                            success: function (response) {
-                                if(response == 'success') 
-                                {
-                                    // UPDATE TOTAL OF CHECKED ITEMS
-                                    $('.cart__item-checkbox').on('change', function() {
-                                        var totalPrice = 0;
-                                        $('.cart__item-checkbox:checked').each(function() {
-                                            var checkedNum = $('.cart__item-checkbox:checked').length;
-                                            $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                                            var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
-                                            totalPrice += parseFloat(itemPrice.substring(1));
-                                        });
-                                        $('.total-price').text('₱'+totalPrice);
-                                        // $.ajax({
-                                        //     type: "POST",
-                                        //     url: "get_cart_total.php",
-                                        //     dataType: "json",
-                                        //     success: function (response) {
-                                        //         totalPrice += response.totalPrice;
-                                        //         $('.total-price').text('₱'+totalPrice);
-                                        //         alert(totalPrice);
-                                        //     }
-                                        // });
-                                    });
-                                }
-                                else
-                                {
-                                    Swal.fire(
-                                        'Something Went Wrong!',
-                                        'Your Cart is Empty!',
-                                        'error'
-                                    );
-                                }
-                            }
-                        });
+                    //     // CHECK CART
+                    //     $.ajax({
+                    //         type: "GET",
+                    //         url: "check_session.php",
+                    //         data: {session: 'cart_item'},
+                    //         success: function (response) {
+                    //             if(response == 'success') 
+                    //             {
+                    //                 // UPDATE TOTAL OF CHECKED ITEMS
+                    //                 $('.cart__item-checkbox').on('change', function() {
+                    //                     var totalPrice = 0;
+                    //                     $('.cart__item-checkbox:checked').each(function() {
+                    //                         var checkedNum = $('.cart__item-checkbox:checked').length;
+                    //                         $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                    //                         var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
+                    //                         totalPrice += parseFloat(itemPrice.substring(1));
+                    //                     });
+                    //                     $('.total-price').text('₱'+totalPrice);
+                    //                     // $.ajax({
+                    //                     //     type: "POST",
+                    //                     //     url: "get_cart_total.php",
+                    //                     //     dataType: "json",
+                    //                     //     success: function (response) {
+                    //                     //         totalPrice += response.totalPrice;
+                    //                     //         $('.total-price').text('₱'+totalPrice);
+                    //                     //         alert(totalPrice);
+                    //                     //     }
+                    //                     // });
+                    //                 });
+                    //             }
+                    //             else
+                    //             {
+                    //                 Swal.fire(
+                    //                     'Something Went Wrong!',
+                    //                     'Your Cart is Empty!',
+                    //                     'error'
+                    //                 );
+                    //             }
+                    //         }
+                    //     });
 
-                    })
+                    // })
 
                     // NEWWWW EMPTY ACTION
                     $(document).on('click', '.m__cart-empty-btn', function(e) {
@@ -394,9 +395,6 @@
                                         icon: 'success',
                                         title: 'Redirecting you to Checkout Form!'
                                     })
-                                    // updateCartItems();
-                                    // updateCart();
-                                    // updateCartPrice();
                                     setInterval(updateCart, 1500);
                                     // setInterval(updateCartPrice, 1500);
                                     setTimeout(' window.location.href = "checkout"; ', 1500);
@@ -409,11 +407,38 @@
                                     );
                                 }
                                 else if(response == 'error_login') {
-                                    Swal.fire(
-                                        'Something Went Wrong!',
-                                        'Unable To Checkout!<br><b>Please Login Before Checking Out!</b>',
-                                        'error'
-                                    );
+                                    // Swal.fire({
+                                    //     title: 'Unable To Checkout!',
+                                    //     html: 'Please Login Before Checking Out!<br><b>Redirecting You To Login Form.</b><br>Please Wait.',
+                                    //     timer: 3000,
+                                    //     showCancelButton: false,
+                                    //     showConfirmButton: false
+                                    //     }).then(
+                                    //     function () {},
+                                    //     function (dismiss) {
+                                    //         if (dismiss === 'timer') {
+                                    //             window.location.href = 'login';
+                                    //         }
+                                    //     }
+                                    // )
+
+                                    let timerInterval
+                                    Swal.fire({
+                                    title: 'Unable To Checkout!',
+                                    html: 'Please Login Before Checking Out!<br><b>Redirecting You To Login Form.</b><br>Please Wait.',
+                                    timer: 3000,
+                                    timerProgressBar: false,
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    willClose: () => {
+                                        clearInterval(timerInterval)
+                                    }
+                                    }).then((result) => {
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            window.location.href = 'login';
+                                        }
+                                    })
+
                                     // setTimeout(' window.location.href = "login"; ', 2000);
                                 }
                                 else
@@ -428,11 +453,11 @@
                         });
                     }
 
-                    // updateCart();
+                    updateCart();
                     // updateCartPrice();
-                    setInterval(updateCart, 1500);
+                    // setInterval(updateCart, 1500);
                     // setInterval(updateCartPrice, 1500);
-                    setInterval(updateCartItems, 1500);
+                    // setInterval(updateCartItems, 1500);
                 })
             })
 
