@@ -2,7 +2,6 @@
     include("connection/connect.php");
     error_reporting(0);
     session_start();
-    // include_once 'product-action.php';
 
     if(empty($_SESSION["user_id"]))
     {

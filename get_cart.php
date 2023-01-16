@@ -26,7 +26,7 @@ if(empty($_SESSION['cart_item'])) {
             <input type="button" name="submit" id="empty-cart" class="m__cart-empty-btn d-block py-1 px-2" value="Empty Cart">
         </form>
     </div>
-</div>
+</div>      
 <?php
     if(isset($_SESSION['cart_item'])) 
     {   $item_total = 0;
@@ -41,7 +41,8 @@ if(empty($_SESSION['cart_item'])) {
                     <div class="cart__item-wrap">
                         <label for="cart-checkbox<?=$item['d_id']?>-<?=$item['title']?>">
                             <div class="cart__item-checkbox-wrap">
-                                <input type="checkbox" id="cart__item-checkbox<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-id="<?=$item['d_id']?>">
+                                <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-check="check-box" data-id="<?=$item['d_id']?>" data-price="<?=$item['price']?>">
+                                <input type="hidden" name="qyt_hidden" data-qty-id="cart_qty_val-<?=$item['quantity']?>" value="<?=$item['quantity']?>">
                                 <label for="cbx" class="cbx"></label>
                             </div>
                             <div class="cart__item-inner-wrap">
@@ -51,7 +52,7 @@ if(empty($_SESSION['cart_item'])) {
                                 <div class="cart__item-info-wrap">
                                     <p class="cart__item-title"><?=$item['title']?></p>
                                     <p class="cart__item-price">₱ <?=$item['price']?></p>
-                                    <input class="cart__item-qty" type="number" min="1" step="1" value="<?=$item['quantity']?>">
+                                    <p class="cart__item-qty text-center"><?=$item['quantity']?></p>
                                 </div>
                             </div>
                             <div class="cart__item-remove-wrap">
@@ -66,3 +67,21 @@ if(empty($_SESSION['cart_item'])) {
         }
     }
 }
+?>
+<form id="cart_checkout">
+    <?php
+        $cart = $_SESSION['cart_item'];
+        if(isset($cart)) 
+        {
+            $item_total = 0;
+            foreach($cart as $item)
+            {
+        ?>
+        <input type="hidden" data-qty-id="cart_qty_val-<?=$item['d_id']?>" name="cart_qty" value="<?=$item['quantity']?>">
+        <input type="hidden" name="cart_dish_id" value="<?=$item['d_id']?>">
+        <?php
+            }
+        }
+    ?>
+    <input type="hidden" name="action" value="checkOutOrder">
+</form>

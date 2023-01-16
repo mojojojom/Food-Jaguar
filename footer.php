@@ -49,7 +49,8 @@
                                 <div class="cart__item-wrap">
                                     <label for="cart-checkbox-<?=$item['d_id']?>-<?=$item['title']?>">
                                         <div class="cart__item-checkbox-wrap">
-                                            <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-check="check-box" data-id="<?=$item['d_id']?>">
+                                            <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-check="check-box" data-id="<?=$item['d_id']?>" data-price="<?=$item['price']?>">
+                                            <input type="hidden" name="qyt_hidden" data-qty-id="cart_qty_val-<?=$item['quantity']?>" value="<?=$item['quantity']?>">
                                             <label for="cbx" class="cbx"></label>
                                         </div>
                                         <div class="cart__item-inner-wrap">
@@ -75,31 +76,14 @@
                     } 
                 }
                 ?>
-            </div>
-
-            <div class="offcanvas-footer d-flex align-items-center justify-content-between">
-                <div class="cart__item-footer-all-wrap d-flex align-items-center gap-2 ps-2">
+                <form id="cart_checkout">
                     <?php
-                    if(empty($_SESSION['cart_item'])) {
-                    ?>
-                        <input type="checkbox" id="cart__item-footer-checkbox disabled" disabled class="cart__item-footer-checkbox">
-                    <?php
-                    } else {
-                    ?>
-                        <input type="checkbox" id="cart__item-footer-checkbox" class="cart__item-footer-checkbox">
-                    <?php
-                    }
-                    ?>
-                    <label for="cart__item-checkbox">All</label>
-                </div>
-                <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
-                    <p class="total-price mb-0 fw-semibold">₱0</p>
-                    <form id="cart_checkout">
-                        <?php
-                        if(isset($_SESSION['cart_item'])) 
+                        session_start();
+                        $cart = $_SESSION['cart_item'];
+                        if(isset($cart)) 
                         {
                             $item_total = 0;
-                            foreach($_SESSION['cart_item'] as $item)
+                            foreach($cart as $item)
                             {
                         ?>
                         <input type="hidden" data-qty-id="cart_qty_val-<?=$item['d_id']?>" name="cart_qty" value="<?=$item['quantity']?>">
@@ -107,11 +91,19 @@
                         <?php
                             }
                         }
-                        ?>
-                        <!-- <input type="hidden" name="action" value="check"> -->
-                        <input type="hidden" name="action" value="checkOutOrder">
-                        <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
-                    </form>
+                    ?>
+                    <input type="hidden" name="action" value="checkOutOrder">
+                </form>
+            </div>
+
+            <div class="offcanvas-footer d-flex align-items-center justify-content-between">
+                <div class="cart__item-footer-all-wrap d-flex align-items-center gap-2 ps-2">
+                    <input type="checkbox" id="cart__item-footer-checkbox" class="cart__item-footer-checkbox">
+                    <label for="cart__item-checkbox">All</label>
+                </div>
+                <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
+                    <p class="total-price mb-0 fw-semibold">₱0.00</p>
+                    <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
                 </div>
             </div>
         </div>
@@ -152,89 +144,10 @@
                     var emptyBtn = document.getElementById('empty-cart');
                     var removeBtn = document.querySelector('.remove-item');
                     var allCheck = document.getElementById('cart__item-footer-checkbox');
-                    // var checkout = document.getElementById('cart__item-footer-btn');
                     var checkout = $('#cart__item-footer-btn');
 
-                    // ALL CHECKBOX - WORKING
-                    // allCheck.addEventListener('click', function() {
-                    //     var checkStatus = $(this).is(':checked');
-                    //     $('.cart__item-checkbox').prop('checked', checkStatus);
-                    //     var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //     $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-
-                    //     // UPDATE TOTAL OF CHECKED ITEMS
-                    //     $('.cart__item-checkbox').on('change', function() {
-                    //         var totalPrice = 0;
-                    //         $('.cart__item-checkbox:checked').each(function() {
-                    //             var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //             $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                    //             var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
-                    //             totalPrice += parseFloat(itemPrice.substring(1));
-                    //         });
-                    //         $('.total-price').text('₱'+totalPrice);
-                    //         // $.ajax({
-                    //         //     type: "POST",
-                    //         //     url: "get_cart_total.php",
-                    //         //     dataType: "json",
-                    //         //     success: function (response) {
-                    //         //         totalPrice += response.totalPrice;
-                    //         //         $('.total-price').text('₱'+totalPrice);
-                    //         //         alert(totalPrice);
-                    //         //     }
-                    //         // });
-                    //     });
-                    // })
-                    // $(allCheck).on('click', function() {
-                    //     var checkStatus = $(this).is(':checked');
-                    //     $('.cart__item-checkbox').prop('checked', checkStatus);
-                    //     var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //     $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-
-                    //     // CHECK CART
-                    //     $.ajax({
-                    //         type: "GET",
-                    //         url: "check_session.php",
-                    //         data: {session: 'cart_item'},
-                    //         success: function (response) {
-                    //             if(response == 'success') 
-                    //             {
-                    //                 // UPDATE TOTAL OF CHECKED ITEMS
-                    //                 $('.cart__item-checkbox').on('change', function() {
-                    //                     var totalPrice = 0;
-                    //                     $('.cart__item-checkbox:checked').each(function() {
-                    //                         var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //                         $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                    //                         var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
-                    //                         totalPrice += parseFloat(itemPrice.substring(1));
-                    //                     });
-                    //                     $('.total-price').text('₱'+totalPrice);
-                    //                     // $.ajax({
-                    //                     //     type: "POST",
-                    //                     //     url: "get_cart_total.php",
-                    //                     //     dataType: "json",
-                    //                     //     success: function (response) {
-                    //                     //         totalPrice += response.totalPrice;
-                    //                     //         $('.total-price').text('₱'+totalPrice);
-                    //                     //         alert(totalPrice);
-                    //                     //     }
-                    //                     // });
-                    //                 });
-                    //             }
-                    //             else
-                    //             {
-                    //                 Swal.fire(
-                    //                     'Something Went Wrong!',
-                    //                     'Your Cart is Empty!',
-                    //                     'error'
-                    //                 );
-                    //             }
-                    //         }
-                    //     });
-
-                    // })
-
                     // NEWWWW EMPTY ACTION
-                    $(document).on('click', '.m__cart-empty-btn', function(e) {
+                    $('.offcanvas-body').on('click', '.m__cart-empty-btn', function(e) {
                         e.preventDefault();
                         var emptyForm = $('#empty_form').serialize();
                         var action = $('input[data-action-id="empty"]').val();
@@ -246,7 +159,11 @@
                             success: function (response) {
                                 if(response == 'success') 
                                 {
-                                    // setInterval(updateCartItems, 1500);
+                                    
+                                    // UPDATE THE CART
+                                    updateCartItems();
+
+                                    // SHOW STATUS
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
@@ -258,16 +175,21 @@
                                         icon: 'success',
                                         title: 'Cart Cleared!'
                                     })
+
+                                    // CHANGE THE CHECKBOX
+                                    $('.cart__item-checkbox').change();
+
+                                    // SECOND SECTION - DISPLAY THE NEW ITEMS IN CART
                                     $.ajax({
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
-                                            // $('.cart-items-product').empty().html(response);
                                             $('.offcanvas-body').empty().html(response);
                                         }
                                     });
-                                    setInterval(updateCart, 1500);
-                                    // updateCartPrice();
+
+                                    // UPDATE CART NUMBER
+                                    setInterval(updateCart, 1000);
                                 }
                                 else if(response == 'error_cart') 
                                 {
@@ -290,9 +212,10 @@
                     })
 
                     // NEWWWWW REMOVE ACTION
-                    $('.cart-items-product').on('click', '.remove-item', function(e) {
+                    $('.offcanvas-body').on('click', '.remove-item', function(e) {
                         e.preventDefault();
                         var productId = $(this).attr('product-id');
+                        console.log(productId);
                         // FIRST FUNCTION
                         $.ajax({
                             type: "POST",
@@ -300,7 +223,11 @@
                             data: {productId: productId, action: 'remove'},
                             success: function (response) {
                                 if(response == 'success') {
-                                    // setInterval(updateCartItems, 1500);
+
+                                    // UPDATE THE CART
+                                    updateCartItems();
+
+                                    // SHOW STATUS
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
@@ -312,25 +239,81 @@
                                         icon: 'success',
                                         title: 'Item Removed!'
                                     })
-                                    // SECOND FUNCTION
+
+                                    // CHANGE THE CHECKBOX
+                                    $('.cart__item-checkbox').change();
+
+                                    // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
                                     $.ajax({
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
-                                            $('.offcanvas-body').empty().html(response); 
+                                            $('.offcanvas-body').empty().html(response);
                                         }
                                     });
-                                    setInterval(updateCart, 1500);
-                                    // setInterval(updateCartPrice, 1500);
+
+                                    // UPDATE CART NUMBER
+                                    setInterval(updateCart, 1000);
                                 } 
                                 else {
-                                    alert('error');
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Unable to Remove Item!',
+                                        'error'
+                                    );
                                 }
                             }
                         });
                     })
-                    
-                    // CHECKOUT SESSION - working
+
+                    // CHECK ALL
+                    $('#cart__item-footer-checkbox').change(function() {
+                        if($('.cart__item-checkbox').length == 0) {
+                            Swal.fire(
+                                'Your Cart is Empty!',
+                                'Please add items to the cart.',
+                                'error'
+                            );
+                        }
+                        else
+                        {
+                            $('.cart__item-checkbox').prop('checked', $(this).prop('checked'));
+                            var checkedNum = $('.cart__item-checkbox:checked').length;
+                            $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                            var totalPrice = 0;
+                            if(checkedNum > 0) {
+                                $('.cart__item-checkbox:checked').each(function() {
+                                    var dish_id = $(this).data('id');
+                                    var item_price = $(this).data('price');
+                                    var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                                    totalPrice += item_price*item_qty;
+                                });
+                                $('.total-price').text('₱'+totalPrice.toFixed(2));
+                            } else {
+                                $('.total-price').text('₱0.00');
+                            }
+                        }
+                    });
+
+                    // CHECK SINGLE ITEM
+                    $(document).on('change', '.cart__item-checkbox', function() {
+                        var checkedNum = $('.cart__item-checkbox:checked').length;
+                        $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                        var totalPrice = 0;
+                        if(checkedNum > 0) {
+                            $('.cart__item-checkbox:checked').each(function() {
+                                var dish_id = $(this).data('id');
+                                var item_price = $(this).data('price');
+                                var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                                totalPrice += item_price*item_qty;
+                            });
+                            $('.total-price').text('₱'+totalPrice.toFixed(2));
+                        } else {
+                            $('.total-price').text('₱0.00');
+                        }
+                    });
+
+                    // CHECKOUT
                     $(checkout).on('click', function(e) {
                         e.preventDefault();
                         var cartForm = $('#cart_checkout').serialize();
@@ -354,11 +337,11 @@
                                     if(selectedItems.length > 0) {
                                         let selectedItemsJson = JSON.stringify(selectedItems);
                                         console.log(selectedItemsJson);
-                                        checkOutOrders(selectedItemsJson, 'checkOutOrder');
+                                        // checkOutOrders(selectedItemsJson, 'checkOutOrder');
                                     } else {
                                         Swal.fire(
-                                            'Something Went Wrong!',
-                                            'Unable To Checkout!<br><b>Please select an item to checkout.</b>',
+                                            'Unable To Checkout!',
+                                            'Please Select an Item to Checkout.',
                                             'error'
                                         );
                                     }
@@ -366,14 +349,15 @@
                                 else
                                 {
                                     Swal.fire(
-                                        'Something Went Wrong!',
                                         'Your Cart is Empty!',
+                                        'Please Add Items to the Cart.',
                                         'error'
                                     );
                                 }
                             }
                         });
                     })
+
                     // CHECKOUT ACTION - working
                     function checkOutOrders(selectedItemsJson) {
                         $.ajax({
@@ -401,8 +385,8 @@
                                 }
                                 else if(response == 'cart_empty') {
                                     Swal.fire(
-                                        'Something Went Wrong!',
-                                        'Unable To Checkout!<br><b>Empty!</b>',
+                                        'Unable To Checkout!!',
+                                        'Please Add Items to the Cart.',
                                         'error'
                                     );
                                 }
@@ -437,24 +421,9 @@
                     }
 
                     updateCart();
-                    // updateCartPrice();
-                    // setInterval(updateCart, 1500);
-                    // setInterval(updateCartPrice, 1500);
-                    // setInterval(updateCartItems, 1500);
                 })
             })
 
-            // UPDATE CART PRICE
-            // function updateCartPrice()
-            // {
-            //     $.ajax({
-            //         type: "GET",
-            //         url: "get_cart_total.php",
-            //         success: function (response) {
-            //             $('.total-price').text('₱'+response);
-            //         }
-            //     });
-            // }
             // UPDATE CART NUMBER
             function updateCart() {
                 $.ajax({

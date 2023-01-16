@@ -137,20 +137,22 @@
         </div>
     </section>
 
-    <!-- <div class="container">
+    <!-- <div class="container"> -->
         <?php
+            // if(isset($_SESSION['cart_item'])) {
+            //     foreach($_SESSION['cart_item'] as $item) {
             // if(isset($_SESSION['check_cart_item'])) {
             //     foreach($_SESSION['check_cart_item'] as $item) {
         ?>
-                <p><?=$item['title']?></p>
+                <!-- <p><?=$item['title']?></p>
                 <p><?=$item['d_id']?></p>
                 <p><?=$item['quantity']?></p>
-                <p><?=$item['price']?></p>
+                <p><?=$item['price']?></p> -->
         <?php
             //     }
             // }
         ?>
-    </div> -->
+    <!-- </div> -->
 
     <script>
         document.title = "Food Jaguar"
@@ -182,8 +184,11 @@
                     if(response == 'success') 
                     {
                         // SECOND SECTION
-                        // updateCartItems();
-                        // setInterval(updateCartItems, 1500);
+
+                        // UPDATE THE CART
+                        updateCartItems();
+
+                        // SHOW STATUS
                         $('input.add_cart_btn').val('Add to Cart');
                         $('input.add_cart_btn').removeClass('disabled');
                         $('input.add_cart_btn').prop('disabled', false);
@@ -198,8 +203,21 @@
                             icon: 'success',
                             title: 'Added to Cart!'
                         })
-                        setInterval(updateCart, 1500);
-                        // setInterval(updateCartPrice, 1500);
+
+                        // CHANGE THE CHECKBOX
+                        $('.cart__item-checkbox').change();
+
+                        // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
+                        $.ajax({
+                            type: "GET",
+                            url: "get_cart.php",
+                            success: function (response) {
+                                $('.offcanvas-body').empty().html(response);
+                            }
+                        });
+
+                        // UPDATE CART NUMBER
+                        setInterval(updateCart, 1000);
                     }
                     else
                     {

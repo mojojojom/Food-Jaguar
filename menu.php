@@ -25,7 +25,6 @@
                     <h1 class="m__menu-heading mb-0">Taste the best!</h1>
                 </div>
                 <div class="m__menu-header-cart-wrap">
-                    <!-- <a href="#cartModal" type="button" class="c-btn-3 m__menu-header-cart position-relative p-font" data-bs-toggle="modal" data-bs-target="#cartModal"> -->
                     <a class="c-btn-3 m__menu-header-cart position-relative p-font" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
                     <i class="fa-solid fa-cart-shopping"></i>
                         <span id="cart_num" class="cart_num position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -117,12 +116,11 @@
 ?>
 
 <script>
-    // ADD TO CART
+    // ADD TO CART ORIGINAL
     jQuery(function($) {
         // NEWWWWW
         $(document).on('click', '.add_cart_btn', function(e) {
             e.preventDefault();
-            var addCartBtn = $(this);
             var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
             var productId = $(this).attr('data-dish-id');
             // FIRST SECTION
@@ -130,39 +128,55 @@
                 type: "POST",
                 url: "add_cart.php",
                 data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
-                // data: menu_form,
                 beforeSend: function() {
-                    addCartBtn.val('Adding to Cart');
-                    addCartBtn.addClass('disabled');
-                    addCartBtn.prop('disabled', true);
+                    $(this).val('Adding to Cart');
+                    $(this).addClass('disabled');
+                    $(this).prop('disabled', true);
                 },
                 success: function (response) {
                     if(response == 'success') 
                     {
                         // SECOND SECTION
+
+                        // UPDATE THE CART
                         updateCartItems();
-                        addCartBtn.val('Add to Cart');
-                        addCartBtn.removeClass('disabled');
-                        addCartBtn.prop('disabled', false);
+
+                        // SHOW STATUS
+                        $(this).val('Add to Cart');
+                        $(this).removeClass('disabled');
+                        $(this).prop('disabled', false);
                         const Toast = Swal.mixin({
                             toast: true,
                             position: 'top-end',
                             showConfirmButton: false,
-                            timer: 1000,
+                            timer: 1500,
                             timerProgressBar: true
                         })
                         Toast.fire({
                             icon: 'success',
                             title: 'Added to Cart!'
                         })
-                        updateCart();
-                        updateCartPrice();
+
+                        // CHANGE THE CHECKBOX
+                        $('.cart__item-checkbox').change();
+
+                        // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
+                        $.ajax({
+                            type: "GET",
+                            url: "get_cart.php",
+                            success: function (response) {
+                                $('.offcanvas-body').empty().html(response);
+                            }
+                        });
+
+                        // UPDATE CART NUMBER
+                        setInterval(updateCart, 1000);
                     }
                     else
                     {
-                        addCartBtn.val('Add to Cart');
-                        addCartBtn.removeClass('disabled');
-                        addCartBtn.prop('disabled', false);
+                        $(this).val('Add to Cart');
+                        $(this).removeClass('disabled');
+                        $(this).prop('disabled', false);
                         Swal.fire(
                             'Something Went Wrong!',
                             'Can\'t Add to Cart!',
@@ -172,15 +186,5 @@
                 }
             });
         })
-        // NEW FUNCTION
-        function updateCartItems() {
-            $.ajax({
-                type: "GET",
-                url: "get_cart.php",
-                success: function (response) {
-                    $('.offcanvas-body').empty().html(response);
-                }
-            });
-        }
     })
 </script>
