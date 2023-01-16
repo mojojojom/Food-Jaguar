@@ -64,12 +64,14 @@
 											{		
 												while($row=mysqli_fetch_array($query_res))
 												{
-													$subtotal = $row['price']*$row['quantity'];
+													$orig_price = $row['price']/$row['quantity'];
+													$subtotal = $orig_price*$row['quantity'];
+													// $subtotal = $row['price']*$row['quantity'];
 										?>
 
 										<tr class="o__order-item-line-wrap">
 											<th scope="row" class="o__order-card-item-name border border-0"><?=$row['title']?></th>
-											<td class="text-center border border-0"><p class="o__order-card-item-price mb-0">₱ <?=$row['price']?></p></td>
+											<td class="text-center border border-0"><p class="o__order-card-item-price mb-0">₱ <?=$orig_price?></p></td>
 											<td class="text-center border border-0"><p class="o__order-card-item-qty mb-0"><?=$row['quantity']?></p></td>
 											<td class="text-center o__order-card-item-sub border border-0">₱ <?=$subtotal?></td>
 											<td class="text-center border border-0 o__order-card-item-status">
@@ -145,10 +147,8 @@
 															$mode = $echo['mop'];
 														}
 												?>
-														<!-- <span class="badge bg-success text-capitalize"><?=$echo['mop']?></span> -->
 														<span class="badge bg-success text-capitalize"><?=$mode?></span>
 												<?php
-														// }
 													}
 												?>
 											</div>
@@ -159,7 +159,7 @@
 
 													if(mysqli_num_rows($query_res) > 0) {
 														while($row = mysqli_fetch_assoc($query_total)) {
-															$item_total += ($row['price']*$row['quantity']);
+															$item_total += ($orig_price*$row['quantity']);
 														}
 												?>
 														<div class="d-flex align-items-center justify-content-between">
@@ -168,34 +168,42 @@
 														</div>
 														<div class="d-flex align-items-center justify-content-between">
 															<?php
-															if($row['mop'] == 'pick-up') {
+															$mop = mysqli_query($db, "SELECT mop FROM users_orders WHERE u_id='".$_SESSION['user_id']."'");
+															if(mysqli_num_rows($mop) > 0) {
+																$get_mop = mysqli_fetch_assoc($mop);
+
+																if($get_mop == 'pick-up'){
 															?>
-															<p class="o__order-card-bill-sub-title mb-3">Delivery Fee: <?=$row['mop']?></p>
-															<p class="o__order-card-bill-sub mb-3">₱ 0</p>
+																<p class="o__order-card-bill-sub-title mb-3">Delivery Fee:</p>
+																<p class="o__order-card-bill-sub mb-3">₱ 5</p>
 															<?php
-															} else if($row['mop'] == 'deliver') {
+																} else {
 															?>
-															<p class="o__order-card-bill-sub-title mb-3">Delivery Fee:</p>
-															<p class="o__order-card-bill-sub mb-3">₱ 5</p>
+																<p class="o__order-card-bill-sub-title mb-3">Delivery Fee: </p>
+																<p class="o__order-card-bill-sub mb-3">₱ 0</p>
 															<?php
+																}
 															}
 															?>
 														</div>
 														<div class="d-flex align-items-center justify-content-between">
 															<p class="o__order-card-bill-sub-title mb-3">Total:</p>
 															<?php
-															if($row['mop'] == 'pick-up') {
-																$s_fee = 0;
-																$total_fee = $s_fee+$item_total;
-															?>
-															<p class="o__order-card-bill-sub mb-3">₱ <?= $total_fee?></p>
-															<?php
-															} else {
-																$s_fee = 5;
-																$total_fee = $s_fee+$item_total;
-															?>
-															<p class="o__order-card-bill-sub mb-3">₱ <?= $total_fee?></p>
-															<?php
+															if(mysqli_num_rows($mop) > 0) {
+																$get_mop = mysqli_fetch_assoc($mop);
+																if($get_mop == 'pick-up') {
+																	$s_fee = 5;
+																	$total_fee = $s_fee+$item_total;
+																?>
+																<p class="o__order-card-bill-sub mb-3">₱ <?= $total_fee?></p>
+																<?php
+																} else {
+																	$s_fee = 0;
+																	$total_fee = $s_fee+$item_total;
+																?>
+																<p class="o__order-card-bill-sub mb-3">₱ <?= $total_fee?></p>
+																<?php
+																}
 															}
 															?>
 														</div>

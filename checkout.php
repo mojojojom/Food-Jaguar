@@ -14,7 +14,8 @@
         foreach ($_SESSION["check_cart_item"] as $item) 
         {
             $dfee = 5;
-            $item_fee += ($item["price"]*$item["quantity"]);
+            // $item_fee += ($item["price"]*$item["quantity"]);
+            $item_fee += $item["price"];
             $item_total = $item_fee + $dfee;
 
             if($_POST['submit'])
@@ -29,28 +30,6 @@
                 header('Location: your_orders');
             }
         }
-    // else if(empty($_SESSION['cart_item'])) {
-    //     header('Location: menu');
-    // }
-    // else{
-        // foreach ($_SESSION["cart_item"] as $item) 
-        // {
-        //     $dfee = 5;
-        //     $item_fee += ($item["price"]*$item["quantity"]);
-        //     $item_total = $item_fee + $dfee;
-
-        //     if($_POST['submit'])
-        //     {
-        //         $SQL="INSERT INTO users_orders(u_id,title,quantity,price, mop) VALUES('".$_SESSION["user_id"]."','".$item["title"]."','".$item["quantity"]."','".$item["price"]."','".$_POST["mode"]."')";
-        //         mysqli_query($db,$SQL);
-
-        //         unset($_SESSION["cart_item"]);
-        //         unset($item["title"]);
-        //         unset($item["quantity"]);
-        //         unset($item["price"]);
-        //         header('Location: your_orders');
-        //     }
-        // }
 
     include('header.php');
 ?>

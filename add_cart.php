@@ -28,14 +28,11 @@
                 $get_order = mysqli_query($db, "SELECT * FROM dishes WHERE d_id= '$productId'");
 
                 $fetch = mysqli_fetch_object($get_order);
-                $orig_price = $fetch->price;
-                // $item_price = $orig_price*$quantity;
                 $itemArray = array(
                                     $fetch->d_id=>array(
                                                         'title'=>$fetch->title,
                                                         'd_id'=>$fetch->d_id,
                                                         'quantity'=>$quantity,
-                                                        // 'price'=>$item_price,
                                                         'price'=>$fetch->price,
                                                         'img'=>$fetch->img)
                             );

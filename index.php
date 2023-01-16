@@ -137,22 +137,23 @@
         </div>
     </section>
 
-    <!-- <div class="container"> -->
+    <div class="container">
         <?php
             // if(isset($_SESSION['cart_item'])) {
             //     foreach($_SESSION['cart_item'] as $item) {
-            // if(isset($_SESSION['check_cart_item'])) {
-            //     foreach($_SESSION['check_cart_item'] as $item) {
+            session_start();
+            if(isset($_SESSION['check_cart_item'])) {
+                foreach($_SESSION['check_cart_item'] as $item) {
         ?>
-                <!-- <p><?=$item['title']?></p>
+                <p><?=$item['title']?></p>
                 <p><?=$item['d_id']?></p>
                 <p><?=$item['quantity']?></p>
-                <p><?=$item['price']?></p> -->
+                <p><?=$item['price']?></p>
         <?php
-            //     }
-            // }
+                }
+            }
         ?>
-    <!-- </div> -->
+    </div>
 
     <script>
         document.title = "Food Jaguar"

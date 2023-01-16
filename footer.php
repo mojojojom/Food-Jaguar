@@ -336,8 +336,8 @@
                                     });
                                     if(selectedItems.length > 0) {
                                         let selectedItemsJson = JSON.stringify(selectedItems);
-                                        console.log(selectedItemsJson);
-                                        // checkOutOrders(selectedItemsJson, 'checkOutOrder');
+                                        // console.log(selectedItemsJson);
+                                        checkOutOrders(selectedItemsJson, 'checkOutOrder');
                                     } else {
                                         Swal.fire(
                                             'Unable To Checkout!',
