@@ -246,7 +246,7 @@
                             success: function (response) {
                                 if(response == 'success') 
                                 {
-                                    etInterval(updateCartItems, 1500);
+                                    // setInterval(updateCartItems, 1500);
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
@@ -300,7 +300,7 @@
                             data: {productId: productId, action: 'remove'},
                             success: function (response) {
                                 if(response == 'success') {
-                                    setInterval(updateCartItems, 1500);
+                                    // setInterval(updateCartItems, 1500);
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
