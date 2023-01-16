@@ -168,12 +168,6 @@
             e.preventDefault();
             var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
             var productId = $(this).attr('data-dish-id');
-            // HIDE MODAL ON ADD TO CART
-            // $('.quantity_modal-'+productId).modal('hide');
-            // $('body').removeClass('modal-open');
-            // $('body').css("overflow", "auto!important");
-            // $('.modal-backdrop').remove();
-            // $('.quantity_modal-'+productId).modal({backdrop: 'static', keyboard: false});
             // FIRST SECTION
             $.ajax({
                 type: "POST",
@@ -188,7 +182,8 @@
                     if(response == 'success') 
                     {
                         // SECOND SECTION
-                        updateCartItems();
+                        // updateCartItems();
+                        setInterval(updateCartItems, 1500);
                         $('input.add_cart_btn').val('Add to Cart');
                         $('input.add_cart_btn').removeClass('disabled');
                         $('input.add_cart_btn').prop('disabled', false);
@@ -220,16 +215,6 @@
                 }
             });
         })
-        // NEW FUNCTION
-        function updateCartItems() {
-            $.ajax({
-                type: "GET",
-                url: "get_cart.php",
-                success: function (response) {
-                    $('.offcanvas-body').empty().html(response);
-                }
-            });
-        }
     })
 
 

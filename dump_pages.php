@@ -110,7 +110,23 @@
                         ?>
                         <!-- <input type="hidden" name="action" value="check"> -->
                         <input type="hidden" name="action" value="checkOutOrder">
-                        <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
+                        <?php
+                        if(empty($_SESSION['cart_item'])) {
+                        ?>
+                            <input type="submit" class="cart__item-footer-btn border-0 disabled" disabled data-action-id="check" id="cart__item-footer-btn" value="Checkout(0)">
+                        <?php
+                        } else {
+                            if(empty($_SESSION['user_id'])) {
+                        ?>
+                            <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check" data-item-id="check" id="cart__item-footer-btn" value="Checkout(0)">
+                        <?php
+                            } else {
+                        ?>
+                            <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
+                        <?php
+                            }
+                        }
+                        ?>
                     </form>
                 </div>
             </div>
@@ -153,84 +169,38 @@
                     var removeBtn = document.querySelector('.remove-item');
                     var allCheck = document.getElementById('cart__item-footer-checkbox');
                     var checkout = document.getElementById('cart__item-footer-btn');
+                    var checkBox = document.querySelectorAll('[data-check="check-box"]');
 
                     // ALL CHECKBOX - WORKING
-                    // allCheck.addEventListener('click', function() {
-                    //     var checkStatus = $(this).is(':checked');
-                    //     $('.cart__item-checkbox').prop('checked', checkStatus);
-                    //     var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //     $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-
-                    //     // UPDATE TOTAL OF CHECKED ITEMS
-                    //     $('.cart__item-checkbox').on('change', function() {
-                    //         var totalPrice = 0;
-                    //         $('.cart__item-checkbox:checked').each(function() {
-                    //             var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //             $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                    //             var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
-                    //             totalPrice += parseFloat(itemPrice.substring(1));
-                    //         });
-                    //         $('.total-price').text('₱'+totalPrice);
-                    //         // $.ajax({
-                    //         //     type: "POST",
-                    //         //     url: "get_cart_total.php",
-                    //         //     dataType: "json",
-                    //         //     success: function (response) {
-                    //         //         totalPrice += response.totalPrice;
-                    //         //         $('.total-price').text('₱'+totalPrice);
-                    //         //         alert(totalPrice);
-                    //         //     }
-                    //         // });
-                    //     });
-                    // })
-                    $(allCheck).on('click', function() {
+                    allCheck.addEventListener('click', function() {
                         var checkStatus = $(this).is(':checked');
                         $('.cart__item-checkbox').prop('checked', checkStatus);
                         var checkedNum = $('.cart__item-checkbox:checked').length;
                         $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
 
-                        // CHECK CART
-                        $.ajax({
-                            type: "GET",
-                            url: "check_session.php",
-                            data: {session: 'cart_item'},
-                            success: function (response) {
-                                if(response == 'success') 
-                                {
-                                    // UPDATE TOTAL OF CHECKED ITEMS
-                                    $('.cart__item-checkbox').on('change', function() {
-                                        var totalPrice = 0;
-                                        $('.cart__item-checkbox:checked').each(function() {
-                                            var checkedNum = $('.cart__item-checkbox:checked').length;
-                                            $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                                            var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
-                                            totalPrice += parseFloat(itemPrice.substring(1));
-                                        });
-                                        $('.total-price').text('₱'+totalPrice);
-                                        // $.ajax({
-                                        //     type: "POST",
-                                        //     url: "get_cart_total.php",
-                                        //     dataType: "json",
-                                        //     success: function (response) {
-                                        //         totalPrice += response.totalPrice;
-                                        //         $('.total-price').text('₱'+totalPrice);
-                                        //         alert(totalPrice);
-                                        //     }
-                                        // });
-                                    });
-                                }
-                                else
-                                {
-                                    Swal.fire(
-                                        'Something Went Wrong!',
-                                        'Your Cart is Empty!',
-                                        'error'
-                                    );
-                                }
-                            }
+                        // UPDATE TOTAL OF CHECKED ITEMS
+                        $('.cart__item-checkbox').on('change', function() {
+                            var totalPrice = 0;
+                            $('.cart__item-checkbox:checked').each(function() {
+                                var checkedNum = $('.cart__item-checkbox:checked').length;
+                                $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                                var itemPrice = $(this).closest('.cart__item-wrap').find('.cart__item-price').text();
+                                totalPrice += parseFloat(itemPrice.substring(1));
+                            });
+                            $('.total-price').text('₱'+totalPrice);
+                            // $.ajax({
+                            //     type: "POST",
+                            //     url: "get_cart_total.php",
+                            //     dataType: "json",
+                            //     success: function (response) {
+                            //         totalPrice += response.totalPrice;
+                            //         $('.total-price').text('₱'+totalPrice);
+                            //         alert(totalPrice);
+                            //     }
+                            // });
                         });
-
                     })
+
 
                     // NEWWWW EMPTY ACTION
                     $(document).on('click', '.m__cart-empty-btn', function(e) {
@@ -245,7 +215,6 @@
                             success: function (response) {
                                 if(response == 'success') 
                                 {
-                                    etInterval(updateCartItems, 1500);
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
@@ -265,7 +234,7 @@
                                             $('.offcanvas-body').empty().html(response);
                                         }
                                     });
-                                    setInterval(updateCart, 1500);
+                                    updateCart();
                                     // updateCartPrice();
                                 }
                                 else if(response == 'error_cart') 
@@ -299,7 +268,6 @@
                             data: {productId: productId, action: 'remove'},
                             success: function (response) {
                                 if(response == 'success') {
-                                    setInterval(updateCartItems, 1500);
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
@@ -316,13 +284,13 @@
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
+                                            // $('.cart-items-product').empty().html(response); 
                                             $('.offcanvas-body').empty().html(response); 
                                         }
                                     });
-                                    setInterval(updateCart, 1500);
-                                    // setInterval(updateCartPrice, 1500);
-                                } 
-                                else {
+                                    updateCart();
+                                    // updateCartPrice();
+                                } else {
                                     alert('error');
                                 }
                             }
@@ -330,48 +298,31 @@
                     })
                     
                     // CHECKOUT SESSION - working
-                    $(checkout).on('click', function(e) {
+                    checkout.addEventListener('click', function(e) {
                         e.preventDefault();
                         var cartForm = $('#cart_checkout').serialize();
-                        $.ajax({
-                            type: "GET",
-                            url: "check_session.php",
-                            data: {session: 'cart_item'},
-                            success: function (response) {
-                                if(response == 'success') 
-                                {
-                                    // NEWWWWW CHECKBOX FUNCTION
-                                    var selectedItems = [];
-                                    $('.cart__item-checkbox:checked').each(function() {
-                                        var dish_id = $(this).data('id');
-                                        var items_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
-                                        selectedItems.push({
-                                            'id': $(this).data('id'),
-                                            'quantity': items_qty
-                                        });
-                                    });
-                                    if(selectedItems.length > 0) {
-                                        let selectedItemsJson = JSON.stringify(selectedItems);
-                                        console.log(selectedItemsJson);
-                                        checkOutOrders(selectedItemsJson, 'checkOutOrder');
-                                    } else {
-                                        Swal.fire(
-                                            'Something Went Wrong!',
-                                            'Unable To Checkout!<br><b>Please select an item to checkout.</b>',
-                                            'error'
-                                        );
-                                    }
-                                }
-                                else
-                                {
-                                    Swal.fire(
-                                        'Something Went Wrong!',
-                                        'Your Cart is Empty!',
-                                        'error'
-                                    );
-                                }
-                            }
+
+                        // NEWWWWW CHECKBOX FUNCTION
+                        var selectedItems = [];
+                        $('.cart__item-checkbox:checked').each(function() {
+                            var dish_id = $(this).data('id');
+                            var items_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                            selectedItems.push({
+                                'id': $(this).data('id'),
+                                'quantity': items_qty
+                            });
                         });
+                        if(selectedItems.length > 0) {
+                            let selectedItemsJson = JSON.stringify(selectedItems);
+                            console.log(selectedItemsJson);
+                            checkOutOrders(selectedItemsJson, 'checkOutOrder');
+                        } else {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable To Checkout!<br><b>Please select an item to checkout.</b>',
+                                'error'
+                            );
+                        }
                     })
                     // CHECKOUT ACTION - working
                     function checkOutOrders(selectedItemsJson) {
@@ -382,7 +333,6 @@
                             success: function (response) {
                                 if(response == 'success') 
                                 {
-                                    setInterval(updateCartItems, 1500);
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-end',
@@ -395,10 +345,8 @@
                                         title: 'Redirecting you to Checkout Form!'
                                     })
                                     // updateCartItems();
-                                    // updateCart();
+                                    updateCart();
                                     // updateCartPrice();
-                                    setInterval(updateCart, 1500);
-                                    // setInterval(updateCartPrice, 1500);
                                     setTimeout(' window.location.href = "checkout"; ', 1500);
                                 }
                                 else if(response == 'cart_empty') {
@@ -432,7 +380,6 @@
                     // updateCartPrice();
                     setInterval(updateCart, 1500);
                     // setInterval(updateCartPrice, 1500);
-                    setInterval(updateCartItems, 1500);
                 })
             })
 
@@ -464,17 +411,6 @@
                 var cartNumber = localStorage.getItem('cartNumber');
                 // update the cart number
                 $('.cart_num').html(cartNumber);
-            }
-
-            // NEW FUNCTION
-            function updateCartItems() {
-                $.ajax({
-                    type: "GET",
-                    url: "get_cart.php",
-                    success: function (response) {
-                        $('.offcanvas-body').empty().html(response);
-                    }
-                });
             }
         </script>
 
