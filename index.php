@@ -204,7 +204,7 @@
                             title: 'Added to Cart!'
                         })
                         setInterval(updateCart, 1500);
-                        setInterval(updateCartPrice, 1500);
+                        // setInterval(updateCartPrice, 1500);
                     }
                     else
                     {

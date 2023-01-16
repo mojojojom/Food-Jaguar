@@ -235,7 +235,7 @@
                                         }
                                     });
                                     updateCart();
-                                    updateCartPrice();
+                                    // updateCartPrice();
                                 }
                                 else if(response == 'error_cart') 
                                 {
@@ -289,7 +289,7 @@
                                         }
                                     });
                                     updateCart();
-                                    updateCartPrice();
+                                    // updateCartPrice();
                                 } else {
                                     alert('error');
                                 }
@@ -314,7 +314,7 @@
                         });
                         if(selectedItems.length > 0) {
                             let selectedItemsJson = JSON.stringify(selectedItems);
-                            console.log(selectedItemsJson);
+                            // console.log(selectedItemsJson);
                             checkOutOrders(selectedItemsJson, 'checkOutOrder');
                         } else {
                             Swal.fire(
@@ -346,7 +346,7 @@
                                     })
                                     // updateCartItems();
                                     updateCart();
-                                    updateCartPrice();
+                                    // updateCartPrice();
                                     setTimeout(' window.location.href = "checkout"; ', 1500);
                                 }
                                 else if(response == 'error_x_empty') {
@@ -376,12 +376,14 @@
                         });
                     }
 
-                    updateCart();
-                    updateCartPrice();
+                    // updateCart();
+                    // updateCartPrice();
+                    setInterval(updateCart, 1500);
+                    // setInterval(updateCartPrice, 1500);
                 })
             })
 
-            // // UPDATE CART PRICE
+            // UPDATE CART PRICE
             // function updateCartPrice()
             // {
             //     $.ajax({
