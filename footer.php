@@ -111,11 +111,11 @@
                         <!-- <input type="hidden" name="action" value="check"> -->
                         <input type="hidden" name="action" value="checkOutOrder">
                         <?php
-                        if(empty($_SESSION['cart_item'])) {
+                        // if(empty($_SESSION['cart_item'])) {
                         ?>
-                            <input type="submit" class="cart__item-footer-btn border-0 disabled" disabled data-action-id="check" id="cart__item-footer-btn" value="Checkout(0)">
+                            <!-- <input type="submit" class="cart__item-footer-btn border-0 disabled" disabled data-action-id="check" id="cart__item-footer-btn" value="Checkout(0)"> -->
                         <?php
-                        } else {
+                        // } else {
                             if(empty($_SESSION['user_id'])) {
                         ?>
                             <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check" data-item-id="check" id="cart__item-footer-btn" value="Checkout(0)">
@@ -125,7 +125,7 @@
                             <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
                         <?php
                             }
-                        }
+                        // }
                         ?>
                     </form>
                 </div>
@@ -362,7 +362,7 @@
                                         'Unable To Checkout!<br><b>Please Login Before Checking Out!</b>',
                                         'error'
                                     );
-                                    setTimeout(' window.location.href = "login"; ', 1500);
+                                    // setTimeout(' window.location.href = "login"; ', 2000);
                                 }
                                 else
                                 {

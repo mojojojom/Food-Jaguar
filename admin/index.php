@@ -11,17 +11,36 @@
             
             if(!empty($_POST["submit"])) 
             {
-                $loginquery ="SELECT * FROM admin WHERE username='$username' && password='".md5($password)."'";
-                $result=mysqli_query($db, $loginquery);
-                $row=mysqli_fetch_array($result);
-                if(is_array($row))
-                {   
-                    $_SESSION["adm_id"] = $row['adm_id'];
-                    header("refresh:1;url=dashboard.php");
-                } 
+                // $loginquery ="SELECT * FROM admin WHERE username='$username' && password='".md5($password)."'";
+                // $loginquery ="SELECT * FROM admin WHERE username='$username' && password='$password'";
+                // $result=mysqli_query($db, $loginquery);
+                // $row=mysqli_fetch_array($result);
+                // if(is_array($row))
+                // {   
+                //     $_SESSION["adm_id"] = $row['adm_id'];
+                //     header("refresh:1;url=dashboard.php");
+                // } 
+                // else
+                // {
+                //     echo "<script>alert('Invalid Username or Password!');</script>"; 
+                // }
+                $checkAdmin = mysqli_query($db, "SELECT * FROM admin WHERE username = '$username'");
+
+                if(mysqli_num_rows($checkAdmin)>0) {
+                    $fetch = mysqli_fetch_assoc($checkAdmin);
+                    $fetch_user = $fetch['username'];
+                    $fetch_pass = $fetch['password'];
+                    if(password_verify($password, $fetch_pass)) {
+                        $_SESSION["adm_id"] = $fetch['adm_id'];
+                        header("refresh:1;url=dashboard.php");
+                    }
+                    else {
+                        echo "<script>alert('Wrong Password!');</script>";
+                    }
+                }   
                 else
                 {
-                    echo "<script>alert('Invalid Username or Password!');</script>"; 
+                    echo "<script>alert('User Doesn\'t Exists!');</script>";
                 }
             }
         }
