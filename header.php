@@ -74,7 +74,7 @@
                             <li class="nav-item">
                                 <div class="m__menu-header-cart-wrap">
                                     <!-- <a href="#cartModal" class="m__menu-header-cart nav-link mx-2 position-relative p-font" data-bs-toggle="modal" data-bs-target="#cartModal"> -->
-                                    <a class="m__menu-header-cart nav-link mx-2 position-relative p-font" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                                    <a class="m__menu-header-cart nav-link mx-2 position-relative p-font" data-bs-toggle="offcanvas" href="#cartSideMenu" role="button" aria-controls="cartSideMenu">
                                         <i class="fa-solid fa-cart-shopping position-relative">
                                             <span id="cart_num" class="cart_num position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger m__menu-header-order fw-semibold">
                                                 0

@@ -82,6 +82,9 @@ if(empty($_SESSION['cart_item'])) {
         <?php
             }
         }
+        else {
+            $_SESSION['cart_item'] = array();
+        }
     ?>
     <input type="hidden" name="action" value="checkOutOrder">
 </form>

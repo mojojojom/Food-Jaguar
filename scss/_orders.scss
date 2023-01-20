@@ -477,32 +477,71 @@
     box-shadow: 0px 2px 5px rgba(50, 50, 50, 0.75);
 }
 
-@keyframes jelly {
-from {
-    transform: scale(1, 1);
-}
-
-30% {
-    transform: scale(1.25, 0.75);
-}
-
-40% {
-    transform: scale(0.75, 1.25);
-}
-
-50% {
-    transform: scale(1.15, 0.85);
-}
-
-65% {
-    transform: scale(0.95, 1.05);
-}
-
-75% {
-    transform: scale(1.05, 0.95);
-}
-
-to {
-    transform: scale(1, 1);
-}
+.modal__checkout {
+    &-address {
+        &-wrap {
+            p:not(:first-child) {
+                font-size: 14px;
+                color: $dark-col;
+            }
+        }
+        &-title {
+            font-size: 16px;
+            color: $dark-col;
+            font-weight: bold;
+            i {
+                color: $secondary-col;
+                font-size: 16px;
+            }
+        }
+    }
+    &-divider {
+        padding: 0;
+        border: none;
+        border-top: medium double $desc-col;
+        color: $desc-col;
+        text-align: center;
+    }
+    &-item {
+        &-img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+        &-name {
+            color: $dark-col;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        &-desc {
+            color: $desc-col;
+            font-size: 14px;
+        }
+        &-price-qty-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        &-price {
+            color: $dark-col;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        &-qty {
+            color: $desc-col;
+            font-size: 14px;
+        }
+    }
+    &-total {
+        &-wrap {
+            p:first-child {
+                color: $dark-col;
+                font-weight: 500;
+            }
+            p:not(:first-child) {
+                color: $red-col;
+                font-weight: bold;
+            }
+        }
+    }
 }

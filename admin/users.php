@@ -8,8 +8,6 @@
     }
     else
     {
-        $query = mysqli_query($db, "SELECT * FROM admin WHERE adm_id='".$_SESSION['adm_id']."'");
-        while($row = mysqli_fetch_array($query)) {
         include('header.php');
     ?>
 
@@ -48,6 +46,10 @@
                             Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
+                        <a class="nav-link collapsed" href="users">
+                            <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                            Users
+                        </a>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
                             Menu
@@ -61,7 +63,7 @@
                                 <a class="nav-link" href="add_menu">
                                     Add Menu
                                 </a>
-                                <a class="nav-link" href="add_category">
+                                <a class="nav-link" href="add_food_category">
                                     Add Category
                                 </a>
                             </nav>
@@ -74,12 +76,10 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    <?=$row['username']?>
+                    Start Bootstrap
                 </div>
             </nav>
         </div>
-
-        <!-- CONTENT -->
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
@@ -90,17 +90,7 @@
                     <div class="row">
                         <div class="col-xl-3 col-md-6">
                             <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $sql="select * from dishes";
-                                            $result=mysqli_query($db,$sql); 
-                                            $rws=mysqli_num_rows($result);
-                                            echo $rws;
-                                        ?>
-                                        DISHES
-                                    </h5>
-                                </div>
+                                <div class="card-body">Primary Card</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="#">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -108,18 +98,8 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $sql="select * from users";
-                                            $result=mysqli_query($db,$sql); 
-                                            $rws=mysqli_num_rows($result);
-                                            echo $rws;
-                                        ?>
-                                        USERS
-                                    </h5>
-                                </div>
+                            <div class="card bg-warning text-white mb-4">
+                                <div class="card-body">Warning Card</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="#">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -127,18 +107,8 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $sql="select * from users_orders";
-                                            $result=mysqli_query($db,$sql); 
-                                            $rws=mysqli_num_rows($result);
-                                            echo $rws;
-                                        ?>
-                                        TOTAL ORDERS
-                                    </h5>
-                                </div>
+                            <div class="card bg-success text-white mb-4">
+                                <div class="card-body">Success Card</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="#">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -146,75 +116,8 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $sql="select * from users_orders WHERE status = 'in process' ";
-                                            $result=mysqli_query($db,$sql); 
-                                            $rws=mysqli_num_rows($result);
-                                            echo $rws;
-                                        ?>
-                                        PROCESSING ORDERS
-                                    </h5>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $sql="select * from users_orders WHERE status = 'closed' ";
-                                            $result=mysqli_query($db,$sql); 
-                                            $rws=mysqli_num_rows($result);
-                                            echo $rws;
-                                        ?>
-                                        DELIVERED ORDERS
-                                    </h5>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $sql="select * from users_orders WHERE status = 'rejected' ";
-                                            $result=mysqli_query($db,$sql); 
-                                            $rws=mysqli_num_rows($result);
-                                            echo $rws;
-                                        ?>
-                                        CANCELLED ORDERS
-                                    </h5>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="#">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body">
-                                    <h5>
-                                        <?php
-                                            $result = mysqli_query($db, 'SELECT SUM(price) AS value_sum FROM users_orders WHERE status = "closed"'); 
-                                            $row = mysqli_fetch_assoc($result); 
-                                            $sum = $row['value_sum'];
-                                            echo $sum;
-                                        ?>
-                                        TOTAL EARNINGS
-                                    </h5>
-                                </div>
+                            <div class="card bg-danger text-white mb-4">
+                                <div class="card-body">Danger Card</div>
                                 <div class="card-footer d-flex align-items-center justify-content-between">
                                     <a class="small text-white stretched-link" href="#">View Details</a>
                                     <div class="small text-white"><i class="fas fa-angle-right"></i></div>
@@ -284,12 +187,9 @@
                 </div>
             </footer>
         </div>
-        <!-- END OF CONTENT -->
-
     </div>
 
 <?php
-        }
     }
     include('footer.php');
 ?>

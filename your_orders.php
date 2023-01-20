@@ -55,7 +55,7 @@
 									<tbody>
 
 										<?php 
-											$query_res= mysqli_query($db,"select * from users_orders where u_id='".$_SESSION['user_id']."'");
+											$query_res= mysqli_query($db,"select * from user_orders where u_id='".$_SESSION['user_id']."'");
 											if(!mysqli_num_rows($query_res) > 0 )
 											{
 												echo '<td colspan="6"><center>You have No orders Placed yet. </center></td>';

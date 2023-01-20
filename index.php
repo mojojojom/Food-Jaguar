@@ -142,13 +142,21 @@
             // if(isset($_SESSION['cart_item'])) {
             //     foreach($_SESSION['cart_item'] as $item) {
             session_start();
-            if(isset($_SESSION['check_cart_item'])) {
-                foreach($_SESSION['check_cart_item'] as $item) {
+            // if(isset($_SESSION['check_cart_item'])) {
+            foreach($_SESSION['check_cart_item'] as $item) {
+                $query = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
+                if(mysqli_num_rows($query) > 0) {
+                    while($menu = mysqli_fetch_array($query)) {
         ?>
-                <p><?=$item['title']?></p>
-                <p><?=$item['d_id']?></p>
+                <p><?=$menu['title']?></p>
+                <p><?=$item['id']?></p>
                 <p><?=$item['quantity']?></p>
-                <p><?=$item['price']?></p>
+                <p><?=$menu['price']?></p>
+        <?php
+                    }    
+            } else {
+        ?>
+                <p>NO ITEMS!</p>
         <?php
                 }
             }
@@ -177,9 +185,9 @@
                 url: "add_cart.php",
                 data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
                 beforeSend: function() {
-                    $('input.add_cart_btn').val('Adding to Cart');
-                    $('input.add_cart_btn').addClass('disabled');
-                    $('input.add_cart_btn').prop('disabled', true);
+                    $(this).val('Adding to Cart');
+                    $(this).addClass('disabled');
+                    $(this).prop('disabled', true);
                 },
                 success: function (response) {
                     if(response == 'success') 
@@ -189,10 +197,10 @@
                         // UPDATE THE CART
                         updateCartItems();
 
-                        // SHOW STATUS
-                        $('input.add_cart_btn').val('Add to Cart');
-                        $('input.add_cart_btn').removeClass('disabled');
-                        $('input.add_cart_btn').prop('disabled', false);
+                        // SHOW STATUS  
+                        $(this).val('Add to Cart');
+                        $(this).removeClass('disabled');
+                        $(this).prop('disabled', false);
                         const Toast = Swal.mixin({
                             toast: true,
                             position: 'top-end',
@@ -207,6 +215,7 @@
 
                         // CHANGE THE CHECKBOX
                         $('.cart__item-checkbox').change();
+                        // $('#cart__item-footer-checkbox').change();
 
                         // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
                         $.ajax({
@@ -222,9 +231,9 @@
                     }
                     else
                     {
-                        $('input.add_cart_btn').val('Add to Cart');
-                        $('input.add_cart_btn').removeClass('disabled');
-                        $('input.add_cart_btn').prop('disabled', false);
+                        $(this).val('Add to Cart');
+                        $(this).removeClass('disabled');
+                        $(this).prop('disabled', false);
                         Swal.fire(
                             'Something Went Wrong!',
                             'Can\'t Add to Cart!',

@@ -15,8 +15,7 @@
             $productId = '';
         }
 
-
-
+        /****************** FUNCTIONS ******************/
         // ADD TO CART - AJAX - FINAL
         if($_POST['action'] == 'add_cart') 
         {
@@ -68,7 +67,7 @@
 
         }
 
-        // REMOVE FROM CART - AJAX - FINAL - NOT CLEARING CAR
+        // REMOVE FROM CART - AJAX - FINAL
         if($_POST['action'] == 'remove')
         {
             $productId = $_POST['productId'];
@@ -83,7 +82,7 @@
             }
         }
 
-        // EMPTY CART - AJAX - FINAL - NOT CLEARING CART
+        // EMPTY CART - AJAX - FINAL
         if($_POST['action'] == 'empty')
         {
             if(!empty($_SESSION['cart_item']))
@@ -155,100 +154,124 @@
             }
         }
 
-        // CHECK THE ARRAY
+        // // CHECK THE ARRAY
+        // if($_POST['action'] == 'checkOutOrder') 
+        // {
+        //     $selectedItems = json_decode($_POST['selectedItems'], true);
+        //     $itemIds = array_column($selectedItems, 'id');
+        //     $idString = implode(",", $itemIds);
+
+        //     // DATABASE CONNECTION
+        //     include('connection/connect.php');
+        //     $checkDish = mysqli_query($db, "SELECT d_id, title, price, img FROM dishes WHERE d_id IN ('$idString')");
+
+        //     // init session variable
+        //     if(!isset($_SESSION['check_cart_item'])) {
+        //         $_SESSION['check_cart_item'] = array();
+        //     }
+        //     while($row = mysqli_fetch_assoc($checkDish)) {
+        //         $dishId = $row['d_id'];
+        //         $quantity = $selectedItems[array_search($dishId, array_column($selectedItems, 'id'))]['quantity'];
+        //         $orig_price = $row['price'];
+        //         $item_price = $orig_price*$quantity;
+        //         $itemArray = array(
+        //             $dishId=>array(
+        //                 'title'=>$row['title'],
+        //                 'd_id'=>$dishId,
+        //                 'quantity'=>$quantity,
+        //                 'price'=>$item_price,
+        //                 'img'=>$row['img'],
+        //             )
+        //         );
+
+        //         if(empty($_SESSION['user_id'])) {
+        //             echo 'error_login';
+        //         }
+        //         else 
+        //         {
+        //             $_SESSION['check_cart_item'] = $_SESSION["check_cart_item"] + $itemArray;
+        //             // unset($_SESSION['cart_item'][$idString]);
+        //             echo 'success';
+        //         }
+        //     }
+
+        // }
+
+        // CHECKOUT ORDER
         if($_POST['action'] == 'checkOutOrder') 
         {
-            $selectedItems = json_decode($_POST['selectedItems'], true);
-            $itemIds = array_column($selectedItems, 'id');
-            $idString = implode(",", $itemIds);
-
-            // DATABASE CONNECTION
-            include('connection/connect.php');
-            $checkDish = mysqli_query($db, "SELECT d_id, title, price, img FROM dishes WHERE d_id IN ('$idString')");
-
-            // init session variable
-            if(!isset($_SESSION['check_cart_item'])) {
-                $_SESSION['check_cart_item'] = array();
+            if(empty($_SESSION['user_id'])) {
+                echo 'error_login';
             }
-            while($row = mysqli_fetch_assoc($checkDish)) {
-                $dishId = $row['d_id'];
-                $quantity = $selectedItems[array_search($dishId, array_column($selectedItems, 'id'))]['quantity'];
-                $orig_price = $row['price'];
-                $item_price = $orig_price*$quantity;
-                $itemArray = array(
-                    $dishId=>array(
-                        'title'=>$row['title'],
-                        'd_id'=>$dishId,
-                        'quantity'=>$quantity,
-                        'price'=>$item_price,
-                        'img'=>$row['img']
-                    )
-                );
-
-                if(empty($_SESSION['user_id'])) {
-                    echo 'error_login';
-                }
-                else 
+            else
+            {
+                $itemArray = json_decode($_POST['selectedItems'], true);
+                if(!isset($_SESSION['check_cart_item']))
                 {
-                    $_SESSION['check_cart_item'] = $_SESSION["check_cart_item"] + $itemArray;
-                    unset($_SESSION['cart_item'][$idString]);
-                    echo 'success';
+                    $_SESSION['check_cart_item'] = array();
                 }
+                foreach ($itemArray as $item) {
+                    array_push($_SESSION['check_cart_item'], $item);
+                }
+                unset($_SESSION['cart_item']['selectedItems']);
+                echo 'success';
             }
+        }          
 
+
+        // UNSET CART SESSION
+        if($_POST['action'] == 'unset') {
+                unset($_SESSION['check_cart_item']);
+                echo 'success';
         }
 
+        
+
+        // PLACE ORDER
+        if($_POST['action'] == 'place_order') {
+            if(!empty($_SESSION['check_cart_item'])) {
+                // INCLUDE CONNECTION
+                include('connection/connect.php');
+                
+                $current_date = date("Y-m-d H:i:s");
+
+                // generate a new order number for each iteration
+                $query = mysqli_query($db, "SELECT MAX(order_number) as max_order_number, MAX(date) as max_date FROM user_orders");
+                $row = mysqli_fetch_assoc($query);
+                if($row['max_date'] != $current_date) {
+                    $order_number = 1;
+                }
+                else {
+                    $order_number = $row['max_order_number'] + 1;
+                }
+
+                foreach($_SESSION['check_cart_item'] as $item) {
+
+                    $get_dish = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
+
+                    if(mysqli_num_rows($get_dish) > 0) {
+
+                        while($dish = mysqli_fetch_array($get_dish)) {
+                            $mop = 'deliver';
+                            $query = mysqli_query($db, "INSERT INTO user_orders (u_id, title, quantity, price, mop, status, order_number, date) VALUES ('".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$dish['price']."', '$mop', '', '$order_number', '$current_date')");
+        
+                            // Check if the insertion was successful
+                            if($query) {
+                                echo 'success';
+                                unset($_SESSION["check_cart_item"]);
+                            } else {
+                                echo 'error' . mysqli_error($db);
+                            }
+                        }
+                        echo 'success';
+                    }
+                }
+                echo 'success';
+            }
+            else {
+                echo 'error' . mysqli_error($db);
+            }
+        }
+
+
     }
-
-
-
-
-
-                    // // init session variable
-            // if(!isset($_SESSION['check_cart_item'])) {
-            //     $_SESSION['check_cart_item'] = array();
-            // }
-            // while($row = mysqli_fetch_assoc($checkDish)) {
-            //     $dishId = $row['d_id'];
-            //     $quantity = $selectedItems[array_search($dishId, array_column($selectedItems, 'id'))]['quantity'];
-            //     $orig_price = $row['price'];
-            //     $item_price = $orig_price*$quantity;
-            //     $itemArray = array(
-            //         $dishId=>array(
-            //             'title'=>$row['title'],
-            //             'd_id'=>$dishId,
-            //             'quantity'=>$quantity,
-            //             'price'=>$item_price,
-            //             'img'=>$row['img']
-            //         )
-            //     );
-
-            //     if(!empty($_SESSION['cart_items']))
-            //     {
-            //         if(array_key_exists($dishId,$_SESSION['cart_items']))
-            //         {
-            //             foreach($_SESSION['cart_items'] as $key => $value)
-            //             {
-            //                 if($dishId == $key)
-            //                 {
-            //                     if(empty($_SESSION['check_cart_item'][$key]['quantity'])) 
-            //                     {
-            //                         $_SESSION['check_cart_item'][$key]['quantity'] = 0;
-            //                     }
-            //                     $_SESSION['check_cart_item'][$key]['quantity'] += $cart_qty;
-            //                     echo 'success';
-            //                 }
-            //             }
-            //         }
-            //         else
-            //         {
-            //             $_SESSION["check_cart_item"] = $_SESSION["check_cart_item"] + $itemArray;
-            //             echo 'success';
-            //         }
-            //     }
-            //     else
-            //     {
-            //         $_SESSION['check_cart_item'] = $itemArray;
-            //         echo 'success';
-            //     }
-            // }

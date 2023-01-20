@@ -1,7 +1,8 @@
 // BANNER
 .h__banner {
     &-wrap {
-        background: linear-gradient(180deg,#171C1A8C 0%,$dark-col 96%),url('../imgs/banner-bg.jpg');
+        // background: linear-gradient(180deg,#171C1A8C 0%,$dark-col 96%),url('../imgs/homepage-banner.jpg');
+        background: linear-gradient(0deg, rgba(19,21,21,0.85) 0%, rgba(0,0,0,0.85) 0%),url('../imgs/homepage-banner.jpg');
         background-position: top center;
         background-repeat: no-repeat;
         background-size: cover;

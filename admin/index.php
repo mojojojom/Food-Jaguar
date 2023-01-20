@@ -1,69 +1,147 @@
-<!DOCTYPE html>
-<html lang="en" >
-    <?php
-        include("../connection/connect.php");
-        error_reporting(0);
-        session_start();
-        if(isset($_POST['submit']))
-        {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            
-            if(!empty($_POST["submit"])) 
-            {
-                $checkAdmin = mysqli_query($db, "SELECT * FROM admin WHERE username = '$username'");
+<?php
+    include("../connection/connect.php"); 
+    error_reporting(0); 
+    session_start(); 
+    include('header.php');
+?>
 
-                if(mysqli_num_rows($checkAdmin)>0) {
-                    $fetch = mysqli_fetch_assoc($checkAdmin);
-                    $fetch_user = $fetch['username'];
-                    $fetch_pass = $fetch['password'];
-                    if(password_verify($password, $fetch_pass)) {
-                        $_SESSION["adm_id"] = $fetch['adm_id'];
-                        header("refresh:1;url=dashboard.php");
-                    }
-                    else {
-                        echo "<script>alert('Wrong Password!');</script>";
-                    }
-                }   
-                else
-                {
-                    echo "<script>alert('User Doesn\'t Exists!');</script>";
-                }
-            }
-        }
-    ?>
-
-    <head>
-        <meta charset="UTF-8">
-        <title>Admin Login</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-        <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900'>
-        <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Montserrat:400,700'>
-        <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css'>
-        <link rel="stylesheet" href="css/login.css">
-    </head>
-
-    <body>
-        <div class="container">
-            <div class="info">
-                <h1>Admin Panel </h1>
+<!-- LOGIN FORM -->
+<section class="container">
+    <div class="admin__login-wrap">
+        <div class="admin__login-inner-wrap">
+            <div class="card">
+                <div class="card-body p-4">
+                    <div class="admin__login-logo-wrap">
+                        <img src="../images/icon.png" class="admin__login-logo" alt="">
+                    </div>
+                    <div class="admin__login-header">
+                        <p class="admin__login-header-heading mb-0">Welcome to Food Jaguar!👋</p>
+                        <p class="admin__login-header-sub">Please sign in with your account. </p>
+                    </div>
+                    <form id="admin_login">
+                        <div class="admin_login-input-wrap mb-3">
+                            <label class="mb-1 admin__login-input-label" for="username">EMAIL OR USERNAME</label>
+                            <input class="l__login-username admin__login-input" type="text" placeholder="Username" name="username" autofocus>
+                        </div>
+                        <div class=" mb-3">
+                            <label class="mb-1 admin__login-input-label" for="password">PASSWORD</label>
+                            <input class="l__login-password admin__login-input" type="password" placeholder="Password" name="password">
+                        </div>
+                        <div class=" mb-4">
+                            <input id="action" type="hidden" name="action" value="admin_login">
+                            <input class="c-btn-3 l__login-btn admin__login-btn" id="admin_login_btn" type="submit" name="submit" value="Login" />
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="form">
-            <div class="thumbnail"><img src="images/manager.png"/></div>
-    
-            <span style="color:red;"><?php echo $message; ?></span>
-            <span style="color:green;"><?php echo $success; ?></span>
-            <form class="login-form" action="index.php" method="post">
-                <input type="text" placeholder="Username" name="username"/>
-                <input type="password" placeholder="Password" name="password"/>
-                <input type="submit"  name="submit" value="Login" />
-            </form>
-        </div>
+<?php
+    include('footer.php');
+?>
 
-        <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-        <script src='js/index.js'></script>
-    </body>
+<script>
+    jQuery(function($) {
+        $(document).ready(function () {
 
-</html>
+            $('#admin_login').submit(function(e) {
+                e.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "action.php",
+                    data: formData,
+                    beforeSend: function() 
+                    {
+                        $('#admin_login_btn').val('Logging In');
+                        $('#admin_login_btn').addClass('disabled');
+                        $('#admin_login_btn').prop('disabled', true);
+                    },
+                    success: function(response)
+                    {
+                        if(response == 'success')
+                        {
+                            $('#admin_login_btn').val('Logging In');
+                            $('#admin_login_btn').addClass('disabled');
+                            $('#admin_login_btn').prop('disabled', true);
+
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1000,
+                                timerProgressBar: true
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Signed in successfully!'
+                            })
+
+                            setTimeout(' window.location.href = "dashboard"; ', 1000);
+                        }
+                        else if(response == 'error_pass')
+                        {
+                            $('#admin_login_btn').val('Login');
+                            $('#admin_login_btn').removeClass('disabled');
+                            $('#admin_login_btn').prop('disabled', false);
+                            Swal.fire(
+                                'Unable to Login!',
+                                'Wrong Password!',
+                                'error'
+                            );
+                        }
+                        else if(response == 'empty_fields')
+                        {
+                            $('#admin_login_btn').val('Login');
+                            $('#admin_login_btn').removeClass('disabled');
+                            $('#admin_login_btn').prop('disabled', false);
+                            Swal.fire(
+                                'Empty Fields!',
+                                'Please Fill All Fields!',
+                                'error'
+                            );
+                        }
+                        else if(response == 'empty_username')
+                        {
+                            $('#admin_login_btn').val('Login');
+                            $('#admin_login_btn').removeClass('disabled');
+                            $('#admin_login_btn').prop('disabled', false);
+                            Swal.fire(
+                                'Empty Fields!',
+                                'Please Enter Your Email or Username!',
+                                'error'
+                            );
+                        }
+                        else if(response == 'empty_password')
+                        {
+                            $('#admin_login_btn').val('Login');
+                            $('#admin_login_btn').removeClass('disabled');
+                            $('#admin_login_btn').prop('disabled', false);
+                            Swal.fire(
+                                'Empty Fields!',
+                                'Please Enter Your Password!',
+                                'error'
+                            );
+                        }
+                        else
+                        {
+                            $('#admin_login_btn').val('Login');
+                            $('#admin_login_btn').removeClass('disabled');
+                            $('#admin_login_btn').prop('disabled', false);
+                            Swal.fire(
+                                'Unable To Login!',
+                                'User Doesn\'t Exists!',
+                                'error'
+                            );
+                        }
+                    }
+                });
+            })
+
+        })
+    })
+</script>

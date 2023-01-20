@@ -1,0 +1,75 @@
+.admin {
+    // LOGIN FORM
+    &__login {
+        &-wrap {
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            display: flex;
+            flex-basis: 100%;
+            min-height: 100vh;
+            width: 100%;
+        }
+        &-inner-wrap {
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+        &-logo {
+            &-wrap {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            height: 100px;
+            width: 100px;
+        }
+        &-header {
+            margin-bottom: 20px;
+            &-heading {
+                font-size: 22px;
+                font-weight: bold;
+            }
+            &-sub {
+                font-size: 16px;
+                color: $desc-col;
+            }
+        }
+        &-input {
+            &-label {
+                font-size: 14px;
+                font-weight: 600;
+            }
+            display: block;
+            width: 100%;
+            padding: 0.4375rem 0.875rem;
+            font-size: 0.9375rem;
+            font-weight: 400;
+            line-height: 1.53;
+            color: $desc-col;
+            background-color: $light-col;
+            background-clip: padding-box;
+            border: 1px solid $gray-col;
+            appearance: none;
+            border-radius: 0.375rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            &:hover {
+                border: 1px solid $primary-col;
+            }
+            &:focus {
+                border: 1px solid $primary-col;
+            }
+        }
+        &-btn {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px!important;
+            text-transform: uppercase;
+        }
+    }
+
+}

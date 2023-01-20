@@ -1,3 +1,6 @@
+// import bootstrap from 'bootstrap';
+
+
 // ACTIVE LINKS
 const pageUrl = location.href;
 const navLinks = document.querySelectorAll('.nav-link');

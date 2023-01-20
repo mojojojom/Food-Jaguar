@@ -1,7 +1,139 @@
+        <!-- CHECKOUT POPUP -->
+        <div class="modal fade" id="checkoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="checkoutModalLabel">Checkout</h1>
+                    </div>
+                    <div class="modal-body checkout_modal-wrap">
+                        <!-- USER DETAILS -->
+                        <?php
+                            // INCLUDE DATABASE
+                            include('connection/connect.php');
+                            session_start();
+                            $get_user = mysqli_query($db, "SELECT * FROM users WHERE u_id = '".$_SESSION['user_id']."'");
+                            if(mysqli_num_rows($get_user) > 0) {
+                                $row = mysqli_fetch_assoc($get_user);
+                                $fullname = $row['f_name'] . " " . $row['l_name'];
+                        ?>
+                            <div>
+                                <ul>
+                                    <li class="modal__checkout-address-wrap">
+                                        <p class="modal__checkout-address-title mb-1"><i class="fa-sharp fa-solid fa-location-dot"></i> Delivery Address</p>
+                                        <p class="mb-0 ps-3"><?=$fullname?> | <?=$row['phone']?></p>
+                                        <p class="mb-0 ps-3"><?=$row['address']?></p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <hr class="modal__checkout-divider">
+                        <?php
+                            }
+                        ?>
+
+                        <!-- ORDERS -->
+                        <div class="modal__checkout-cart-item-heading-wrap">
+                            <p class="modal__checkout-address-title mb-1"><i class="fa-solid fa-cart-shopping"></i> Your Orders</p>
+                        </div>
+                        <div class="modal__checkout-orders-wrap" id="modal__checkout-orders-wrap">
+                            <?php
+                            session_start();
+                            if(empty($_SESSION['check_cart_item'])){
+                            ?>
+
+                                <div class="w-100 d-flex align-items-center justify-content-center">
+                                    <span class="alert alert-danger text-center w-100 fw-bold">YOUR CART IS EMPTY!</span>
+                                </div>
+
+                            <?php
+                            }
+                            else {
+                            ?>
+                                <!-- ORDERS -->
+                                <div class="modal__checkout-cart-item-heading-wrap">
+                                    <p class="modal__checkout-address-title mb-1"><i class="fa-solid fa-cart-shopping"></i> Your Orders</p>
+                                </div>
+                                <?php
+                                    if(isset($_SESSION['check_cart_item'])) 
+                                    {
+                                        $total_price = 0;
+                                        $total_quantity = 0;
+                                        // foreach($selectedItems as $item) 
+                                        foreach($_SESSION['check_cart_item'] as $item) 
+                                        {
+                                            $total_price += ($item['price']*$item['quantity']);
+                                            $get_menu = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
+                                            if(mysqli_num_rows($get_menu) > 0) {
+                                                while($menu = mysqli_fetch_array($get_menu)) {
+                                ?>
+                                            <div class="modal__checkout-wrap card p-2 mb-2 ms-3">
+                                                <div class="row w-100">
+                                                    <div class="modal__checkout-item-img-wrap col-3 pe-0">
+                                                        <img src="admin/Res_img/dishes/<?=$menu["img"]?>" class="modal__checkout-item-img img-thumbnail" alt="Item">
+                                                    </div>
+                                                    <div class="modal__checkout-item-desc-wrap col-9">
+                                                        <p class="modal__checkout-item-name mb-1"><?=$menu["title"]?></p>
+                                                        <?php
+                                                            $get_desc = mysqli_query($db, "SELECT substring(slogan, 1 , 80) as excerpt FROM dishes WHERE d_id='".$item['id']."'");
+                                                            if(mysqli_num_rows($get_desc) > 0) {
+                                                                while($row = mysqli_fetch_assoc($get_desc)) {
+                                                            ?>
+                                                            <p class="modal__checkout-item-desc mb-2"><?=$row['excerpt']?>...</p>
+                                                            <?php
+                                                                }
+                                                            } else {
+                                                            ?>
+                                                            <p class="modal__checkout-item-desc mb-2">No Description Available.</p>
+                                                            <?php
+                                                            }
+                                                        ?>
+                                                        <div class="modal__checkout-item-price-qty-wrap">
+                                                            <p class="modal__checkout-item-price mb-0">₱<?=$menu['price']?></p>
+                                                            <p class="modal__checkout-item-qty mb-0">x<?=$item['quantity']?></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                            <hr class="modal__checkout-divider">
+                                <?php
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ?>
+                        </div>
+
+                        <div class="modal__checkout-total-wrap">
+                            <div class="card">
+                                <div class="card-body d-flex align-items-center justify-content-between">
+                                    <?php 
+                                        $item_count = count($_SESSION['check_cart_item']);
+                                    ?>
+                                    <p class="mb-0">Order Total(<?=$item_count?>)</p>
+                                    <!-- <p class="mb-0">₱<?=$total_price?></p> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <form id="place_order">
+                            <input type="submit" class="c-btn-4" id="place_order-btn" value="Place Order">
+                        </form>
+                        <form id="unset_form">
+                            <input type="hidden" name="action" value="unset">
+                        </form>
+                        <button type="button" class="c-btn-2" id="unset_btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
         <!-- CART SIDEBAR -->
-        <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="cartSideMenu" aria-labelledby="cartSideMenuLabel">
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title fw-bold" id="offcanvasExampleLabel">SHOPPING CART</h5>
+                <h5 class="offcanvas-title fw-bold" id="offcanvasExampleLabel">YOUR CART</h5>
                 <!-- <button type="button" class="btn-close text-light" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
                 <button type="button" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-square-xmark text-white"></i></button>
             </div>
@@ -103,7 +235,8 @@
                 </div>
                 <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
                     <p class="total-price mb-0 fw-semibold">₱0.00</p>
-                    <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)">
+                    <!-- <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)"> -->
+                    <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-btn" value="Checkout(0)">
                 </div>
             </div>
         </div>
@@ -145,6 +278,7 @@
                     var removeBtn = document.querySelector('.remove-item');
                     var allCheck = document.getElementById('cart__item-footer-checkbox');
                     var checkout = $('#cart__item-footer-btn');
+                    var cartBtn = $('#cart__item-btn');
 
                     // NEWWWW EMPTY ACTION
                     $('.offcanvas-body').on('click', '.m__cart-empty-btn', function(e) {
@@ -178,6 +312,7 @@
 
                                     // CHANGE THE CHECKBOX
                                     $('.cart__item-checkbox').change();
+                                    $('#cart__item-footer-checkbox').prop('checked', false);
 
                                     // SECOND SECTION - DISPLAY THE NEW ITEMS IN CART
                                     $.ajax({
@@ -190,13 +325,14 @@
 
                                     // UPDATE CART NUMBER
                                     setInterval(updateCart, 1000);
+                                    // updateCart();
                                 }
                                 else if(response == 'error_cart') 
                                 {
                                     Swal.fire(
                                         'Something Went Wrong!',
                                         'Cart Is Already Empty!',
-                                        'error'
+                                        'info'
                                     );
                                 }
                                 else
@@ -204,7 +340,7 @@
                                     Swal.fire(
                                         'Something Went Wrong!',
                                         'Unable To Clear Cart!',
-                                        'error'
+                                        'warning'
                                     );
                                 }
                             }
@@ -242,6 +378,7 @@
 
                                     // CHANGE THE CHECKBOX
                                     $('.cart__item-checkbox').change();
+                                    $('#cart__item-footer-checkbox').prop('checked', false);
 
                                     // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
                                     $.ajax({
@@ -254,6 +391,7 @@
 
                                     // UPDATE CART NUMBER
                                     setInterval(updateCart, 1000);
+                                    // updateCart();
                                 } 
                                 else {
                                     Swal.fire(
@@ -271,8 +409,8 @@
                         if($('.cart__item-checkbox').length == 0) {
                             Swal.fire(
                                 'Your Cart is Empty!',
-                                'Please add items to the cart.',
-                                'error'
+                                'Please Add Items to the Cart.',
+                                'warning'
                             );
                         }
                         else
@@ -313,8 +451,7 @@
                         }
                     });
 
-                    // CHECKOUT
-                    $(checkout).on('click', function(e) {
+                    $(cartBtn).on('click', function(e) {
                         e.preventDefault();
                         var cartForm = $('#cart_checkout').serialize();
                         $.ajax({
@@ -334,15 +471,18 @@
                                             'quantity': items_qty
                                         });
                                     });
-                                    if(selectedItems.length > 0) {
+                                    if(selectedItems.length > 0) 
+                                    {
                                         let selectedItemsJson = JSON.stringify(selectedItems);
-                                        // console.log(selectedItemsJson);
                                         checkOutOrders(selectedItemsJson, 'checkOutOrder');
-                                    } else {
+                                        console.log(selectedItemsJson);
+                                    } 
+                                    else 
+                                    {
                                         Swal.fire(
                                             'Unable To Checkout!',
                                             'Please Select an Item to Checkout.',
-                                            'error'
+                                            'warning'
                                         );
                                     }
                                 }
@@ -351,14 +491,13 @@
                                     Swal.fire(
                                         'Your Cart is Empty!',
                                         'Please Add Items to the Cart.',
-                                        'error'
+                                        'warning'
                                     );
                                 }
                             }
                         });
                     })
 
-                    // CHECKOUT ACTION - working
                     function checkOutOrders(selectedItemsJson) {
                         $.ajax({
                             type: "POST",
@@ -367,34 +506,35 @@
                             success: function (response) {
                                 if(response == 'success') 
                                 {
-                                    setInterval(updateCartItems, 1500);
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 1500,
-                                        timerProgressBar: true
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'Redirecting you to Checkout Form!'
-                                    })
-                                    setInterval(updateCart, 1500);
-                                    // setInterval(updateCartPrice, 1500);
-                                    setTimeout(' window.location.href = "checkout"; ', 1500);
+                                    // UPDATE THE CART
+                                    updateCartItems();
+
+                                    // UPDATE CHECKOUT MODAL
+                                    updateCheckout();
+                                    
+                                    // SHOW CHECKOUT MODAL
+                                    $('#checkoutModal').modal('show');
+
+                                    // REMOVE CHECK
+                                    $('.cart__item-footer-checkbox').prop('checked', false);
+
+                                    // UPDATE CART NUMBER
+                                    setInterval(updateCart, 1000);
+                                    // updateCart();
+
                                 }
                                 else if(response == 'cart_empty') {
                                     Swal.fire(
-                                        'Unable To Checkout!!',
+                                        'Unable To Checkout!',
                                         'Please Add Items to the Cart.',
-                                        'error'
+                                        'info'
                                     );
                                 }
                                 else if(response == 'error_login') {
                                     let timerInterval
                                     Swal.fire({
                                     title: 'Unable To Checkout!',
-                                    html: 'Please Login Before Checking Out!<br><b>Redirecting You To Login Form.</b><br>Please Wait.',
+                                    html: 'Please Login Before Checking Out!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
                                     timer: 3000,
                                     timerProgressBar: false,
                                     showCancelButton: false,
@@ -419,6 +559,132 @@
                             }
                         });
                     }
+
+                    // CANCEL BUTTON
+                    $('#unset_btn').on('click', function(e) {
+                        e.preventDefault();
+
+                        $.ajax({
+                            type: "POST",
+                            url: "add_cart.php",
+                            data: {action: 'unset'},
+                            success: function (response) {
+                                if(response == 'success') {
+                                    // window.location.href='menu';
+                                    $('#checkoutModal').modal('hide');
+                                }
+                                else
+                                {
+                                    console.log(response);
+                                }
+                            }
+                        });
+
+                    })
+
+                    // PLACE ORDER
+                    $('#place_order-btn').on('click', function(e) {
+                        e.preventDefault();
+                        $.ajax({
+                            type: "GET",
+                            url: "checkout_session.php",
+                            data: {session: 'check_cart_item'},
+                            success: function (response) 
+                            {
+                                if(response == 'success') 
+                                {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "add_cart.php",
+                                        data: {action: 'place_order'},
+                                        success: function (response) {
+                                            if(response == 'success') 
+                                            {
+                                                // SHOW STATUS
+                                                const Toast = Swal.mixin({
+                                                    toast: true,
+                                                    position: 'top-end',
+                                                    showConfirmButton: false,
+                                                    timer: 1500,
+                                                    timerProgressBar: true
+                                                })
+                                                Toast.fire({
+                                                    icon: 'success',
+                                                    title: 'Your Order Has Been Placed!'
+                                                })
+
+                                                setTimeout(() => {
+                                                    window.location.href='your_orders';
+                                                }, 1500);
+                                            }
+                                            else {
+                                                Swal.fire(
+                                                    'Something Went Wrong!',
+                                                    'Unable To Place Order!',
+                                                    'error'
+                                                );
+                                            }
+                                        }
+                                    });
+                                }
+                                else 
+                                {
+                                    console.log('Failed!');
+                                }
+                            }
+                        })
+                        // $.ajax({
+                        //     type: "POST",
+                        //     url: "add_cart.php",
+                        //     data: {formData, action: 'place_order'},
+                        //     success: function (response) {
+                        //         if(response == 'success') {
+                        //             // SHOW STATUS
+                        //             const Toast = Swal.mixin({
+                        //                 toast: true,
+                        //                 position: 'top-end',
+                        //                 showConfirmButton: false,
+                        //                 timer: 1500,
+                        //                 timerProgressBar: true
+                        //             })
+                        //             Toast.fire({
+                        //                 icon: 'success',
+                        //                 title: 'Your Order Has Been Placed!'
+                        //             })
+
+                        //             setTimeout(() => {
+                        //                 window.location.href='your_orders';
+                        //             }, 1500);
+                        //         }
+                        //         else {
+                        //             Swal.fire(
+                        //                 'Something Went Wrong!',
+                        //                 'Unable To Place Order!',
+                        //                 'error'
+                        //             );
+                        //         }
+                        //     }
+                        // });
+                    })
+
+                    $(window).on('beforeunload', function(){
+                        $.ajax({
+                            type: "POST",
+                            url: "unset_session.php",
+                            data: {check_cart_item: 'check_cart_item'},
+                            async: false
+                        });
+                    });
+                    $(document).ready(function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "unset_session.php",
+                            data: {check_cart_item: 'check_cart_item'},
+                            success: function(response) {
+                                console.log("Session unset");
+                            }
+                        });
+                    });
 
                     updateCart();
                 })
@@ -453,12 +719,42 @@
                     }
                 });
             }
+
+            function updateCheckout() {
+                $.ajax({
+                    type: "GET",
+                    url: "get_checkout.php",
+                    success: function (response) {
+                        $('.checkout_modal-wrap').empty().html(response);
+                    }
+                });
+            }
+
+            // function updateCartSession() {
+            //     $.ajax({
+            //         type: "GET",
+            //         url: "checkout_session.php",
+            //         data: {session: 'check_cart_item'},
+            //         success: function (response) {
+            //             if(response == 'success') 
+            //             {
+            //                 console.log('Success');
+            //             }
+            //             else 
+            //             {
+            //                 console.log('Failed!');
+            //             }
+            //         }
+            //     })
+            // }
+
         </script>
 
     <!-- JAVASCRIPT FILES -->
         <script src="js/tether.min.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/bootstrap.bundle.min.js"></script>
+        <!-- <script src="js/bootstrap.min.js"></script> -->
+        <!-- <script src="js/bootstrap.bundle.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
         <script src="js/animsition.min.js"></script>
         <script src="js/bootstrap-slider.min.js"></script>
         <script src="js/jquery.isotope.min.js"></script>

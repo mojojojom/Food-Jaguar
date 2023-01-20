@@ -14,18 +14,21 @@
         foreach ($_SESSION["check_cart_item"] as $item) 
         {
             $dfee = 5;
+            // $item_fee += ($item["price"]*$item["quantity"]);
             $item_fee += $item["price"];
             $item_total = $item_fee + $dfee;
 
-                
-            $SQL="INSERT INTO user_orders(u_id,title,quantity,price, mop) VALUES('".$_SESSION["user_id"]."','".$item["title"]."','".$item["quantity"]."','".$item["price"]."','".$_POST["mode"]."')";
-            mysqli_query($db,$SQL);
+            if($_POST['submit'])
+            {
+                $SQL="INSERT INTO users_orders(u_id,title,quantity,price, mop) VALUES('".$_SESSION["user_id"]."','".$item["title"]."','".$item["quantity"]."','".$item["price"]."','".$_POST["mode"]."')";
+                mysqli_query($db,$SQL);
 
-            unset($_SESSION["check_cart_item"]);
-            unset($item["title"]);
-            unset($item["quantity"]);
-            unset($item["price"]);
-            header('Location: your_orders');
+                unset($_SESSION["check_cart_item"]);
+                unset($item["title"]);
+                unset($item["quantity"]);
+                unset($item["price"]);
+                header('Location: your_orders');
+            }
         }
 
     include('header.php');
@@ -175,7 +178,7 @@
 
                             <div class="checkout__btn-wrap gap-2">
                                 <input type="submit" name="submit"  class="btn checkout__btn disabled" value="CHECKOUT">
-                                <a href="menu" id="unset_btn" class="c-btn-3">Cancel</a>
+                                <a href="menu" class="c-btn-3">Cancel</a>
                             </div>
                         </form>
                     </div>
@@ -258,27 +261,6 @@
                     $('input.checkout__btn').addClass('disabled');
                 }
             })
-
-            // // CANCEL BUTTON
-            // $('#unset_btn').on('click', function(e) {
-            //     e.preventDefault();
-
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "add_cart.php",
-            //         data: {action: 'unset'},
-            //         success: function (response) {
-            //             if(response == 'success') {
-            //                 window.location.href='menu';
-            //             }
-            //             else
-            //             {
-            //                 console.log(response);
-            //             }
-            //         }
-            //     });
-
-            // })
         })
     })
 </script>

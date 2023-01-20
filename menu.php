@@ -25,7 +25,7 @@
                     <h1 class="m__menu-heading mb-0">Taste the best!</h1>
                 </div>
                 <div class="m__menu-header-cart-wrap">
-                    <a class="c-btn-3 m__menu-header-cart position-relative p-font" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                    <a class="c-btn-3 m__menu-header-cart position-relative p-font" data-bs-toggle="offcanvas" href="#cartSideMenu" role="button" aria-controls="cartSideMenu">
                     <i class="fa-solid fa-cart-shopping"></i>
                         <span id="cart_num" class="cart_num position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             0
@@ -159,6 +159,7 @@
 
                         // CHANGE THE CHECKBOX
                         $('.cart__item-checkbox').change();
+                        // $('#cart__item-footer-checkbox').change();
 
                         // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
                         $.ajax({
