@@ -65,47 +65,6 @@
                                 <input type="submit" value="Register" name="submit" class="c-btn-3 r__register-btn" id="r__register-btn">
                             </div>
                         </form>
-
-                        <!-- <form action="" method="post">
-                            <div class="row">
-                                <div class="col-12 fj-input-wrap mb-3">
-                                    <label for="username" class="mb-1 s-font">Username</label>
-                                    <input type="text" class="fj-input" name="username" placeholder="Username" required>
-                                </div>
-                                <div class="col-6 fj-input-wrap mb-3">
-                                    <label for="firstName" class="mb-1 s-font">First Name</label>
-                                    <input type="text" class="fj-input" name="firstname" placeholder="First Name" required>
-                                </div>
-                                <div class="col-6 fj-input-wrap mb-3">
-                                    <label for="lastName" class="mb-1 s-font">Last Name</label>
-                                    <input type="text" class="fj-input" name="lastname" placeholder="Last Name" required>
-                                </div>
-                                <div class="col-6 fj-input-wrap mb-3">
-                                    <label for="email" class="mb-1 s-font">Email Address</label>
-                                    <input type="email" class="fj-input" name="email" placeholder="Email Address" required>
-                                </div>
-                                <div class="col-6 fj-input-wrap mb-3">
-                                    <label for="phone" class="mb-1 s-font">Mobile Number</label>
-                                    <input type="text" class="fj-input" name="phone" placeholder="Mobile Number" required>
-                                </div>
-                                <div class="col-6 fj-input-wrap mb-3">
-                                    <label for="password" class="mb-1 s-font">Password</label>
-                                    <input type="password" class="fj-input" name="password" placeholder="Password" required>
-                                </div>
-                                <div class="col-6 fj-input-wrap mb-3">
-                                    <label for="cpassword" class="mb-1 s-font">Confirm Password</label>
-                                    <input type="password" class="fj-input" name="cpassword" placeholder="Confirm Password" required>
-                                </div>
-                                <div class="col-12 fj-input-wrap mb-3">
-                                    <label for="address" class="mb-1 s-font d-block">Delivery Address</label>
-                                    <textarea name="address" rows="3" placeholder="Address" required></textarea>
-                                </div>
-                            </div>
-                            <div class="r__register-btn-wrap mb-3">
-                                <input id="action" type="hidden" name="action" value="register">
-                                <input type="submit" value="Register" name="submit" class="c-btn-3 r__register-btn">
-                            </div>
-                        </form> -->
                         <div class="l__login-signup-wrap text-center">
                             <p class="l__login-signup">Already have an account? <a href="register">Sign in</a></p>
                         </div>

@@ -351,7 +351,7 @@
                     $('.offcanvas-body').on('click', '.remove-item', function(e) {
                         e.preventDefault();
                         var productId = $(this).attr('product-id');
-                        console.log(productId);
+                        // console.log(productId);
                         // FIRST FUNCTION
                         $.ajax({
                             type: "POST",
@@ -618,11 +618,12 @@
                                                 }, 1500);
                                             }
                                             else {
-                                                Swal.fire(
-                                                    'Something Went Wrong!',
-                                                    'Unable To Place Order!',
-                                                    'error'
-                                                );
+                                                // Swal.fire(
+                                                //     'Something Went Wrong!',
+                                                //     'Unable To Place Order!',
+                                                //     'error'
+                                                // );
+                                                alert(response);
                                             }
                                         }
                                     });

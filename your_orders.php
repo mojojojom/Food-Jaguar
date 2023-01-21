@@ -52,7 +52,7 @@
 										</tr>
 									</thead>
 
-									<tbody>
+									<tbody id="order_body">
 
 										<?php 
 											$query_res= mysqli_query($db,"select * from user_orders where u_id='".$_SESSION['user_id']."'");
@@ -64,7 +64,7 @@
 											{		
 												while($row=mysqli_fetch_array($query_res))
 												{
-													$orig_price = $row['price']/$row['quantity'];
+													$orig_price = $row['price'];
 													$subtotal = $orig_price*$row['quantity'];
 													// $subtotal = $row['price']*$row['quantity'];
 										?>
@@ -80,12 +80,12 @@
 											if($status=="" or $status=="NULL")
 											{
 											?>
-												<span class="badge bg-info">Dispatch</span>
+												<span class="badge bg-warning">Queue</span>
 											<?php 
 											}
 											if($status=="in process")
 											{ ?>
-												<span class="badge bg-warning">On The Way!</span>
+												<span class="badge bg-info">On The Way!</span>
 											<?php
 											}
 											if($status=="closed")
@@ -104,24 +104,38 @@
 											} 
 											?>
 											</td>
+											<?php
+											if($status=="rejected" || $status == "closed") {
+											?>
 											<td class="border border-0 d-flex align-items-center justify-content-center">
-												<a href="#confirmModal" data-bs-toggle="modal" data-bs-target="#confirmModal" class="o__order-card-item-cancel mb-0"><i class="fa-solid fa-square-xmark"></i></a>
+												<i class="fa-solid fa-square-xmark"></i>
 											</td>
+											<?php
+											} else {
+											?>
+												<td class="border border-0 d-flex align-items-center justify-content-center">
+													<a href="#confirmModal<?=$row['o_id']?>" data-bs-toggle="modal" data-bs-target="#confirmModal<?=$row['o_id']?>" class="o__order-card-item-cancel mb-0"><i class="fa-solid fa-square-xmark"></i></a>
+												</td>
+											<?php
+											}
+											?>
 										</tr>
 										<!-- Modal -->
-										<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+										<div class="modal fade" id="confirmModal<?=$row['o_id']?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
 											<div class="modal-dialog modal-dialog-centered">
 												<div class="modal-content">
-												<div class="modal-header">
-													<h1 class="modal-title fs-5 text-danger fw-bold" id="confirmModalLabel">ATTENTION!</h1>
-												</div>
-												<div class="modal-body">
-													<p class="text-center">Are you sure you want to cancel your order?</p>
-												</div>
-												<div class="modal-footer">
-													<a href="delete_orders?order_del=<?php echo $row['o_id'];?>" type="button" class="btn btn-primary">Confirm</a>
-													<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-												</div>
+													<div class="modal-header">
+														<h1 class="modal-title fs-5 text-danger fw-bold" id="confirmModalLabel">ATTENTION!</h1>
+													</div>
+													<div class="modal-body">
+														<p class="text-center">Are you sure you want to cancel your order?</p>
+													</div>
+													<div class="modal-footer">
+														<!-- <a href="delete_orders?order_del=<?php echo $row['o_id'];?>" type="button" class="btn btn-primary">Confirm</a> -->
+														<!-- <a href="delete_orders?order_del=<?php echo $row['o_id'];?>" type="button" class="btn btn-primary">Confirm</a> -->
+														<button type="submit" name="cancel_order" data-id="<?=$row['o_id']?>" class="c-btn-sm c-btn-3 cancel_order">Confirm</button>
+														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -338,26 +352,52 @@
 
 <script>
 
-	// jQuery(function($) {
-	// 	$(document).ready(function () {
-	// 		$('#profile_form').submit(function(e) {
-	// 			e.preventDefault();
-	// 			var formData = $(this).serialize();
+	jQuery(function($) {
+		$(document).ready(function () {
+			$('.cancel_order').on('click',function(e) {
+				e.preventDefault();
+				var id = $(this).data('id');
+				// alert(id);
 
-	// 			$.ajax({
-	// 				type: "POST",
-	// 				url: "action.php",
-	// 				data: formData,
-	// 				before: function() {
+				$.ajax({
+					type: "POST",
+					url: "add_cart.php",
+					data: {id: id, action: 'cancel_order'},
+					success: function (response) {
+						if(response == 'success') {
+							$.ajax({
+								type: "GET",
+								url: "get_orders.php",
+								success: function (response) {
+									$('#order_body').empty().html(response);
+								}
+							});
 
-	// 				},
-	// 				success: function (response) {
-						
-	// 				}
-	// 			});
+							// SHOW STATUS
+							const Toast = Swal.mixin({
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 1000,
+								timerProgressBar: true
+							})
+							Toast.fire({
+								icon: 'success',
+								title: 'Order Cancelled!'
+							})
+						} else {
+							Swal.fire(
+								'Something Went Wrong!',
+								'Unable to Cancel Your Order.',
+								'error'
+							);
+							alert(response);
+						}
+					}
+				});
 
-	// 		})
-	// 	})
-	// })
+			})
+		})
+	})
 
 </script>

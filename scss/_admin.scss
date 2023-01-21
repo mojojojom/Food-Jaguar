@@ -71,5 +71,43 @@
             text-transform: uppercase;
         }
     }
+    &__table {
+        &-actions {
+            a {
+                margin: 0 5px;
+                &:first-child i{
+                    color: $primary-col;
+                }
+                &:last-child {
+                    color: $red-col;
+                }
+            }
+        }
+    }
 
+}
+
+#users_table_paginate,
+#orders_table_paginate,
+#menu_table_paginate {
+    a {
+        color: $dark-col;
+        background-color: unset;
+        border: none;
+        padding: 5px;
+        text-decoration: none;
+    }
+    .paginate_button {
+        padding: 5px;
+        height: 20px;
+        width: 30px;
+        font-size: 14px;
+        display: inline-table;
+        text-align: center;
+        &.current {
+            border: 1px solid $primary-col;
+            background-color: $primary-col;
+            color: $light-col;
+        }
+    }
 }

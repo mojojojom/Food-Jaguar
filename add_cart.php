@@ -154,49 +154,6 @@
             }
         }
 
-        // // CHECK THE ARRAY
-        // if($_POST['action'] == 'checkOutOrder') 
-        // {
-        //     $selectedItems = json_decode($_POST['selectedItems'], true);
-        //     $itemIds = array_column($selectedItems, 'id');
-        //     $idString = implode(",", $itemIds);
-
-        //     // DATABASE CONNECTION
-        //     include('connection/connect.php');
-        //     $checkDish = mysqli_query($db, "SELECT d_id, title, price, img FROM dishes WHERE d_id IN ('$idString')");
-
-        //     // init session variable
-        //     if(!isset($_SESSION['check_cart_item'])) {
-        //         $_SESSION['check_cart_item'] = array();
-        //     }
-        //     while($row = mysqli_fetch_assoc($checkDish)) {
-        //         $dishId = $row['d_id'];
-        //         $quantity = $selectedItems[array_search($dishId, array_column($selectedItems, 'id'))]['quantity'];
-        //         $orig_price = $row['price'];
-        //         $item_price = $orig_price*$quantity;
-        //         $itemArray = array(
-        //             $dishId=>array(
-        //                 'title'=>$row['title'],
-        //                 'd_id'=>$dishId,
-        //                 'quantity'=>$quantity,
-        //                 'price'=>$item_price,
-        //                 'img'=>$row['img'],
-        //             )
-        //         );
-
-        //         if(empty($_SESSION['user_id'])) {
-        //             echo 'error_login';
-        //         }
-        //         else 
-        //         {
-        //             $_SESSION['check_cart_item'] = $_SESSION["check_cart_item"] + $itemArray;
-        //             // unset($_SESSION['cart_item'][$idString]);
-        //             echo 'success';
-        //         }
-        //     }
-
-        // }
-
         // CHECKOUT ORDER
         if($_POST['action'] == 'checkOutOrder') 
         {
@@ -218,14 +175,11 @@
             }
         }          
 
-
         // UNSET CART SESSION
         if($_POST['action'] == 'unset') {
                 unset($_SESSION['check_cart_item']);
                 echo 'success';
         }
-
-        
 
         // PLACE ORDER
         if($_POST['action'] == 'place_order') {
@@ -259,17 +213,36 @@
                             if($query) {
                                 echo 'success';
                                 unset($_SESSION["check_cart_item"]);
+
                             } else {
                                 echo 'error' . mysqli_error($db);
                             }
                         }
-                        echo 'success';
                     }
                 }
-                echo 'success';
             }
             else {
                 echo 'error' . mysqli_error($db);
+            }
+        }
+
+        // ORDERS
+        if($_POST['action'] == 'cancel_order') {
+            $id = $_POST['id'];
+            // CONNECTION
+            include('connection/connect.php');
+            $check_order = mysqli_query($db, "SELECT * FROM user_orders WHERE o_id='$id'");
+            if(mysqli_num_rows($check_order) > 0) {
+                $update = mysqli_query($db, "UPDATE user_orders SET status='rejected' WHERE o_id='$id'");
+                if($update) {
+                    echo 'success';
+                }
+                else {
+                    echo 'error';
+                }
+            }
+            else {
+                echo 'error';
             }
         }
 

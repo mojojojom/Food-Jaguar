@@ -26,5 +26,11 @@
         <link rel="icon" type="image/png" sizes="32x32" href="../site_icon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="../site_icon/favicon-16x16.png">
 
+        <style>
+            body {
+                font-family:'Poppins';
+            }
+        </style>
+
     </head>
     <body class="sb-nav-fixed">

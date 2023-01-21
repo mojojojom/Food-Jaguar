@@ -147,6 +147,36 @@ hr {
             font-size: 16px;
         }
     }
+    &-sm {
+        padding: 5px 20px;
+        font-size: 16px;
+    }
+    &-6 {
+        padding: 10px 30px;
+        color: $light-col;
+        border: 1px solid $red-col;
+        font-size: 18px;
+        background-color: $red-col;
+        border-radius: 5px;
+        transition: all ease-in-out 300ms;
+        font-weight: 600;
+        font-family: $secondary-font;
+        &:hover {
+            color: $red-col;
+            background-color: $secondary-col;
+            border: 1px solid $secondary-col;
+        }
+        &.active {
+            cursor: progress;
+        }
+        @include media('<=phone') {
+            font-size: 16px;
+        }
+    }
+    &-sm {
+        padding: 5px 20px;
+        font-size: 16px;
+    }
 }
 
 .sec-pad {
