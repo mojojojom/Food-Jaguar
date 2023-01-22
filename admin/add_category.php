@@ -11,33 +11,6 @@
         $query = mysqli_query($db, "SELECT * FROM admin WHERE adm_id='".$_SESSION['adm_id']."'");
         while($row = mysqli_fetch_array($query)) {
         include('header.php');
-
-        if(isset($_POST['submit'] ))
-        {
-            if(empty($_POST['f_catname']))
-            {
-                $error = '<div class="alert alert-danger alert-dismissible fade show text-center">
-                            <strong>Field Required!</strong>
-                        </div>';
-            }
-            else
-            {
-                $check_cat= mysqli_query($db, "SELECT f_catname FROM food_category where f_catname = '".$_POST['f_catname']."' ");
-                if(mysqli_num_rows($check_cat) > 0)
-                {
-                    $error = '<div class="alert alert-danger alert-dismissible fade show text-center">
-                                <strong>Category already exist!</strong>
-                            </div>';
-                }
-                else{
-                    $mql = "INSERT INTO food_category(f_catname) VALUES('".$_POST['f_catname']."')";
-                    mysqli_query($db, $mql);
-                    $success = 	'<div class="alert alert-success alert-dismissible fade show text-center">
-                                    New Category Added Successfully.</br>
-                                </div>';
-                }
-            }
-        }
     ?>
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -115,10 +88,6 @@
                         <li class="breadcrumb-item active">Category</li>
                     </ol>
                     <div class="row">
-                        <?php  
-                            echo $error;
-                            echo $success; 
-                        ?>
                         <div class="col-lg-12 mb-5">
                             <div class="card p-5 card-outline-primary">
                                 <form action='' method='post' >
@@ -127,12 +96,12 @@
                                             <div class="col-md-12">
                                                 <div class="form-group mb-3">
                                                     <label class="control-label">Category Name</label>
-                                                    <input type="text" name="f_catname" class="form-control" >
+                                                    <input type="text" name="f_catname" class="form-control new_cat" >
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-actions">
-                                            <input type="submit" name="submit" class="c-btn-sm c-btn-3" value="Save"> 
+                                            <input type="button" name="submit" class="c-btn-sm c-btn-3 add_cat" value="Save"> 
                                             <a href="all_menu" class="c-btn-sm c-btn-6 text-decoration-none">Cancel</a>
                                         </div>
                                     </div>
@@ -145,14 +114,14 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Listed Categories</h4>
                                     <div class="table-responsive m-t-40">
-                                        <table id="myTable" class="table table-bordered table-hover table-striped">
+                                        <table id="catTable" class="table table-bordered table-hover table-striped">
                                             <thead class="thead-dark">
                                                 <tr>
                                                     <th>Category Name</th>
                                                     <th>Action</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="cat_list">
                                                 <?php
                                                     $sql="SELECT * FROM food_category order by f_catid desc";
                                                     $query=mysqli_query($db,$sql);
@@ -168,10 +137,72 @@
                                                                 <tr>
                                                                     <td><?=$rows['f_catname']?></td>
                                                                     <td class="text-center">
-                                                                        <a href="update_category.php?cat_upd=<?=$rows['f_catid']?>" class="mx-2"><i class="fa-solid fa-pen-to-square"></i></i></a>
-                                                                        <a href="delete_category.php?cat_del=<?=$rows['f_catid']?>" class="mx-2"><i class="fa-solid fa-trash text-danger"></i></a> 
+                                                                        <a href="#edit_cat<?=$rows['f_catid']?>" class="mx-2" data-bs-toggle="modal" data-bs-target="#edit_cat<?=$rows['f_catid']?>"><i class="fa-solid fa-pen-to-square"></i></i></a>
+                                                                        <!-- <a href="delete_category.php?cat_del=<?=$rows['f_catid']?>" class="mx-2"><i class="fa-solid fa-trash text-danger"></i></a>  -->
+                                                                        <a href="#delete_cat<?=$rows['f_catid']?>" class="mx-2" data-bs-toggle="modal" data-bs-target="#delete_cat<?=$rows['f_catid']?>"><i class="fa-solid fa-trash text-danger"></i></a> 
                                                                     </td>
                                                                 </tr>
+
+
+                                                                <!-- EDIT MODAL -->
+                                                                <div class="modal fade edit_modal" id="edit_cat<?=$rows['f_catid']?>" tabindex="-1" aria-labelledby="edit_catLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                            <div class="modal-content">
+                                                                                <form method="POST">
+                                                                                    <div class="modal-header">
+                                                                                        <h1 class="modal-title fs-5" id="edit_catLabel">Update Category</h1>
+                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <div class="card">
+                                                                                            <div class="card-body">
+                                                                                                <?php 
+                                                                                                    $ssql ="select * from food_category where f_catid='".$rows['f_catid']."'";
+                                                                                                    $res=mysqli_query($db, $ssql); 
+                                                                                                    $row=mysqli_fetch_array($res);
+                                                                                                    ?>
+
+                                                                                                    <div class="form-group">
+                                                                                                        <label class="control-label">Category</label>
+                                                                                                        <input type="text" name="f_catname" data-name="new_cat" value="<?=$row['f_catname']?>" class="form-control cat_input<?=$row['f_catid']?>" placeholder="Category Name" required>
+                                                                                                    </div>
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="c-btn-sm c-btn-3 edit_cat-btn" data-id="<?=$row['f_catid']?>">Save changes</button>
+                                                                                        <button type="button" class="c-btn-sm c-btn-6" data-bs-dismiss="modal">Close</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                </div>
+
+                                                                <!-- DELETE MODAL -->
+                                                                <div class="modal fade delete_modal" id="delete_cat<?=$rows['f_catid']?>" tabindex="-1" aria-labelledby="edit_catLabel" aria-hidden="true">
+                                                                    <div class="modal-dialog modal-dialog-centered">
+                                                                            <div class="modal-content">
+                                                                                <form method="POST">
+                                                                                    <div class="modal-header">
+                                                                                        <h1 class="modal-title fs-5" id="edit_catLabel">Delete Category</h1>
+                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <div class="card">
+                                                                                            <div class="card-body text-center">
+                                                                                                <h6 class="mb-0">Are you sure you want to delete this category?</h6>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <button type="button" class="c-btn-sm c-btn-3 delete_cat-btn" data-id="<?=$row['f_catid']?>">Confirm</button>
+                                                                                        <button type="button" class="c-btn-sm c-btn-6" data-bs-dismiss="modal">Cancel</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                </div>
                                                 <?php
                                                             }	
                                                         }
@@ -183,8 +214,6 @@
                             </div>
                         </div>
                     </div>
-
-
 
                 </div>
             </main>
@@ -209,7 +238,140 @@
 <script>
     jQuery(function($) {
         $(document).ready(function () {
-            $('#users_table').DataTable();
+            $('#catTable').DataTable();
+
+            $("input.new_cat").on("input", function(e) {
+                var input = $(this);
+                input.val(input.val().replace(/\s/g, ''));
+            });
+
+            // ADD CATEGORY
+            $('.add_cat').on('click', function(e) {
+                e.preventDefault();
+                var new_cat = $('input.new_cat').val();
+                $.ajax({
+                    type: "POST",
+                    url: "action.php",
+                    data: {cat: new_cat, action:'add_category'},
+                    success: function (response) {
+                        if(response == 'success') {
+                            $.ajax({
+                                type: "GET",
+                                url: "get_cat.php",
+                                success: function (response) {
+                                    $('#cat_list').empty().html(response);
+                                }
+                            });
+
+                            $('input.new_cat').val("");
+                            
+                            Swal.fire(
+                                'Success!',
+                                'Category Has Been Added.',
+                                'success'
+                            );
+                        }else if(response == 'error_exists') {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Category Already Exists',
+                                'error'
+                            ); 
+                        }else {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable To Add Category.',
+                                'error'
+                            );
+                        }
+                    }
+                });
+            })
+
+            // EDIT CATEGORY
+            // $('.edit_cat-btn').on('click', function(e) {
+            $('.edit_modal').on('click', '.edit_cat-btn', function(e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                var cat = $(".cat_input"+id).val();
+                $('#edit_cat'+id).modal();
+
+                $.ajax({
+                    type: "POST",
+                    url: "action.php",
+                    data: {id:id, cat:cat, action: 'edit_category'},
+                    success: function (response) {
+                        if(response == 'success') {
+
+                            $.ajax({
+                                type: "GET",
+                                url: "get_cat.php",
+                                success: function (response) {
+                                    $('#cat_list').empty().html(response);
+                                }
+                            });
+
+                            $('.edit_modal').modal('hide');
+                            
+                            Swal.fire(
+                                'Success!',
+                                'Category Has Been Changed.',
+                                'success'
+                            );
+                        }
+                        else {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable To Edit Category.',
+                                'error'
+                            );
+                        }
+                    }
+                });
+
+            })
+
+            // DELETE CATEGORY
+            // $('.delete_cat-btn').on('click', function(e) {
+            $('.delete_modal').on('click', '.delete_cat-btn', function(e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                $('#delete_cat'+id).modal();
+
+                $.ajax({
+                    type: "POST",
+                    url: "action.php",
+                    data: {id:id, action: 'delete_category'},
+                    success: function (response) {
+                        if(response == 'success') {
+
+                            $.ajax({
+                                type: "GET",
+                                url: "get_cat.php",
+                                success: function (response) {
+                                    $('#cat_list').empty().html(response);
+                                }
+                            });
+
+                            $('.delete_modal').modal('hide');
+                            
+                            Swal.fire(
+                                'Success!',
+                                'Category Has Been Deleted.',
+                                'success'
+                            );
+                        }
+                        else {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable To Delete Category.',
+                                'error'
+                            );
+                        }
+                    }
+                });
+
+            })
+
         })
     })
 </script>

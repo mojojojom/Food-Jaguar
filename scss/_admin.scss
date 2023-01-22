@@ -89,13 +89,15 @@
 
 #users_table_paginate,
 #orders_table_paginate,
-#menu_table_paginate {
+#menu_table_paginate,
+#catTable_paginate{
     a {
         color: $dark-col;
         background-color: unset;
         border: none;
         padding: 5px;
         text-decoration: none;
+        cursor: pointer;
     }
     .paginate_button {
         padding: 5px;

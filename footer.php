@@ -57,7 +57,6 @@
                                     {
                                         $total_price = 0;
                                         $total_quantity = 0;
-                                        // foreach($selectedItems as $item) 
                                         foreach($_SESSION['check_cart_item'] as $item) 
                                         {
                                             $total_price += ($item['price']*$item['quantity']);
@@ -93,8 +92,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        
-                                            <hr class="modal__checkout-divider">
                                 <?php
                                                 }
                                             }
@@ -116,6 +113,19 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="modal-body">
+                        <hr class="modal__checkout-divider">
+
+                        <div class="modal__checkout-mop-wrap">
+                            <label for="shippingOption">Select Shipping Option</label>
+                            <select class="form-select shipping_option" aria-label="Default select example" required>
+                                <option value="deliver"selected>Delivery (₱5.00)</option>
+                                <option value="pick-up">Pick-up</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="modal-footer">
                         <form id="place_order">
                             <input type="submit" class="c-btn-4" id="place_order-btn" value="Place Order">
@@ -128,7 +138,6 @@
                 </div>
             </div>
         </div>
-
         
         <!-- CART SIDEBAR -->
         <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="cartSideMenu" aria-labelledby="cartSideMenuLabel">
@@ -585,6 +594,7 @@
                     // PLACE ORDER
                     $('#place_order-btn').on('click', function(e) {
                         e.preventDefault();
+                        var ship = $('select.shipping_option').val();
                         $.ajax({
                             type: "GET",
                             url: "checkout_session.php",
@@ -596,7 +606,7 @@
                                     $.ajax({
                                         type: "POST",
                                         url: "add_cart.php",
-                                        data: {action: 'place_order'},
+                                        data: {ship: ship, action: 'place_order'},
                                         success: function (response) {
                                             if(response == 'success') 
                                             {
@@ -614,16 +624,15 @@
                                                 })
 
                                                 setTimeout(() => {
-                                                    window.location.href='your_orders';
+                                                    window.location.href='your_order';
                                                 }, 1500);
                                             }
                                             else {
-                                                // Swal.fire(
-                                                //     'Something Went Wrong!',
-                                                //     'Unable To Place Order!',
-                                                //     'error'
-                                                // );
-                                                alert(response);
+                                                Swal.fire(
+                                                    'Something Went Wrong!',
+                                                    'Unable To Place Order!',
+                                                    'error'
+                                                );
                                             }
                                         }
                                     });
@@ -634,38 +643,6 @@
                                 }
                             }
                         })
-                        // $.ajax({
-                        //     type: "POST",
-                        //     url: "add_cart.php",
-                        //     data: {formData, action: 'place_order'},
-                        //     success: function (response) {
-                        //         if(response == 'success') {
-                        //             // SHOW STATUS
-                        //             const Toast = Swal.mixin({
-                        //                 toast: true,
-                        //                 position: 'top-end',
-                        //                 showConfirmButton: false,
-                        //                 timer: 1500,
-                        //                 timerProgressBar: true
-                        //             })
-                        //             Toast.fire({
-                        //                 icon: 'success',
-                        //                 title: 'Your Order Has Been Placed!'
-                        //             })
-
-                        //             setTimeout(() => {
-                        //                 window.location.href='your_orders';
-                        //             }, 1500);
-                        //         }
-                        //         else {
-                        //             Swal.fire(
-                        //                 'Something Went Wrong!',
-                        //                 'Unable To Place Order!',
-                        //                 'error'
-                        //             );
-                        //         }
-                        //     }
-                        // });
                     })
 
                     $(window).on('beforeunload', function(){
@@ -731,30 +708,10 @@
                 });
             }
 
-            // function updateCartSession() {
-            //     $.ajax({
-            //         type: "GET",
-            //         url: "checkout_session.php",
-            //         data: {session: 'check_cart_item'},
-            //         success: function (response) {
-            //             if(response == 'success') 
-            //             {
-            //                 console.log('Success');
-            //             }
-            //             else 
-            //             {
-            //                 console.log('Failed!');
-            //             }
-            //         }
-            //     })
-            // }
-
         </script>
 
     <!-- JAVASCRIPT FILES -->
         <script src="js/tether.min.js"></script>
-        <!-- <script src="js/bootstrap.min.js"></script> -->
-        <!-- <script src="js/bootstrap.bundle.min.js"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
         <script src="js/animsition.min.js"></script>
         <script src="js/bootstrap-slider.min.js"></script>

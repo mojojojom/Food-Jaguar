@@ -160,4 +160,56 @@ if(isset($_POST['action'])) {
     //     // echo 'success';
     // }
 
+    // EDIT CATEGORY
+    if($_POST['action'] == 'edit_category') {
+        // CONNECTION
+        include('../connection/connect.php');
+        $id = $_POST['id'];
+        $newCat = $_POST['cat'];
+
+        $check_cat = mysqli_query($db, "SELECT * FROM food_category WHERE f_catid = '$id'");
+        if(mysqli_num_rows($check_cat) > 0) {
+            $update_cat = mysqli_query($db, "UPDATE food_category SET f_catname='".$newCat."' WHERE f_catid='".$id."'");
+            if($update_cat) {
+                echo 'success';
+            }
+        } else {
+            echo 'error';
+        }
+
+    }
+
+    // ADD CATEGORY
+    if($_POST['action'] == 'add_category') {
+        // CONNECTION
+        include('../connection/connect.php');
+        $newCat = $_POST['cat'];
+
+        $check_cat = mysqli_query($db, "SELECT f_catname FROM food_category WHERE f_catname = '$newCat'");
+        if(mysqli_num_rows($check_cat) > 0) {
+            echo 'error_exists';
+        } else {
+            $add_cat = mysqli_query($db, "INSERT INTO food_category(f_catname) VALUES('".$newCat."')");
+            if($add_cat) {
+                echo 'success';
+            }
+        }
+
+    }
+
+    // DELETE CATEGORY
+    if($_POST['action'] == 'delete_category') {
+        // CONNECTION
+        include('../connection/connect.php');
+        $id = $_POST['id'];
+
+        $delete_cat = mysqli_query($db, "DELETE FROM food_category WHERE f_catid='$id'");
+        if($delete_cat) {
+            echo 'success';
+        } else {
+            echo 'error';
+        }
+
+    }
+
 }

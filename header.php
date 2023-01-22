@@ -66,7 +66,7 @@
                             else
                             {
                             ?>
-                                <li class="nav-item"><a href="your_orders" class="nav-link mx-2">My Orders</a> </li>
+                                <li class="nav-item"><a href="your_order" class="nav-link mx-2">My Orders</a> </li>
                                 <li class="nav-item"><a href="logout" class="nav-link mx-2">Logout</a> </li>
                             <?php
                             }

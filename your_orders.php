@@ -64,9 +64,11 @@
 											{		
 												while($row=mysqli_fetch_array($query_res))
 												{
-													$orig_price = $row['price'];
+													$get_price = mysqli_query($db, "SELECT * FROM dishes WHERE title='".$row['title']."'");
+													while($price = mysqli_fetch_assoc($get_price)) {
+														$orig_price = $price['price'];
+													}
 													$subtotal = $orig_price*$row['quantity'];
-													// $subtotal = $row['price']*$row['quantity'];
 										?>
 
 										<tr class="o__order-item-line-wrap">
@@ -121,7 +123,7 @@
 											?>
 										</tr>
 										<!-- Modal -->
-										<div class="modal fade" id="confirmModal<?=$row['o_id']?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+										<div class="modal fade confirmModal" id="confirmModal<?=$row['o_id']?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
 											<div class="modal-dialog modal-dialog-centered">
 												<div class="modal-content">
 													<div class="modal-header">
@@ -131,8 +133,6 @@
 														<p class="text-center">Are you sure you want to cancel your order?</p>
 													</div>
 													<div class="modal-footer">
-														<!-- <a href="delete_orders?order_del=<?php echo $row['o_id'];?>" type="button" class="btn btn-primary">Confirm</a> -->
-														<!-- <a href="delete_orders?order_del=<?php echo $row['o_id'];?>" type="button" class="btn btn-primary">Confirm</a> -->
 														<button type="submit" name="cancel_order" data-id="<?=$row['o_id']?>" class="c-btn-sm c-btn-3 cancel_order">Confirm</button>
 														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 													</div>
@@ -155,7 +155,7 @@
 												<p class="mb-0 o__order-card-bill-heading">BILL DETAILS</p>
 
 												<?php
-													$query_mop = mysqli_query($db, "SELECT mop FROM users_orders WHERE u_id='".$_SESSION['user_id']."'");
+													$query_mop = mysqli_query($db, "SELECT mop FROM user_orders WHERE u_id='".$_SESSION['user_id']."'");
 													if(mysqli_num_rows($query_mop) > 0) {
 														while($echo = mysqli_fetch_array($query_mop)) {
 															$mode = $echo['mop'];
@@ -169,11 +169,11 @@
 											<hr class="my-1">
 											<div class="o__order-card-bill-sub-wrap">
 												<?php
-													$query_total = mysqli_query($db, "SELECT * FROM users_orders WHERE u_id='".$_SESSION['user_id']."'");
+													$query_total = mysqli_query($db, "SELECT * FROM user_orders WHERE u_id='".$_SESSION['user_id']."'");
 
 													if(mysqli_num_rows($query_res) > 0) {
 														while($row = mysqli_fetch_assoc($query_total)) {
-															$item_total += ($orig_price*$row['quantity']);
+															$item_total += $row['price'];
 														}
 												?>
 														<div class="d-flex align-items-center justify-content-between">
@@ -182,20 +182,22 @@
 														</div>
 														<div class="d-flex align-items-center justify-content-between">
 															<?php
-															$mop = mysqli_query($db, "SELECT mop FROM users_orders WHERE u_id='".$_SESSION['user_id']."'");
+															$order_number = 1;
+															$mop = mysqli_query($db, "SELECT mop FROM user_orders WHERE u_id='".$_SESSION['user_id']."' AND order_number='$order_number'");
 															if(mysqli_num_rows($mop) > 0) {
-																$get_mop = mysqli_fetch_assoc($mop);
 
-																if($get_mop == 'pick-up'){
+																while($get_mop = mysqli_fetch_assoc($mop)) {
+																	if($get_mop['mop'] == 'deliver') {
 															?>
-																<p class="o__order-card-bill-sub-title mb-3">Delivery Fee:</p>
-																<p class="o__order-card-bill-sub mb-3">₱ 5</p>
+																		<p class="o__order-card-bill-sub-title mb-3">Delivery Fee:</p>
+																		<p class="o__order-card-bill-sub mb-3">₱ 5</p>
 															<?php
-																} else {
+																	} else{
 															?>
-																<p class="o__order-card-bill-sub-title mb-3">Delivery Fee: </p>
-																<p class="o__order-card-bill-sub mb-3">₱ 0</p>
+																		<p class="o__order-card-bill-sub-title mb-3">Delivery Fee: </p>
+																		<p class="o__order-card-bill-sub mb-3">₱ 0</p>
 															<?php
+																	}
 																}
 															}
 															?>
@@ -204,25 +206,24 @@
 															<p class="o__order-card-bill-sub-title mb-3">Total:</p>
 															<?php
 															if(mysqli_num_rows($mop) > 0) {
-																$get_mop = mysqli_fetch_assoc($mop);
-																if($get_mop == 'pick-up') {
-																	$s_fee = 5;
-																	$total_fee = $s_fee+$item_total;
+																$get_mop = mysqli_fetch_array($mop);
+																if($get_mop['deliver'] == 'deliver') {
+																	$d_fee = 5;
+																	$dtotal_fee = $d_fee+$item_total;
 																?>
-																<p class="o__order-card-bill-sub mb-3">₱ <?= $total_fee?></p>
+																<p class="o__order-card-bill-sub mb-3">₱ <?= $dtotal_fee?></p>
 																<?php
 																} else {
 																	$s_fee = 0;
-																	$total_fee = $s_fee+$item_total;
+																	$stotal_fee = $s_fee+$item_total;
 																?>
-																<p class="o__order-card-bill-sub mb-3">₱ <?= $total_fee?></p>
+																<p class="o__order-card-bill-sub mb-3">₱ <?= $stotal_fee?></p>
 																<?php
 																}
 															}
 															?>
 														</div>
 												<?php
-														// }
 													}else {
 												?>
 													<?php
@@ -365,6 +366,9 @@
 					data: {id: id, action: 'cancel_order'},
 					success: function (response) {
 						if(response == 'success') {
+
+							$('.confirmModal').modal('hide');
+
 							$.ajax({
 								type: "GET",
 								url: "get_orders.php",

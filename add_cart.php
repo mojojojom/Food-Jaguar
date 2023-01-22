@@ -182,22 +182,66 @@
         }
 
         // PLACE ORDER
+        // if($_POST['action'] == 'place_order') {
+        //     if(!empty($_SESSION['check_cart_item'])) {
+        //         // INCLUDE CONNECTION
+        //         include('connection/connect.php');
+                
+        //         $current_date = date("Y-m-d H:i:s");
+
+        //         // generate a new order number for each iteration
+        //         $query = mysqli_query($db, "SELECT MAX(order_number) as max_order_number, MAX(date) as max_date FROM user_orders");
+        //         $row = mysqli_fetch_assoc($query);
+        //         if($row['max_date'] != $current_date) {
+        //             $order_number = 1;
+        //         }
+        //         else {
+        //             $order_number = $row['max_order_number'] + 1;
+        //         }
+
+        //         foreach($_SESSION['check_cart_item'] as $item) {
+
+        //             $get_dish = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
+
+        //             if(mysqli_num_rows($get_dish) > 0) {
+
+        //                 while($dish = mysqli_fetch_array($get_dish)) {
+        //                     $total_price = $item['quantity']*$dish['price'];
+        //                     $mop = 'deliver';
+        //                     // $query = mysqli_query($db, "INSERT INTO user_orders (u_id, title, quantity, price, mop, status, order_number, date) VALUES ('".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$dish['price']."', '$mop', '', '$order_number', '$current_date')");
+        //                     $query = mysqli_query($db, "INSERT INTO user_orders (u_id, title, quantity, price, mop, status, order_number, date) VALUES ('".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$total_price."', '$mop', '', '$order_number', '$current_date')");
+        
+        //                     // Check if the insertion was successful
+        //                     if($query) {
+        //                         echo 'success';
+        //                         unset($_SESSION["check_cart_item"]);
+
+        //                     } else {
+        //                         echo 'error' . mysqli_error($db);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     else {
+        //         echo 'error' . mysqli_error($db);
+        //     }
+        // }
         if($_POST['action'] == 'place_order') {
+            $mop = $_POST['ship'];
+            $last_order_number = 1;
             if(!empty($_SESSION['check_cart_item'])) {
                 // INCLUDE CONNECTION
                 include('connection/connect.php');
                 
                 $current_date = date("Y-m-d H:i:s");
+                $order_number = $last_order_number;
+                $last_order_number++;
 
-                // generate a new order number for each iteration
-                $query = mysqli_query($db, "SELECT MAX(order_number) as max_order_number, MAX(date) as max_date FROM user_orders");
+                $query = mysqli_query($db, "SELECT MAX(order_number) as max_order_number FROM user_orders");
                 $row = mysqli_fetch_assoc($query);
-                if($row['max_date'] != $current_date) {
-                    $order_number = 1;
-                }
-                else {
-                    $order_number = $row['max_order_number'] + 1;
-                }
+                $last_order_number = $row['max_order_number'];
+                $order_number = $last_order_number + 1;
 
                 foreach($_SESSION['check_cart_item'] as $item) {
 
@@ -206,27 +250,26 @@
                     if(mysqli_num_rows($get_dish) > 0) {
 
                         while($dish = mysqli_fetch_array($get_dish)) {
-                            $mop = 'deliver';
-                            $query = mysqli_query($db, "INSERT INTO user_orders (u_id, title, quantity, price, mop, status, order_number, date) VALUES ('".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$dish['price']."', '$mop', '', '$order_number', '$current_date')");
+                            $total_price = $item['quantity']*$dish['price'];
+                            $query = mysqli_query($db, "INSERT INTO user_orders (u_id, title, quantity, price, mop, status, order_number, date) VALUES ('".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$total_price."', '$mop', '', '$order_number', '$current_date')");
         
                             // Check if the insertion was successful
                             if($query) {
-                                echo 'success';
                                 unset($_SESSION["check_cart_item"]);
-
                             } else {
                                 echo 'error' . mysqli_error($db);
                             }
                         }
                     }
                 }
+                echo 'success';
             }
             else {
                 echo 'error' . mysqli_error($db);
             }
         }
 
-        // ORDERS
+        // CANCEL ORDER
         if($_POST['action'] == 'cancel_order') {
             $id = $_POST['id'];
             // CONNECTION

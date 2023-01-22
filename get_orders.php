@@ -1,7 +1,5 @@
-
 <?php 
     session_start();
-    // DATABASE
     include('connection/connect.php');
     $query_res= mysqli_query($db,"select * from user_orders where u_id='".$_SESSION['user_id']."'");
     if(!mysqli_num_rows($query_res) > 0 )
@@ -12,7 +10,10 @@
     {		
         while($row=mysqli_fetch_array($query_res))
         {
-            $orig_price = $row['price'];
+            $get_price = mysqli_query($db, "SELECT * FROM dishes WHERE title='".$row['title']."'");
+            while($price = mysqli_fetch_assoc($get_price)) {
+                $orig_price = $price['price'];
+            }
             $subtotal = $orig_price*$row['quantity'];
 ?>
 
@@ -54,8 +55,8 @@
     <?php
     if($status=="rejected" || $status == "closed") {
     ?>
-        <td class="border border-0 d-flex align-items-center justify-content-center">
-        <a href="#confirmModal<?=$row['o_id']?>" data-bs-toggle="modal" data-bs-target="#confirmModal<?=$row['o_id']?>" class="o__order-card-item-cancel mb-0 disabled" disabled><i class="fa-solid fa-square-xmark"></i></a>
+    <td class="border border-0 d-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-square-xmark"></i>
     </td>
     <?php
     } else {
@@ -68,7 +69,7 @@
     ?>
 </tr>
 <!-- Modal -->
-<div class="modal fade" id="confirmModal<?=$row['o_id']?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+<div class="modal fade confirmModal" id="confirmModal<?=$row['o_id']?>" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">

@@ -66,7 +66,7 @@
                             </div>
                         </form>
                         <div class="l__login-signup-wrap text-center">
-                            <p class="l__login-signup">Already have an account? <a href="register">Sign in</a></p>
+                            <p class="l__login-signup">Already have an account? <a href="login">Sign in</a></p>
                         </div>
                     </div>
                 </div>
