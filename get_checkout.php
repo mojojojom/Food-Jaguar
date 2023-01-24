@@ -10,10 +10,17 @@
                         ?>
                             <div>
                                 <ul>
-                                    <li class="modal__checkout-address-wrap">
-                                        <p class="modal__checkout-address-title mb-1"><i class="fa-sharp fa-solid fa-location-dot"></i> Delivery Address</p>
+                                <li class="modal__checkout-address-wrap">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <p class="modal__checkout-address-title mb-1"><i class="fa-sharp fa-solid fa-location-dot"></i> Delivery Address</p>
+                                            <button type="button" class="c-btn-sm c-btn-3 add_address_btn" style="font-size: 12px;">ADD NEW ADDRESS</button>
+                                        </div>
                                         <p class="mb-0 ps-3"><?=$fullname?> | <?=$row['phone']?></p>
                                         <p class="mb-0 ps-3"><?=$row['address']?></p>
+                                        <div class="address_input-wrap my-2 d-none">
+                                            <label for="add_address_input" style="font-size: 12px;">Enter Address</label>
+                                            <input type="text" style="font-size: 12px;" class="fj-input add_address_input">
+                                        </div>
                                     </li>
                                 </ul>
                             </div>

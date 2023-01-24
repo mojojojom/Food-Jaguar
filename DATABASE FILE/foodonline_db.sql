@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 21, 2023 at 08:12 AM
+-- Generation Time: Jan 24, 2023 at 03:26 AM
 -- Server version: 5.7.33
 -- PHP Version: 7.4.19
 
@@ -82,8 +82,7 @@ INSERT INTO `dishes` (`d_id`, `rs_id`, `title`, `slogan`, `price`, `img`) VALUES
 (16, 1, 'Meatballs Penne Pasta', 'Garlic-herb beef meatballs tossed in our house-made marinara sauce and penne pasta topped with fresh parsley.', '10.00', '606d76eedbb99.jpg'),
 (17, 1, 'Dinuguan', 'Sample Description', '100.00', '63b791e470000.jpg'),
 (18, 2, 'Coca-cola (Can)', 'Coca-cola drink', '50.00', '63b794e249182.png'),
-(23, 4, 'Dinuguans', 'Dinuguan na masarap', '150.00', '63cb992f04872.jpg'),
-(24, 5, 'Pinakbet', 'healthy vegie', '100.00', '63cb9967a6452.png');
+(23, 4, 'Dinuguans', 'Dinuguan na masarap', '150.00', '63cb992f04872.jpg');
 
 -- --------------------------------------------------------
 
@@ -106,7 +105,26 @@ INSERT INTO `food_category` (`f_catid`, `f_catname`) VALUES
 (3, 'Combo-Meal'),
 (4, 'Meat'),
 (5, 'Vegetables'),
-(6, 'Best-Seller');
+(6, 'Best-Sellers');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orders`
+--
+
+CREATE TABLE `orders` (
+  `id` int(255) NOT NULL,
+  `u_id` int(255) NOT NULL,
+  `order_names` varchar(255) NOT NULL,
+  `order_quantity` int(255) NOT NULL,
+  `order_total` int(255) NOT NULL,
+  `order_number` int(255) NOT NULL,
+  `order_ship` varchar(255) NOT NULL,
+  `order_fee` decimal(10,2) NOT NULL,
+  `order_status` varchar(255) NOT NULL,
+  `date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -142,7 +160,12 @@ INSERT INTO `remark` (`id`, `frm_id`, `status`, `remark`, `remarkDate`) VALUES
 (13, 47, 'in process', 'thank you for ordering!', '2023-01-14 01:32:11'),
 (14, 47, 'closed', 'Thank you for ordering!', '2023-01-14 05:15:08'),
 (18, 48, 'in process', 'thanks for ordering!', '2023-01-21 04:49:42'),
-(19, 48, 'closed', 'thanks for ordering!', '2023-01-21 04:50:40');
+(19, 48, 'closed', 'thanks for ordering!', '2023-01-21 04:50:40'),
+(20, 45, 'rejected', '', '2023-01-21 09:16:20'),
+(21, 53, 'closed', '', '2023-01-21 09:18:12'),
+(22, 47, 'in process', '', '2023-01-21 09:19:13'),
+(23, 52, 'rejected', '', '2023-01-21 09:20:22'),
+(24, 98, 'closed', '', '2023-01-22 00:24:19');
 
 -- --------------------------------------------------------
 
@@ -170,7 +193,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`u_id`, `username`, `f_name`, `l_name`, `email`, `phone`, `password`, `address`, `u_vcode`, `u_verify`, `status`, `date`) VALUES
-(1, 'foodjaguar', 'Food', 'Jaguar', 'foodjaguar@gmail.com', '09123456789', '$2y$10$kCGqvOGyyd78YpTn6X7ofueXelZE5QuZmkf63p49tZC4jB/ixkssK', 'PRMSU', '0', 'Yes', 1, '2023-01-20 02:21:00');
+(2, 'foodjaguar', 'Food', 'Jaguar', 'foodjaguar@gmail.com', '09123456789', '$2y$10$psqbNLa7wW26pUmzfujIRuobay6wn3H9GhCpWMDtRwerXgFOllbvG', 'PRMSU', '0', 'Yes', 1, '2023-01-22 00:21:01');
 
 -- --------------------------------------------------------
 
@@ -184,7 +207,11 @@ CREATE TABLE `user_orders` (
   `title` varchar(255) NOT NULL,
   `quantity` int(255) NOT NULL,
   `price` decimal(10,2) NOT NULL,
+  `original_price` decimal(10,2) NOT NULL,
   `mop` varchar(255) NOT NULL,
+  `s_fee` decimal(10,2) NOT NULL,
+  `s_address` varchar(255) NOT NULL,
+  `original_address` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
   `order_number` int(255) NOT NULL,
   `date` timestamp NOT NULL
@@ -194,10 +221,34 @@ CREATE TABLE `user_orders` (
 -- Dumping data for table `user_orders`
 --
 
-INSERT INTO `user_orders` (`o_id`, `u_id`, `title`, `quantity`, `price`, `mop`, `status`, `order_number`, `date`) VALUES
-(45, 1, 'Dinuguan', 1, '100.00', 'deliver', '', 1, '2023-01-20 19:32:14'),
-(47, 1, 'Coca-cola (Can)', 1, '50.00', 'deliver', '', 1, '2023-01-20 19:32:14'),
-(48, 1, 'Meatballs Penne Pasta', 1, '10.00', 'deliver', 'closed', 1, '2023-01-20 19:32:14');
+INSERT INTO `user_orders` (`o_id`, `u_id`, `title`, `quantity`, `price`, `original_price`, `mop`, `s_fee`, `s_address`, `original_address`, `status`, `order_number`, `date`) VALUES
+(79, 1, 'Meatballs Penne Pasta', 1, '10.00', '0.00', 'deliver', '0.00', '', '', '', 1, '2023-01-21 03:05:35'),
+(80, 1, 'Spring Rolls', 1, '6.00', '0.00', 'deliver', '0.00', '', '', '', 1, '2023-01-21 03:05:35'),
+(81, 1, 'Crispy Chicken Strips', 1, '8.00', '0.00', 'deliver', '0.00', '', '', '', 1, '2023-01-21 03:05:35'),
+(82, 1, 'Yorkshire Lamb Patties', 1, '14.00', '0.00', 'deliver', '0.00', '', '', '', 1, '2023-01-21 03:05:35'),
+(83, 1, 'Lobster Thermidor', 2, '72.00', '0.00', 'deliver', '0.00', '', '', 'rejected', 1, '2023-01-21 03:05:35'),
+(84, 1, 'Stuffed Jacket Potatoes', 1, '8.00', '0.00', 'deliver', '0.00', '', '', 'rejected', 1, '2023-01-21 03:05:35'),
+(85, 1, 'Chicken Madeira', 1, '23.00', '0.00', 'deliver', '0.00', '', '', 'rejected', 1, '2023-01-21 03:05:35'),
+(86, 1, 'Pink Spaghetti Gamberoni', 1, '21.00', '0.00', 'deliver', '0.00', '', '', 'rejected', 1, '2023-01-21 03:05:35'),
+(87, 1, 'Lemon Grilled Chicken And Pasta', 4, '44.00', '0.00', 'deliver', '0.00', '', '', '', 2, '2023-01-21 03:08:44'),
+(88, 1, 'Spring Rolls', 1, '6.00', '0.00', 'deliver', '0.00', '', '', '', 3, '2023-01-21 06:36:02'),
+(89, 1, 'Crispy Chicken Strips', 1, '8.00', '0.00', 'deliver', '0.00', '', '', '', 3, '2023-01-21 06:36:02'),
+(90, 1, 'Stuffed Jacket Potatoes', 1, '8.00', '0.00', 'deliver', '0.00', '', '', '', 3, '2023-01-21 06:36:02'),
+(91, 1, 'Spring Rolls', 1, '6.00', '0.00', 'pick-up', '0.00', '', '', '', 4, '2023-01-21 06:52:32'),
+(92, 1, 'Crispy Chicken Strips', 1, '8.00', '0.00', 'pick-up', '0.00', '', '', '', 4, '2023-01-21 06:52:32'),
+(93, 1, 'Stuffed Jacket Potatoes', 1, '8.00', '0.00', 'pick-up', '0.00', '', '', '', 4, '2023-01-21 06:52:32'),
+(94, 1, 'Lobster Thermidor', 1, '36.00', '0.00', 'pick-up', '0.00', '', '', '', 5, '2023-01-21 06:53:54'),
+(95, 1, 'Mac N Cheese Bites', 3, '27.00', '0.00', 'pick-up', '0.00', '', '', '', 5, '2023-01-21 06:53:54'),
+(99, 2, 'Stuffed Jacket Potatoes', 1, '8.00', '0.00', 'deliver', '0.00', '', '', 'rejected', 7, '2023-01-21 16:21:30'),
+(108, 2, 'Manchurian Chicken', 1, '11.00', '0.00', 'deliver', '5.00', 'ccit', '', '', 10, '2023-01-23 04:23:10'),
+(109, 2, 'Stuffed Jacket Potatoes', 5, '40.00', '0.00', 'deliver', '5.00', 'ccit', '', '', 10, '2023-01-23 04:23:10'),
+(110, 2, 'Lobster Thermidor', 1, '36.00', '0.00', 'pick-up', '0.00', 'ccit', 'PRMSU', '', 11, '2023-01-23 04:37:37'),
+(111, 2, 'Lobster Thermidor', 2, '72.00', '0.00', 'deliver', '5.00', 'CON', 'PRMSU', '', 12, '2023-01-23 15:12:28'),
+(112, 2, 'Prawn Crackers', 5, '35.00', '0.00', 'deliver', '5.00', 'CON', 'PRMSU', '', 12, '2023-01-23 15:12:28'),
+(113, 2, 'Signature Potato Twisters', 5, '30.00', '0.00', 'deliver', '5.00', 'CON', 'PRMSU', '', 12, '2023-01-23 15:12:28'),
+(114, 2, 'Dinuguan', 1, '100.00', '100.00', 'deliver', '5.00', '', 'PRMSU', '', 13, '2023-01-23 17:06:38'),
+(115, 2, 'Meatballs Penne Pasta', 5, '50.00', '10.00', 'deliver', '5.00', '', 'PRMSU', '', 13, '2023-01-23 17:06:38'),
+(116, 2, 'Coca-cola (Can)', 2, '100.00', '50.00', 'deliver', '5.00', '', 'PRMSU', '', 13, '2023-01-23 17:06:38');
 
 --
 -- Indexes for dumped tables
@@ -220,6 +271,12 @@ ALTER TABLE `dishes`
 --
 ALTER TABLE `food_category`
   ADD PRIMARY KEY (`f_catid`);
+
+--
+-- Indexes for table `orders`
+--
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `remark`
@@ -253,31 +310,37 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `dishes`
 --
 ALTER TABLE `dishes`
-  MODIFY `d_id` int(222) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `d_id` int(222) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `food_category`
 --
 ALTER TABLE `food_category`
-  MODIFY `f_catid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `f_catid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `orders`
+--
+ALTER TABLE `orders`
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `remark`
 --
 ALTER TABLE `remark`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `u_id` int(222) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `u_id` int(222) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `user_orders`
 --
 ALTER TABLE `user_orders`
-  MODIFY `o_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `o_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
