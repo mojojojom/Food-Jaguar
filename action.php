@@ -189,11 +189,11 @@ if(isset($_POST['action'])) {
                 // // SENDINBLUE
                 // $mail->SMTPAuth = true;
                 // $mail->SMTPSecure = 'PHPMailer::ENCRYPTION_SMTPS';
-                // $mail->Host = "smtp-relay.sendinblue.com";
+                // $mail->Host = "";
                 // $mail->Port = 587;
                 // $mail->IsHTML(true);
-                // $mail->Username = "foodjaguar.prmsu@gmail.com";
-                // $mail->Password = "I1XpFTydnEZgBhMf";
+                // $mail->Username = "";
+                // $mail->Password = "";
 
                 // $mail->SetFrom("foodjaguar.prmsu@gmail.com");
                 // $mail->Subject = "Reset Code";
