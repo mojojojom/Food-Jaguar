@@ -155,6 +155,17 @@
                             'error'
                         );
                     }
+                    else if(response == "error_send") 
+                    {
+                        $('input.r__register-btn').val('Register');
+                        $('input.r__register-btn').removeClass('disabled');
+                        $('input.r__register-btn').prop('disabled', false);
+                        Swal.fire(
+                            'Something went wrong!',
+                            'Verification Code Cannot Be Send!',
+                            'error'
+                        );
+                    }
                     else if(response == "error_num") 
                     {
                         $('input.r__register-btn').val('Register');

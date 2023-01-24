@@ -124,7 +124,6 @@ if(isset($_POST['action'])) {
             {
                 echo 'error_not_match';
             }
-            // echo 'success';
         }
 
     }
@@ -186,25 +185,17 @@ if(isset($_POST['action'])) {
 
                 // $mail = new PHPMailer(true);
                 // $mail->IsSMTP();
-            
-                // MAILCHIMP
+
+                // // SENDINBLUE
                 // $mail->SMTPAuth = true;
                 // $mail->SMTPSecure = 'PHPMailer::ENCRYPTION_SMTPS';
-                // $mail->Host = "smtp.mandrillapp.com";
+                // $mail->Host = "smtp-relay.sendinblue.com";
                 // $mail->Port = 587;
                 // $mail->IsHTML(true);
-                // $mail->Username = "Food Jaguar";
-                // $mail->Password = "md-O5NbbOBhdFIKuJsqhFjMWg";
+                // $mail->Username = "foodjaguar.prmsu@gmail.com";
+                // $mail->Password = "I1XpFTydnEZgBhMf";
 
-                // MAILTRAP
-                // $mail->Host = 'smtp.mailtrap.io';
-                // $mail->SMTPAuth = true;
-                // $mail->Port = 2525;
-                // $mail->IsHTML(true);
-                // $mail->Username = '2e0ca7296420a2';
-                // $mail->Password = '92a5b85ea84342';
-
-                // $mail->SetFrom("foodjaguar@gmail.com");
+                // $mail->SetFrom("foodjaguar.prmsu@gmail.com");
                 // $mail->Subject = "Reset Code";
                 // $mail->Body = 'Your Password Reset Code : "'.$r_code.'"';
                 // $mail->AddAddress($resetEmail);

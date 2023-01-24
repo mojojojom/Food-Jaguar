@@ -4,20 +4,22 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="">
+        <meta name="title" content="Food Jaguar">
+        <meta name="description" content="Food Jaguar is a website application that let the students from President Ramon Magsaysay State University to order their foods from this web app.">
+        <meta name="keywords" content="food, food ordering system, online food, student meal, students">
+        <meta name="robots" content="noindex, nofollow">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="language" content="English">
+
         <link rel="icon" href="#">
         <title>Food Jaguar</title>
         <!-- FONTS -->
         <link rel="stylesheet" href="fonts/BebasNeue-Regular.ttf">
         <!-- BOOTSTRAP -->
         <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"> -->
-        <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
         <!-- FONTAWESOME -->
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
         <!-- ANIMSITION -->
         <link href="css/animsition.min.css" rel="stylesheet">
         <!-- ANIMATE -->
@@ -78,7 +80,6 @@
                             ?>
                             <li class="nav-item">
                                 <div class="m__menu-header-cart-wrap">
-                                    <!-- <a href="#cartModal" class="m__menu-header-cart nav-link mx-2 position-relative p-font" data-bs-toggle="modal" data-bs-target="#cartModal"> -->
                                     <a class="m__menu-header-cart nav-link mx-2 position-relative p-font" data-bs-toggle="offcanvas" href="#cartSideMenu" role="button" aria-controls="cartSideMenu">
                                         <i class="fa-solid fa-cart-shopping position-relative">
                                             <span id="cart_num" class="cart_num position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger m__menu-header-order fw-semibold">
