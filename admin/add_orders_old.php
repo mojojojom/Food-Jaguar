@@ -89,20 +89,6 @@
                         <li class="breadcrumb-item active">Orders</li>
                     </ol>
 
-                    <p>sample</p>
-                    <?php
-                        $get_all = mysqli_query($db, "SELECT users.*, user_orders.* FROM users JOIN user_orders ON users.u_id = user_orders.u_id GROUP BY user_orders.order_number");
-                        if($get_all) {
-                            while($items = mysqli_fetch_assoc($get_all)) {
-                                ?>
-                                <p><?=$items['u_id']?></p>
-                                <?php
-                            }
-                        } else {
-                            echo "Error: " . mysqli_error($db);
-                        }
-                    ?>
-
                     <!-- ORDERS LIST -->
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
@@ -127,6 +113,7 @@
                             <tbody>
                                 <?php
                                     $get_orders = mysqli_query($db, "SELECT users.*, user_orders.* FROM users INNER JOIN user_orders ON users.u_id=user_orders.u_id");
+                                    // $sql="SELECT users.*, users_orders.* FROM users INNER JOIN users_orders ON users.u_id=users_orders.u_id ";
                                     if(mysqli_num_rows($get_orders) > 0) {
                                         while($rows = mysqli_fetch_array($get_orders)){
                                             $fullname = $rows['f_name'] . " " . $rows["l_name"];
@@ -297,11 +284,6 @@
     }
     include('footer.php');
 ?>
-
-    <!-- PAGE TITLE -->
-    <script>
-        document.title = "All Orders | Food Jaguar"
-    </script>
 
 <script>
     jQuery(function($) {

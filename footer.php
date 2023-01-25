@@ -523,10 +523,13 @@
                                 if(response == 'success') 
                                 {
                                     // UPDATE THE CART
-                                    updateCartItems();
+                                    // updateCartItems();
 
                                     // UPDATE CHECKOUT MODAL
                                     updateCheckout();
+
+                                    // UPDATE CHECKOUT SESSION
+                                    updateModalCheckout()
                                     
                                     // SHOW CHECKOUT MODAL
                                     $('#checkoutModal').modal('show');
@@ -728,6 +731,18 @@
                 });
             }
 
+            // UPDATE CHECKOUT MODAL SESSION
+            function updateModalCheckout() {
+                $.ajax({
+                    type: "GET",
+                    url: "checkout_session.php",
+                    success: function (response) {
+                        console.log(response);
+                    }
+                });
+            }
+
+            // UPDATE THE ITEMS IN CHECKOUT MODAL
             function updateCheckout() {
                 $.ajax({
                     type: "GET",
@@ -743,7 +758,6 @@
     <!-- JAVASCRIPT FILES -->
         <script src="js/tether.min.js"></script>
         <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script> -->
         <script src="js/animsition.min.js"></script>
         <script src="js/bootstrap-slider.min.js"></script>
         <script src="js/jquery.isotope.min.js"></script>
