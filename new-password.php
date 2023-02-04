@@ -38,7 +38,11 @@
                                         <div class="col-12">
                                             <div class="fj-input-wrap mb-3">
                                                 <label for="password">Password</label>
-                                                <input type="password" name="password" class="fj-input" placeholder="Password" required>
+                                                <!-- <input type="password" name="password" class="fj-input" placeholder="Password" required> -->
+                                                <div class="position-relative">
+                                                    <input type="password" class="fj-input password_input" name="password" placeholder="Password" required>
+                                                    <i class="fa-solid fa-eye show-password-icon"></i>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-12">

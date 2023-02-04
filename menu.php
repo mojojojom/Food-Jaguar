@@ -64,6 +64,11 @@
                         {
                             $query = mysqli_query($db, 'SELECT * FROM food_category WHERE f_catid="'.$rows['rs_id'].'"');
                             $product = mysqli_fetch_array($query);
+
+                            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
+                            while($get_stock = mysqli_fetch_array($check_stock)) {
+                                $stocks = $get_stock['d_stock'];
+                            }
                     ?>
 
                         <div class="col-12 col-sm-12 col-md- 12 col-lg-6 all <?=$product['f_catname']?>">
@@ -77,6 +82,17 @@
                                         <div>
                                             <h1 class="m__menu-list-name s-font"><?=$rows['title']?></h1>
                                             <h1 class="m__menu-price s-font">₱<?=$rows['price']?></h1>
+                                            <?php
+                                            if($stocks >= 1) {
+                                            ?>
+                                            <p class="mb-0 fw-bold" style="font-size: 14px;">STOCK (<?=$stocks?>)</p>
+                                            <?php
+                                            } else {
+                                            ?>
+                                            <p class="mb-0 fw-bold" style="font-size: 14px;">STOCK (0)</p>
+                                            <?php
+                                            }
+                                            ?>
                                         </div>
                                     </div>
 
@@ -86,8 +102,18 @@
                                             <input class="m__menu-qty" type="number" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required/>
                                         </div>
                                         <div class="m__menu-cart-wrap text-center">
+                                        <?php
+                                            if($stocks <= 0) {
+                                        ?>
+                                        <input type="button" class="m__menu-cart-btn addCartBtn add_cart_btn disabled" disabled value="OUT OF STOCK" />
+                                        <?php
+                                            } else {
+                                        ?>
                                             <input type="hidden" name="action" value="add_cart">
                                             <input type="submit" class="m__menu-cart-btn addCartBtn add_cart_btn" name="submit" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add To Cart" />
+                                        <?php
+                                            }
+                                        ?>
                                         </div>
                                     </div>
 

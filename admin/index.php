@@ -25,7 +25,11 @@
                         </div>
                         <div class=" mb-3">
                             <label class="mb-1 admin__login-input-label" for="password">PASSWORD</label>
-                            <input class="l__login-password admin__login-input" type="password" placeholder="Password" name="password">
+                            <!-- <input class="l__login-password admin__login-input" type="password" placeholder="Password" name="password"> -->
+                            <div class="position-relative">
+                                <input type="password" class="l__login-password admin__login-input password_input" name="password" placeholder="Password">
+                                <i class="fa-solid fa-eye show-password-icon"></i>
+                            </div>
                         </div>
                         <div class=" mb-4">
                             <input id="action" type="hidden" name="action" value="admin_login">
@@ -45,6 +49,13 @@
 <script>
     jQuery(function($) {
         $(document).ready(function () {
+
+            // SHOW PASSWORD 
+            $('.show-password-icon').on('click', function() {
+                var inputType = $("input.password_input").attr("type") === "text" ? "password" : "text";
+                $("input.password_input").attr("type", inputType);
+                $(this).toggleClass("fa-eye-slash fa-eye");
+            })
 
             $('#admin_login').submit(function(e) {
                 e.preventDefault();

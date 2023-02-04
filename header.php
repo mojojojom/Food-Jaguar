@@ -59,7 +59,11 @@
                         <li class="nav-item"> <a class="nav-link mx-2" href="menu">Menu <span class="sr-only"></span></a> </li>
                         <li class="nav-item d-none d-lg-block">
                             <a class="nav-link mx-2" href="index">
-                                <img src="images/icon.png" height="100" />
+                            <?php 
+                                $site_logo = mysqli_query($db, "SELECT site_logo FROM site_settings"); 
+                                $sl = mysqli_fetch_assoc($site_logo);
+                            ?>
+                                <img src="admin/images/<?=$sl['site_logo']?>" height="100" />
                             </a>
                         </li>
                         <?php

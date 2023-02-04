@@ -18,7 +18,7 @@
                         ?>
                             <div>
                                 <ul>
-                                    <li class="modal__checkout-address-wrap">
+                                <li class="modal__checkout-address-wrap">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <p class="modal__checkout-address-title mb-1"><i class="fa-sharp fa-solid fa-location-dot"></i> Delivery Address</p>
                                             <button type="button" class="c-btn-sm c-btn-3 add_address_btn" style="font-size: 12px;">ADD NEW ADDRESS</button>
@@ -40,82 +40,71 @@
                         <!-- ORDERS -->
                         <div class="modal__checkout-cart-item-heading-wrap">
                             <p class="modal__checkout-address-title mb-1"><i class="fa-solid fa-cart-shopping"></i> Your Orders</p>
-                        </div>
-                        <div class="modal__checkout-orders-wrap" id="modal__checkout-orders-wrap">
-                            <?php
-                            session_start();
-                            if(empty($_SESSION['check_cart_item'])){
-                            ?>
+                        </div>                    
+                    
+                    <?php
+                        if(empty($_SESSION['check_cart_item'])){
+                        ?>
 
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <span class="alert alert-danger text-center w-100 fw-bold">YOUR CART IS EMPTY!</span>
-                                </div>
+                            <div class="w-100 d-flex align-items-center justify-content-center">
+                                <span class="alert alert-danger text-center w-100 fw-bold">YOUR CART IS EMPTY!</span>
+                            </div>
 
-                            <?php
-                            }
-                            else {
-                            ?>
-                                <!-- ORDERS -->
-                                <div class="modal__checkout-cart-item-heading-wrap">
-                                    <p class="modal__checkout-address-title mb-1"><i class="fa-solid fa-cart-shopping"></i> Your Orders</p>
-                                </div>
-                                <?php
-                                    if(isset($_SESSION['check_cart_item'])) 
-                                    {
-                                        $total_price = 0;
-                                        $total_quantity = 0;
-                                        foreach($_SESSION['check_cart_item'] as $item) 
-                                        {
-                                            $total_price += ($item['price']*$item['quantity']);
-                                            $get_menu = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
-                                            if(mysqli_num_rows($get_menu) > 0) {
-                                                while($menu = mysqli_fetch_array($get_menu)) {
-                                ?>
-                                            <div class="modal__checkout-wrap card p-2 mb-2 ms-3">
-                                                <div class="row w-100">
-                                                    <div class="modal__checkout-item-img-wrap col-3 pe-0">
-                                                        <img src="admin/Res_img/dishes/<?=$menu["img"]?>" class="modal__checkout-item-img img-thumbnail" alt="Item">
-                                                    </div>
-                                                    <div class="modal__checkout-item-desc-wrap col-9">
-                                                        <p class="modal__checkout-item-name mb-1"><?=$menu["title"]?></p>
-                                                        <?php
-                                                            $get_desc = mysqli_query($db, "SELECT substring(slogan, 1 , 80) as excerpt FROM dishes WHERE d_id='".$item['id']."'");
-                                                            if(mysqli_num_rows($get_desc) > 0) {
-                                                                while($row = mysqli_fetch_assoc($get_desc)) {
-                                                            ?>
-                                                            <p class="modal__checkout-item-desc mb-2"><?=$row['excerpt']?>...</p>
-                                                            <?php
-                                                                }
-                                                            } else {
-                                                            ?>
-                                                            <p class="modal__checkout-item-desc mb-2">No Description Available.</p>
-                                                            <?php
-                                                            }
-                                                        ?>
-                                                        <div class="modal__checkout-item-price-qty-wrap">
-                                                            <p class="modal__checkout-item-price mb-0">₱<?=$menu['price']?></p>
-                                                            <p class="modal__checkout-item-qty mb-0">x<?=$item['quantity']?></p>
-                                                        </div>
-                                                    </div>
+                        <?php
+                        }
+                        else {
+                    ?>
+                        <?php
+                            if(isset($_SESSION['check_cart_item'])) 
+                            {
+                                $total_price = 0;
+                                $total_quantity = 0;
+                                foreach($_SESSION['check_cart_item'] as $item) 
+                                {
+                                    $get_menu = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
+                                    if(mysqli_num_rows($get_menu) > 0) {
+                                        while($menu = mysqli_fetch_array($get_menu)) {
+                        ?>
+                                    <div class="modal__checkout-wrap card p-2 mb-2 ms-3">
+                                        <div class="row w-100">
+                                            <div class="modal__checkout-item-img-wrap col-3 pe-0">
+                                                <img src="admin/Res_img/dishes/<?=$menu["img"]?>" class="modal__checkout-item-img img-thumbnail" alt="Item">
+                                            </div>
+                                            <div class="modal__checkout-item-desc-wrap col-9">
+                                                <p class="modal__checkout-item-name mb-1"><?=$menu["title"]?></p>
+                                                <?php
+                                                    $get_desc = mysqli_query($db, "SELECT substring(slogan, 1 , 80) as excerpt FROM dishes WHERE d_id='".$item['id']."'");
+                                                    if(mysqli_num_rows($get_desc) > 0) {
+                                                        while($row = mysqli_fetch_assoc($get_desc)) {
+                                                    ?>
+                                                    <p class="modal__checkout-item-desc mb-2"><?=$row['excerpt']?>...</p>
+                                                    <?php
+                                                        }
+                                                    } else {
+                                                    ?>
+                                                    <p class="modal__checkout-item-desc mb-2">No Description Available.</p>
+                                                    <?php
+                                                    }
+                                                ?>
+                                                <div class="modal__checkout-item-price-qty-wrap">
+                                                    <p class="modal__checkout-item-price mb-0">₱<?=$menu['price']?></p>
+                                                    <p class="modal__checkout-item-qty mb-0">x<?=$item['quantity']?></p>
                                                 </div>
                                             </div>
-                                <?php
-                                                }
-                                            }
+                                        </div>
+                                    </div>
+                                
+                                    <hr class="modal__checkout-divider">
+                        <?php
                                         }
                                     }
                                 }
-                            ?>
-                        </div>
-
+                            }
+                        }
+                    ?>
                         <div class="modal__checkout-total-wrap">
                             <div class="card">
                                 <div class="card-body d-flex align-items-center justify-content-between">
-                                    <?php 
-                                        $item_count = count($_SESSION['check_cart_item']);
-                                    ?>
-                                    <p class="mb-0">Order Total(<?=$item_count?>)</p>
-                                    <!-- <p class="mb-0">₱<?=$total_price?></p> -->
                                 </div>
                             </div>
                         </div>
@@ -127,7 +116,11 @@
                         <div class="modal__checkout-mop-wrap">
                             <label for="shippingOption">Select Shipping Option</label>
                             <select class="form-select shipping_option" aria-label="Default select example" required>
-                                <option value="deliver"selected>Delivery (₱5.00)</option>
+                                <?php
+                                    $sfee = mysqli_query($db, "SELECT s_fee FROM shipping_settings"); 
+                                    $sf = mysqli_fetch_assoc($sfee);
+                                ?>
+                                <option value="deliver"selected>Delivery (₱<?=$sf['s_fee']?>)</option>
                                 <option value="pick-up">Pick-up</option>
                             </select>
                         </div>
@@ -147,7 +140,7 @@
         </div>
         
         <!-- CART SIDEBAR -->
-        <div class="offcanvas offcanvas-end" data-bs-backdrop="static" tabindex="-1" id="cartSideMenu" aria-labelledby="cartSideMenuLabel">
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSideMenu" aria-labelledby="cartSideMenuLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title fw-bold" id="offcanvasExampleLabel">YOUR CART</h5>
                 <!-- <button type="button" class="btn-close text-light" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
@@ -262,8 +255,18 @@
             <div class="container">
                 <div class="fj__inner-wrap row">
                     <div class="col-12 col-sm-12 col-md-6 col-lg-4 fj__footer-img-wrap text-start d-flex align-items-center justify-content-center justify-content-sm-center justify-content-md-start">
-                        <img src="images/icon.png" alt="">
-                        <a href="./" class="fj__footer-site-title p-font mb-0 mt-2 ms-3">FOOD JAGUAR</a>
+                        <?php 
+                            $site_logo = mysqli_query($db, "SELECT site_logo FROM site_settings"); 
+                            $sl = mysqli_fetch_assoc($site_logo);
+                        ?>
+                        <img src="admin/images/<?=$sl['site_logo']?>"/>
+                        <a href="./" class="fj__footer-site-title p-font mb-0 mt-2 ms-3">
+                        <?php 
+                            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                            $sn = mysqli_fetch_assoc($site_name);
+                            echo $sn['site_name'];
+                        ?>
+                        </a>
                     </div>
                     <div class="col-12 col-sm-12 col-md-6 col-lg-4 fj__footer-links-wrap d-flex align-items-center justify-content-center py-4 py-sm-4 py-md-0 py-lg-0">
                         <ul class="mx-auto gap-5 d-flex mb-0">
@@ -281,7 +284,13 @@
                     </div>
                 </div>
                 <div class="fj__copyright-wrap pt-4">
-                    <p class="s-font fj__copyright mb-0">Copyright © <?= date('Y') ?> <a href="./">Food Jaguar</a></p>
+                    <p class="s-font fj__copyright mb-0">Copyright © <?= date('Y') ?> <a href="./">
+                    <?php 
+                        $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                        $sn = mysqli_fetch_assoc($site_name);
+                        echo $sn['site_name'];
+                    ?>
+                    </a></p>
                 </div>
             </div>
         </footer>
@@ -341,7 +350,6 @@
 
                                     // UPDATE CART NUMBER
                                     setInterval(updateCart, 1000);
-                                    // updateCart();
                                 }
                                 else if(response == 'error_cart') 
                                 {
@@ -525,11 +533,12 @@
                                     // UPDATE THE CART
                                     // updateCartItems();
 
+                                    // UPDATE CHECKOUT SESSION
+                                    updateModalCheckout()
+
                                     // UPDATE CHECKOUT MODAL
                                     updateCheckout();
 
-                                    // UPDATE CHECKOUT SESSION
-                                    updateModalCheckout()
                                     
                                     // SHOW CHECKOUT MODAL
                                     $('#checkoutModal').modal('show');
@@ -567,6 +576,14 @@
                                         }
                                     })
                                 }
+                                else if(response == 'error_qty')
+                                {
+                                    Swal.fire(
+                                        'Unable To Checkout!',
+                                        'Invalid Quantity!',
+                                        'info'
+                                    );
+                                }
                                 else
                                 {
                                     Swal.fire(
@@ -602,7 +619,6 @@
                     })
 
                     // ADD ADDRESS
-                    // $('button.add_address_btn').on('click', function() {
                     $('.checkout_modal-wrap').on('click', '.add_address_btn', function() {
                         $(this).toggleClass('show');
                         if($(this).hasClass('show')) {
@@ -698,6 +714,15 @@
                     });
 
                     updateCart();
+
+
+                    // SHOW PASSWORD 
+                    $('.show-password-icon').on('click', function() {
+                        var inputType = $("input.password_input").attr("type") === "text" ? "password" : "text";
+                        $("input.password_input").attr("type", inputType);
+                        $(this).toggleClass("fa-eye-slash fa-eye");
+                    })
+
                 })
             })
 
@@ -720,7 +745,7 @@
                 $('.cart_num').html(cartNumber);
             }
 
-            // NEW FUNCTION
+            // UPDATE CART ITEMS
             function updateCartItems() {
                 $.ajax({
                     type: "GET",

@@ -11,8 +11,21 @@
     <section class="h__banner-wrap">
         <div class="container h-100 d-flex align-items-center">
             <div class="h__banner-content-wrap text-center">
-                <h1 class="h__banner-heading p-font">WELCOME TO FOOD JAGUAR!</h1>
-                <p class="h__banner-sub-heading s-font">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad libero accusamus, velit magni cum voluptatum ea repudiandae ipsa voluptates nihil labore enim laborum ullam expedita provident commodi aliquam. Laboriosam, beatae?</p>
+                <h1 class="h__banner-heading p-font">
+                    WELCOME TO                         
+                    <?php 
+                        $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                        $sn = mysqli_fetch_assoc($site_name);
+                    ?>
+                    <?=$sn['site_name']?>!
+                </h1>
+                <p class="h__banner-sub-heading s-font">
+                    <?php
+                    $site_tag = mysqli_query($db, "SELECT site_tag FROM site_settings");
+                    $st = mysqli_fetch_assoc($site_tag);
+                    ?>
+                    <?=$st['site_tag']?>
+                </p>
                 <a href="#menu" class="h__banner-btn c-btn-1 s-font">ORDER NOW</a>
             </div>
         </div>
@@ -31,12 +44,20 @@
                     <div class="col-12 col-sm-12 col-md-12 col-lg-6">
                         <div class="h__about-inner-content-wrap">
                             <p class="h__about-content-sub-heading p-font mb-0 ls-1">ABOUT</p>
-                            <h1 class="h__about-content-heading p-font ls-1 mb-0">FOOD JAGUAR</h1>
-                            <p class="h__about-content-desc s-font mb-4">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Perferendis tempora minus vitae officiis harum fugit! Illum facilis in quo eaque dicta asperiores laboriosam provident fugiat accusantium architecto blanditiis, inventore ex!
-                            Incidunt quis unde odit harum, quo facilis culpa delectus voluptates ex impedit libero distinctio recusandae itaque ipsum assumenda provident quam, dolorem, numquam cum corporis! Illum eum cum adipisci voluptatem nihil!
-                            Quia debitis dolorum itaque molestiae, neque sequi vitae nobis voluptatibus minus omnis iusto corrupti inventore nihil temporibus iure mollitia dolore reprehenderit ab id excepturi autem impedit? Accusantium quis ut incidunt.
-                            Illo suscipit magni ratione. Facilis cumque, hic voluptatum quo numquam quis dolor debitis neque, iure necessitatibus officia, ipsum modi aut. Perferendis dicta neque explicabo labore quas autem blanditiis nam! Eos!
-                            Reprehenderit dolorum delectus, tempore expedita cum culpa illo non magni quas qui tenetur laboriosam ipsum aut, odio, fugiat sint nobis corrupti repudiandae sed commodi. Culpa officiis consequatur soluta beatae odit?</p>
+                            <h1 class="h__about-content-heading p-font ls-1 mb-0">
+                            <?php 
+                                $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                                $sn = mysqli_fetch_assoc($site_name);
+                            ?>
+                            <?=$sn['site_name']?>
+                            </h1>
+                            <p class="h__about-content-desc s-font mb-4">
+                            <?php 
+                                $site_desc = mysqli_query($db, "SELECT site_about FROM site_settings"); 
+                                $sd = mysqli_fetch_assoc($site_desc);
+                            ?>
+                            <?=$sd['site_about']?>
+                            </p>
                             <a href="about" class="c-btn-3 h__about-content-btn">LEARN MORE</a>
                         </div>
                     </div>
@@ -59,7 +80,7 @@
                 <div class="h__menu-list-wrap">
                     <div class="row">
                         <?php
-                            $menu = mysqli_query($db, "SELECT * FROM dishes WHERE rs_id = 1 LIMIT 6");
+                            $menu = mysqli_query($db, "SELECT * FROM dishes LIMIT 6");
                             while($rows=mysqli_fetch_array($menu))
                             {
                         ?>
@@ -113,8 +134,23 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
+                                            <?php
+                                                $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
+                                                while($get_stock = mysqli_fetch_array($check_stock)) {
+                                                    $stocks = $get_stock['d_stock'];
+                                                }
+                                                
+                                                if($stocks <= 0) {
+                                            ?>
+                                            <input type="button" class="c-btn-3 disabled" disabled value="OUT OF STOCK">
+                                            <?php
+                                                } else {
+                                            ?>
                                             <input type="hidden" name="action" class="add_action" value="add_cart">
-                                            <input type="submit" name="submit" class="c-btn-3 add_cart_btn" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add to Cart">
+                                            <input type="submit" name="submit" class="c-btn-3 add_cart_btn" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add to Cart" data-bs-dismiss="modal">
+                                            <?php
+                                                }
+                                            ?>
                                         </div>
                                     </form>
 
@@ -136,32 +172,6 @@
             </div>
         </div>
     </section>
-
-    <div class="container">
-        <?php
-            // if(isset($_SESSION['cart_item'])) {
-            //     foreach($_SESSION['cart_item'] as $item) {
-            session_start();
-            // if(isset($_SESSION['check_cart_item'])) {
-            foreach($_SESSION['check_cart_item'] as $item) {
-                $query = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
-                if(mysqli_num_rows($query) > 0) {
-                    while($menu = mysqli_fetch_array($query)) {
-        ?>
-                <p><?=$menu['title']?></p>
-                <p><?=$item['id']?></p>
-                <p><?=$item['quantity']?></p>
-                <p><?=$menu['price']?></p>
-        <?php
-                    }    
-            } else {
-        ?>
-                <p>NO ITEMS!</p>
-        <?php
-                }
-            }
-        ?>
-    </div>
 
     <script>
         document.title = "Food Jaguar"
@@ -193,7 +203,6 @@
                     if(response == 'success') 
                     {
                         // SECOND SECTION
-
                         // UPDATE THE CART
                         updateCartItems();
 

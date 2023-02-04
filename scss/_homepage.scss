@@ -138,9 +138,10 @@
             }
         }
         &-name {
-            font-size: 25px;
+            font-size: 20px;
             font-weight: bolder;
             text-align: center;
+            min-height: 50px;
             @include media('<desktop') {
                 min-height: 40px;
                 font-size: 20px;
@@ -156,6 +157,7 @@
             font-size: 14px;
             font-weight: normal;
             color: $desc-col;
+            margin-bottom: 0;
             &-wrap {
                 min-height: 120px;
                 text-align: center;

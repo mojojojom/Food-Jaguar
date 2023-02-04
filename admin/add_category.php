@@ -15,7 +15,13 @@
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="dashboard"><b>FOOD JAGUAR</b></a>
+        <a class="navbar-brand ps-3" href="dashboard"><b>
+        <?php 
+            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+            $sn = mysqli_fetch_assoc($site_name);
+            echo $sn['site_name'];
+        ?>
+        </b></a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -47,6 +53,10 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
+                        <a class="nav-link" href="site_settings">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></i></div>
+                            Site
+                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed active" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -57,9 +67,6 @@
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link" href="all_menu">
                                     All Menu
-                                </a>
-                                <a class="nav-link" href="add_menu">
-                                    Add Menu
                                 </a>
                                 <a class="nav-link active" href="add_category">
                                     Add Category
@@ -87,6 +94,15 @@
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Category</li>
                     </ol>
+
+                    <!-- MESSAGE -->
+                    <?php
+                        if(isset($_SESSION['message'])) {
+                            echo $_SESSION['message'];
+                            unset($_SESSION['message']);
+                        }
+                    ?>
+
                     <div class="row">
                         <div class="col-lg-12 mb-5">
                             <div class="card p-5 card-outline-primary">
@@ -96,7 +112,10 @@
                                             <div class="col-md-12">
                                                 <div class="form-group mb-3">
                                                     <label class="control-label">Category Name</label>
-                                                    <input type="text" name="f_catname" class="form-control new_cat" >
+                                                    <input type="text" title="Category" name="f_catname" class="form-control new_cat" placeholder="Enter Category">
+                                                    <div class="invalid-feedback d-flex">
+                                                    Category Name should be separated by "-" only.
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -127,7 +146,7 @@
                                                     $query=mysqli_query($db,$sql);
                                                         if(!mysqli_num_rows($query) > 0 )
                                                         {
-                                                            echo '<td colspan="7"><center>No Categories-Data!</center></td>';
+                                                            echo '<td colspan="7"><center>No Categories Data!</center></td>';
                                                         }
                                                         else
                                                         {				
@@ -138,7 +157,6 @@
                                                                     <td><?=$rows['f_catname']?></td>
                                                                     <td class="text-center">
                                                                         <a href="#edit_cat<?=$rows['f_catid']?>" class="mx-2" data-bs-toggle="modal" data-bs-target="#edit_cat<?=$rows['f_catid']?>"><i class="fa-solid fa-pen-to-square"></i></i></a>
-                                                                        <!-- <a href="delete_category.php?cat_del=<?=$rows['f_catid']?>" class="mx-2"><i class="fa-solid fa-trash text-danger"></i></a>  -->
                                                                         <a href="#delete_cat<?=$rows['f_catid']?>" class="mx-2" data-bs-toggle="modal" data-bs-target="#delete_cat<?=$rows['f_catid']?>"><i class="fa-solid fa-trash text-danger"></i></a> 
                                                                     </td>
                                                                 </tr>
@@ -220,7 +238,13 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; <b>Food Jaguar</b> <?= date('Y')?></div>
+                        <div class="text-muted">Copyright &copy; <b>
+                        <?php 
+                            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                            $sn = mysqli_fetch_assoc($site_name);
+                            echo $sn['site_name'];
+                        ?>
+                        </b> <?= date('Y')?></div>
                     </div>
                 </div>
             </footer>
@@ -238,12 +262,12 @@
 <script>
     jQuery(function($) {
         $(document).ready(function () {
-            $('#catTable').DataTable();
+            // $('#catTable').DataTable();
 
-            $("input.new_cat").on("input", function(e) {
-                var input = $(this);
-                input.val(input.val().replace(/\s/g, ''));
+            $("input.new_cat").keyup(function() {
+                $(this).val($(this).val().trim());
             });
+
 
             // ADD CATEGORY
             $('.add_cat').on('click', function(e) {
@@ -288,7 +312,6 @@
             })
 
             // EDIT CATEGORY
-            // $('.edit_cat-btn').on('click', function(e) {
             $('.edit_modal').on('click', '.edit_cat-btn', function(e) {
                 e.preventDefault();
                 var id = $(this).data('id');
@@ -333,6 +356,7 @@
             // DELETE CATEGORY
             // $('.delete_cat-btn').on('click', function(e) {
             $('.delete_modal').on('click', '.delete_cat-btn', function(e) {
+            // $('#menu_table').on('click', '.delete_cat-btn', function(e) {
                 e.preventDefault();
                 var id = $(this).data('id');
                 $('#delete_cat'+id).modal();

@@ -11,11 +11,58 @@
         $query = mysqli_query($db, "SELECT * FROM admin WHERE adm_id='".$_SESSION['adm_id']."'");
         while($row = mysqli_fetch_array($query)) {
         include('header.php');
+
+
+        // SHIPPING
+        if($_POST['action'] == 'set_sfee') {
+            $s_fee = $_POST['s_fee'];
+            $insert_fee = mysqli_query($db, "INSERT INTO shipping_settings (s_fee) VALUES ('$s_fee')");
+            if($insert_fee) {
+                $_SESSION['message'] = '
+                <div class="alert alert-success alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
+                    SHIPPING FEE HAS BEEN SET.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                ';
+            } else {
+                $_SESSION['message'] = '
+                <div class="alert alert-danger alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
+                    SHIPPING FEE CANNOT BE SET!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                ';
+            }
+        }
+        if($_POST['action'] == 'update_sfee') {
+            $s_fee = $_POST['s_fee'];
+            $insert_fee = mysqli_query($db, "UPDATE shipping_settings SET s_fee = '$s_fee'");
+            if($insert_fee) {
+                $_SESSION['message'] = '
+                <div class="alert alert-success alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
+                    SHIPPING FEE HAS BEEN SET.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                ';
+            } else {
+                $_SESSION['message'] = '
+                <div class="alert alert-danger alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
+                    SHIPPING FEE CANNOT BE SET!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                ';
+            }
+        }
     ?>
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="dashboard"><b>FOOD JAGUAR</b></a>
+        <a class="navbar-brand ps-3" href="dashboard"><b>
+        <?php 
+            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+            $sn = mysqli_fetch_assoc($site_name);
+            echo $sn['site_name'];
+        ?>
+        </b></a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -47,6 +94,10 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
+                        <a class="nav-link" href="site_settings">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></div>
+                            Site
+                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -57,9 +108,6 @@
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link" href="all_menu">
                                     All Menu
-                                </a>
-                                <a class="nav-link" href="add_menu">
-                                    Add Menu
                                 </a>
                                 <a class="nav-link" href="add_category">
                                     Add Category
@@ -87,6 +135,45 @@
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Dashboard</li>
                     </ol>
+
+                    <!-- MESSAGE -->
+                    <?php
+                        if(isset($_SESSION['message'])) {
+                            echo $_SESSION['message'];
+                            unset($_SESSION['message']);
+                        }
+                    ?>
+                    <!-- SHIPPING FEE -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form action="" method="POST">
+                                <div class="fj-input-wrap">
+                                    <?php
+                                        $sfee = mysqli_query($db, "SELECT s_fee FROM shipping_settings"); 
+                                        $sf = mysqli_fetch_assoc($sfee);
+                                    ?>
+                                    <label for="s_fee">Shipping Fee</label>
+                                    <input type="number" name="s_fee" class="fj-input" min="1" required value="<?=$sf['s_fee']?>">
+                                </div>
+                                <?php
+                                $check_fee = mysqli_query($db, "SELECT * FROM shipping_settings");
+                                if(mysqli_num_rows($check_fee) > 0) {
+                                ?>
+                                    <input type="hidden" name="action" value="update_sfee">
+                                    <button type="submit" class="c-btn-3 c-btn-sm mt-2">SET</button>
+                                <?php
+                                } else {
+                                ?>
+                                    <input type="hidden" name="action" value="set_sfee">
+                                    <button type="submit" class="c-btn-3 c-btn-sm mt-2">SET</button>
+                                <?php
+                                }
+                                ?>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- CARDS -->
                     <div class="row">
                         <div class="col-xl-3 col-md-6">
                             <div class="card bg-primary text-white mb-4">
@@ -219,13 +306,15 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- USERS TABLER -->
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
                             <i class="fas fa-table me-1"></i>
                             <p class="mb-0 fw-bold">Users Table</p>
                         </div>
                         <div class="card-body">
-                        <table id="users_table" class="table table-striped table-bordered">
+                        <table id="users_table" class="table table-striped table-bordered users_table">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -255,7 +344,7 @@
                                                 <td class="d-flex justify-content-around admin__table-actions">
                                                     <a href="#viewModal<?php echo htmlentities($rows['u_id']);?>" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo htmlentities($rows['u_id']);?>"><i class="fas fa-eye"></i></a>
                                                     <a href="#editModal<?php echo htmlentities($rows['u_id']); ?>" data-bs-toggle="modal" data-bs-target="#editModal<?php echo htmlentities($rows['u_id']);?>"><i class="fas fa-pen"></i></a>
-                                                    <a href="" class="delete"><i class="fas fa-trash"></i></a>
+                                                    <a href="#deleteModal<?=$rows['u_id']?>" class="delete delete_user-btn" data-bs-toggle="modal" data-bs-target="#deleteModal<?=$rows['u_id']?>" data-id="<?=$rows['u_id']?>"><i class="fas fa-trash"></i></a>
                                                 </td>
                                             </tr>
 
@@ -263,7 +352,7 @@
                                             <!-- VIEW MODAL -->
                                             <div class="modal fade" id="viewModal<?php echo htmlentities($rows['u_id']);?>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
+                                                    <div class="modal-content view_user-modal">
                                                         <div class="modal-header">
                                                             <h1 class="modal-title fs-5 fw-bold" id="viewModalLabel">VIEW USER</h1>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -318,7 +407,7 @@
                                             <div class="modal fade" id="editModal<?php echo htmlentities($rows['u_id']);?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
-                                                        <form metho="POST" id="edit_user">
+                                                        <form method="POST" action="action.php" id="edit_user" class="edit_user">
                                                             <div class="modal-header">
                                                                 <h1 class="modal-title fs-5 fw-bold" id="editModalLabel">EDIT USER DETAILS</h1>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -330,30 +419,56 @@
                                                                     $full_name = $fetch['f_name'].' '.$fetch['l_name'];
                                                                 ?>
                                                                 <div class="row">
+                                                                    <input type="hidden" name="user_id" value="<?=$rows['u_id']?>">
                                                                     <div class="col-6 mb-3 fj-input-wrap">
                                                                         <label for="name">First Name</label>
-                                                                        <input type="text" name="f_name" class="fj-input" value="<?=$fetch['f_name']?>">
+                                                                        <input type="text" name="f_name" class="fj-input f_name" value="<?=$fetch['f_name']?>">
                                                                     </div>
                                                                     <div class="col-6 mb-3 fj-input-wrap">
                                                                         <label for="name">Last Name</label>
-                                                                        <input type="text" name="l_name" class="fj-input" value="<?=$fetch['l_name']?>">
+                                                                        <input type="text" name="l_name" class="fj-input l_name" value="<?=$fetch['l_name']?>">
                                                                     </div>
                                                                     <div class="col-6 mb-3 fj-input-wrap">
                                                                         <label for="name">Email</label>
-                                                                        <input type="email" name="email" class="fj-input" value="<?=$fetch['email']?>">
+                                                                        <input type="email" name="email" class="fj-input email" value="<?=$fetch['email']?>">
                                                                     </div>
                                                                     <div class="col-6 mb-3 fj-input-wrap">
                                                                         <label for="name">Phone Number</label>
-                                                                        <input type="text" name="phone" class="fj-input" value="<?=$fetch['phone']?>">
+                                                                        <input type="text" name="phone" class="fj-input phone" value="<?=$fetch['phone']?>">
                                                                     </div>
                                                                     <div class="col-12 mb-3 fj-input-wrap">
                                                                         <label for="address">Address</label>
-                                                                        <textarea name="address" rows="3" class="fj-input"><?=$fetch['address']?></textarea>
+                                                                        <textarea name="address" rows="3" class="fj-input address"><?=$fetch['address']?></textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <button type="submit" class="c-btn-3 c-btn-sm" data-bs-dismiss="modal">Save</button>
+                                                                <input type="hidden" name="u_id" value="<?=$rows['u_id']?>">
+                                                                <input type="hidden" name="action" value="edit_user">
+                                                                <button type="submit" class="c-btn-3 c-btn-sm edit_user-btn" data-id="<?=$rows['u_id']?>">Save</button>
+                                                                <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- DELETE MODAL -->
+                                            <div class="modal fade" id="deleteModal<?php echo htmlentities($rows['u_id']);?>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content view_user-modal">
+                                                        <form action="action.php" method="POST">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5 fw-bold" id="viewModalLabel">DELETE USER</h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p class="text-center">Are you sure you want to delete this user?</p>
+                                                                <input type="hidden" name="id" value="<?=$rows['u_id']?>">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <input type="hidden" name="action" value="delete_user">
+                                                                <button type="submit" class="c-btn-3 c-btn-sm">Confirm</button>
                                                                 <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
                                                             </div>
                                                         </form>
@@ -378,7 +493,13 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; <b>Food Jaguar</b> <?= date('Y')?></div>
+                        <div class="text-muted">Copyright &copy; <b>
+                        <?php 
+                            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                            $sn = mysqli_fetch_assoc($site_name);
+                            echo $sn['site_name'];
+                        ?>
+                        </b> <?= date('Y')?></div>
                     </div>
                 </div>
             </footer>
@@ -397,8 +518,94 @@
     jQuery(function($) {
         $(document).ready(function () {
             $('#users_table').DataTable();
-            // $('#users_table_previous').html('<i class="fa-solid fa-angle-left"></i>');
-            // $('#users_table_next').html('<i class="fa-solid fa-angle-right"></i>');
+
+            // EDIT USER FUNCTION
+            // $('#edit_user').on('submit', function(e) {
+            // $('#edit_user').on('click', '.edit_user-btn', function(e) {
+            // $('.edit_user-btn').on('click', function(e) {
+            //     e.preventDefault();
+            //     // var formData = $(this).serialize();
+            //     var formData = $('#edit_user').serialize();
+            //     // alert('success');
+
+            //     $.ajax({
+            //         type: "POST",
+            //         url: "action.php",
+            //         data: formData,
+            //         success: function (response) {
+            //             if(response == 'success') {
+
+            //                 // SHOW STATUS
+            //                 const Toast = Swal.mixin({
+            //                     toast: true,
+            //                     position: 'top-end',
+            //                     showConfirmButton: false,
+            //                     timer: 1500,
+            //                     timerProgressBar: true
+            //                 })
+            //                 Toast.fire({
+            //                     icon: 'success',
+            //                     title: 'User Info Has Been Edited'
+            //                 })
+
+            //                 // REFRESH THE TABLE
+            //                 // $.ajax({
+            //                 //     type: "GET",
+            //                 //     url: "get_users.php",
+            //                 //     success: function (response) {
+            //                 //         $('.users_table').empty().html(response);
+            //                 //     }
+            //                 // });
+            //                 get_users();
+            //                 get_view_user();
+
+            //             } else {
+            //                 alert(response);
+            //             }
+            //         }
+            //     });
+
+            // })
+
+            // REMOVE USER FUNCTION
+            // $('.delete_user-btn').on('click', function(e) {
+            //     e.preventDefault();
+            //     var id = $(this).data('id');
+                
+            //     $.ajax({
+            //         type: "POST",
+            //         url: "action.php",
+            //         data: {id: id, action: 'delete_user'},
+            //         success: function (response) {
+            //             if(response == 'success') {
+            //                 alert('success');
+            //             } else {
+            //                 alert('error');
+            //             }
+            //         }
+            //     });
+            // })
         })
+
+        function get_users() {
+            $.ajax({
+                type: "GET",
+                url: "get_users.php",
+                success: function (response) {
+                    $('.users_table').empty().html(response);
+                }
+            });
+        }
+
+        function get_view_user() {
+            $.ajax({
+                type: "GET",
+                url: "get_view_user.php",
+                success: function (response) {
+                    $('.view_user-modal').empty().html(response);
+                }
+            });
+        }
+
     })
 </script>

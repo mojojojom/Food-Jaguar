@@ -15,7 +15,13 @@
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="dashboard"><b>FOOD JAGUAR</b></a>
+        <a class="navbar-brand ps-3" href="dashboard"><b>
+        <?php 
+            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+            $sn = mysqli_fetch_assoc($site_name);
+            echo $sn['site_name'];
+        ?>
+        </b></a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
         <!-- Navbar Search-->
@@ -47,6 +53,10 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
+                        <a class="nav-link" href="site_settings">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></div>
+                            Site
+                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed active" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -57,9 +67,6 @@
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
                                 <a class="nav-link active" href="all_menu">
                                     All Menu
-                                </a>
-                                <a class="nav-link" href="add_menu">
-                                    Add Menu
                                 </a>
                                 <a class="nav-link" href="add_category">
                                     Add Category
@@ -88,20 +95,34 @@
                         <li class="breadcrumb-item active">Menu</li>
                     </ol>
 
+                    <!-- MESSAGE -->
+                    <?php
+                        if(isset($_SESSION['message'])) {
+                            echo $_SESSION['message'];
+                            unset($_SESSION['message']);
+                        }
+                    ?>
+
                     <!-- ORDERS LIST -->
                     <div class="card mb-4">
-                        <div class="card-header d-flex align-items-center">
-                            <i class="fas fa-table me-1"></i>
-                            <p class="mb-0 fw-bold">Menu Table</p>
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-table me-1"></i>
+                                <p class="mb-0 fw-bold">Menu Table</p>
+                            </div>
+                            <div>
+                                <a href="#add_menu_modal" class="text-decoration-none c-btn-3 c-btn-sm" data-bs-toggle="modal" data-bs-target="#add_menu_modal">ADD MENU</a>
+                            </div>
                         </div>
                         <div class="card-body">
-                        <table id="menu_table" class="table table-striped table-bordered">
+                        <table id="menu_table" class="table table-striped table-bordered table-responsive">
                             <thead>
                                 <tr>
                                     <th scope="col">Category</th>
                                     <th scope="col">Item</th>
                                     <th scope="col">Description</th>
                                     <th scope="col">Price</th>
+                                    <th scope="col">Stock</th>
                                     <th scope="col">Image</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -119,24 +140,25 @@
                                                 <td><?= $rows['title']?></td>
                                                 <td><?= $rows['slogan']?></td>
                                                 <td><?= $rows['price']?></td>
+                                                <td><?= $rows['d_stock']?></td>
                                                 <td>
                                                     <div class="col-12">
-                                                        <center><img src="Res_img/dishes/<?= $rows['img']?>" class="img-thumbnail" style="height:75px; width: 100%; object-fit: cover;" alt=""></center>
+                                                        <center><img src="Res_img/dishes/<?= $rows['img']?>" class="img-thumbnail" style="height:80px; width: 80px; object-fit: cover;" alt=""></center>
                                                     </div>
                                                 </td>
                                                 <td class="admin__table-actions text-center">
-                                                    <a href="#editModal<?php echo htmlentities($rows['d_id']); ?>"data-bs-toggle="modal" data-bs-target="#editModal<?php echo htmlentities($rows['d_id']);?>"><i class="fas fa-pen"></i></a>
-                                                    <a href="#" id="delete_order" class="delete_order" data-order="<?=$rows['o_id']?>" class="delete"><i class="fas fa-trash"></i></a>
+                                                    <a href="#editModal<?=$rows['d_id'] ?>"data-bs-toggle="modal" data-bs-target="#editModal<?=$rows['d_id']?>"><i class="fas fa-pen"></i></a>
+                                                    <a href="#deleteModal<?=$rows['d_id']?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?=$rows['d_id']?>" data-item="<?=$rows['d_id']?>"><i class="fas fa-trash"></i></a>
                                                 </td>
                                             </tr>
 
                                             <!------------------------------- MODALS ------------------------------->
 
                                             <!-- EDIT MODAL -->
-                                            <div class="modal fade" id="editModal<?php echo htmlentities($rows['d_id']);?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editModal<?=$rows['d_id']?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
-                                                        <form id="dish_form" enctype="multipart/form-data">
+                                                        <form id="dish_form" method="POST" action="action.php" enctype="multipart/form-data">
                                                             <div class="modal-header">
                                                                 <h1 class="modal-title fs-5 fw-bold" id="editModalLabel">Edit Item</h1>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -158,23 +180,28 @@
                                                                     </div>
                                                                     <div class="mb-3 col-6">
                                                                         <label for="formFile" class="form-label">Item Image</label>
-                                                                        <input class="form-control" name="dish_img" type="file" id="formFile">
+                                                                        <input class="form-control" name="dish_img" type="file" id="dish_img">
+                                                                        <img class="img-thumbnail" src="Res_img/dishes/<?=$rows['img']?>" alt="item image">
                                                                     </div>
                                                                     <div class="mb-3 col-6">
                                                                         <label for="formFile" class="form-label">Item Category</label>
                                                                         <select class="form-select" name="dish_cat" aria-label="Default select example">
-                                                                            <option selected><?=$fetch['f_catname']?></option>
+                                                                            <option selected value="<?=$fetch['f_catid']?>"><?=$fetch['f_catname']?></option>
                                                                             <?php
                                                                                 $get_category = mysqli_query($db, "SELECT * FROM food_category");
                                                                                 if(mysqli_num_rows($get_category) > 0) {
                                                                                     while($cat = mysqli_fetch_array($get_category)) {
                                                                             ?>
-                                                                                        <option><?=$cat['f_catname']?></option>
+                                                                                        <option value="<?=$cat['f_catid']?>"><?=$cat['f_catname']?></option>
                                                                             <?php
                                                                                     }
                                                                                 }
                                                                             ?>
                                                                         </select>
+                                                                    </div>
+                                                                    <div class="mb-3 col-12">
+                                                                        <label for="stock">Stocks</label>
+                                                                        <input class="form-control" type="number" name="dish_stock" value="<?=$rows['d_stock']?>">
                                                                     </div>
                                                                 </div>
 
@@ -182,7 +209,30 @@
                                                             <div class="modal-footer">
                                                                 <input type="hidden" name="action" value="edit_dish">
                                                                 <button type="submit" class="c-btn-3 c-btn-sm edit_dish" id="edit_dish" dish-id="<?=$rows['d_id']?>">Save</button>
-                                                                <button type="button" class="c-btn-5 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                                <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- DELETE MODAL -->
+                                            <div class="modal fade" id="deleteModal<?=$rows['d_id']?>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content view_user-modal">
+                                                        <form action="action.php" method="POST">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5 fw-bold" id="deleteModalLabel">DELETE ITEM</h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p class="text-center">Are you sure you want to delete this item?</p>
+                                                                <input type="hidden" name="id" value="<?=$rows['d_id']?>">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <input type="hidden" name="action" value="delete_item">
+                                                                <button type="submit" class="c-btn-3 c-btn-sm delete_dish-btn" data-id="<?=$rows['d_id']?>">Confirm</button>
+                                                                <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -195,7 +245,7 @@
                                         }
                                     } else {
                                 ?>
-                                    <td colspan="9" class="text-center fw-bold text-danger">No Orders</td>
+                                    <td colspan="9" class="text-center fw-bold text-danger">No Items in the Menu</td>
                                 <?php
                                     }
                                 ?>
@@ -211,7 +261,13 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Copyright &copy; <b>Food Jaguar</b> <?= date('Y')?></div>
+                        <div class="text-muted">Copyright &copy; <b>
+                        <?php 
+                            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                            $sn = mysqli_fetch_assoc($site_name);
+                            echo $sn['site_name'];
+                        ?>
+                        </b> <?= date('Y')?></div>
                     </div>
                 </div>
             </footer>
@@ -219,6 +275,83 @@
         <!-- END OF CONTENT -->
 
     </div>
+
+    <!-- ADD MENU MODAL -->
+    <div class="modal fade" id="add_menu_modal" tabindex="-1" aria-labelledby="add_menu_modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="action.php" method="POST" id="add_item_form" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 fw-bold" id="add_menu_modalLabel">ADD ITEM TO THE MENU</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <div class=" fj-input-wrap">
+                                    <label for="item_name">Item Name</label>
+                                    <input type="text" name="d_name" class=" fj-input" placeholder="Enter Item Name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class=" fj-input-wrap">
+                                    <label for="item_name">Item Price</label>
+                                    <input type="number" name="d_price" class=" fj-input" placeholder="Enter Item Price" required>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mb-3">
+                                <div class="fj-input-wrap">
+                                    <label for="d_desc">Item Description</label>
+                                    <textarea name="d_desc" rows="3" class="fj-input" placeholder="Enter Item Description"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="fj-input-wrap">
+                                    <label for="d_img">Item Image</label>
+                                    <input type="file" name="d_img" class=" fj-input" placeholder="12n" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class=" fj-input-wrap">
+                                    <label for="cat_name">Item Category</label>
+                                    <select name="d_cat" class="fj-input" data-placeholder="Choose a Category" tabindex="1" required>
+                                        <option>Select Category</option>
+                                        <?php 
+                                            $ssql ="select * from food_category";
+                                            $res=mysqli_query($db, $ssql); 
+                                            while($row=mysqli_fetch_array($res))  
+                                            {
+                                                echo' <option value="'.$row['f_catid'].'">'.$row['f_catname'].'</option>';;
+                                            }
+                                        ?> 
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="fj-input-wrap">
+                                    <label for="d_stock">Item Stock</label>
+                                    <input type="number" name="d_stock" class="fj-input" placeholder="Enter Item Stock" required>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="action" value="add_item">
+                        <button type="submit" class="c-btn-sm c-btn-3">ADD</button>
+                        <button type="button" class="c-btn-sm c-btn-6" data-bs-dismiss="modal">CANCEL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
 <?php
         }
@@ -230,30 +363,6 @@
     jQuery(function($) {
         $(document).ready(function () {
             $('#menu_table').DataTable();
-
-
-            // EDIT ITEM
-            $('.edit_dish').on('click', function(e) {
-                e.preventDefault();
-                var formData = $('#dish_form').serialize();
-                $.ajax({
-                    type: "POST",
-                    url: "action.php",
-                    data: formData,
-                    success: function (response) {
-                        if(response == 'success') {
-                            alert(response);
-                        } else {
-                            alert(response);
-                        }
-                    }
-                });
-            })
-
-
-            // DELETE ITEM
-
-
         })
     })
 </script>

@@ -9,7 +9,7 @@ use Dompdf\Dompdf;
 
 $html .= '
         <div class="container">
-            <h2 style="font-weight: 800; color:red; margin-bottom: 0; padding: 0;" align="center">FOOD JAGUAR</h2>
+            <h2 style="font-weight: 800; color:black; margin-bottom: 0; padding: 0;" align="center">FOOD JAGUAR</h2>
             <p align="center" style="margin-bottom:0; font-size: 12px;">President Ramon Magsaysay State University, Iba Zambales, <br>Quality Assurance Building, Ground Floor</p>
             <hr style="border: solid 0.5px black">
 ';
@@ -36,8 +36,16 @@ if(isset($_SESSION['user_id']))
     $all_mop = $get_all_mop['mop'];
     // GET SHIPPING FEE
     $get_sfee = mysqli_query($db, "SELECT s_fee FROM user_orders WHERE u_id='".$_SESSION['user_id']."' AND status <> 'rejected' GROUP BY s_fee");
-    $get_all_sfee = mysqli_fetch_assoc($get_mop);
-    $all_sfee = $get_all_sfee['s_fee'];
+    $get_all_sfee = mysqli_fetch_assoc($get_sfee);
+    // $all_sfee = $get_all_sfee['s_fee'];
+
+    $final_price = $get_all_sfee['s_fee']+$total_price;
+
+    $html .= '
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <p>ORDER #'.$order_id.'</p>
+        </div>
+    ';
 
 
 
@@ -58,17 +66,22 @@ if(isset($_SESSION['user_id']))
                     <td>'.$row['title'].'</td>
                     <td align="right">'.$row['quantity'].' <span style="margin: 0 10px;">x</span> P'.$row['original_price'].'</td>
                 </tr>
+                <tr><td style="border-bottom: 1px solid black; width:100%; height: 10px;"></td><td style="border-bottom: 1px solid black; width:100%; height: 10px;"></td></tr>
             ';
 
         } 
             $html .= '
                 <tr style="margin-top: 50px;">
                     <td>Subtotal</td>
-                    <td align="right">'.$total_price.'</td>
+                    <td align="right">P'.$total_price.'</td>
                 </tr>
                 <tr>
                     <td>Delivery Fee</td>
-                    <td align="right">'.$all_s_fee.'</td>
+                    <td align="right">P'.$get_all_sfee['s_fee'].'</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Total Price</td>
+                    <td align="right" style="font-weight: bold;">P'.$final_price.'</td>
                 </tr>
             ';
         $html .= '
@@ -80,6 +93,10 @@ if(isset($_SESSION['user_id']))
     {
         $html .= 'YOU HAVE NO ORDERS!';
     }
+
+    $html .= '<div style="height: 20px; display: block; width: 100%;"></div>';
+
+
 } else {
     header('Location: login.php');
 }

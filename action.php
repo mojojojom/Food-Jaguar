@@ -328,6 +328,7 @@ if(isset($_POST['action'])) {
 
     // EDIT
     if($_POST['action'] == 'editprofile') {
+        include('connection/connect.php');
         $edit = mysqli_real_escape_string($db,$_POST['user_id']);
         $u_username = mysqli_real_escape_string($db,$_POST['u_username']);
         $u_fname = mysqli_real_escape_string($db,$_POST['u_firstname']);
@@ -337,33 +338,32 @@ if(isset($_POST['action'])) {
         $u_password = mysqli_real_escape_string($db,$_POST['u_password']);
         $u_address = mysqli_real_escape_string($db,$_POST['u_address']);
 
-        $hashedPass = password_hash($u_password, PASSWORD_DEFAULT);
-
-        $query = mysqli_query($db, "UPDATE users SET username='$u_username', f_name='$u_fname', l_name='$u_lname', email='$u_email', phone='$u_phone', password='$hashedPass', address='$u_address' WHERE u_id='$edit'");
-
-        if($query) {
-            $message = '<div class="alert alert-success alert-dismissible text-center" role="alert">UPDATED SUCCESSFULLY!</div>';
+        if(empty($u_password)) {
+            $update_user_profile = mysqli_query($db, "UPDATE users SET username='$u_username', f_name='$u_fname', l_name='$u_lname', email='$u_email', phone='$u_phone', address='$u_address' WHERE u_id='$edit'");
+            if($update_user_profile) {
+                header('Location: your_order');
+                exit();
+            } else {
+                // echo mysqli_error($db);
+                header('Location: your_order');
+                exit();
+            }
         } else {
-            $message = '<div class="alert alert-danger alert-dismissible text-center" role="alert">UPDATE FAILED!</div>';
+            $hashedPass = password_hash($u_password, PASSWORD_DEFAULT);
+
+            $query = mysqli_query($db, "UPDATE users SET username='$u_username', f_name='$u_fname', l_name='$u_lname', email='$u_email', phone='$u_phone', password='$hashedPass', address='$u_address' WHERE u_id='$edit'");
+    
+            if($query) {
+                $message = '<div class="alert alert-success alert-dismissible text-center" role="alert">UPDATED SUCCESSFULLY!</div>';
+                $_SESSION['message'] = $message;
+                header('Location: your_order');
+            } else {
+                $message = '<div class="alert alert-danger alert-dismissible text-center" role="alert">UPDATE FAILED!</div>';
+                $_SESSION['message'] = $message;
+                header('Location: your_order');
+            }
         }
     } 
-
-    // EDIT - AJAX
-    if($_POST['action'] == 'edit_profile') {
-        $edit = mysqli_real_escape_string($db,$_POST['user_id']);
-        $u_username = mysqli_real_escape_string($db,$_POST['u_username']);
-        $u_fname = mysqli_real_escape_string($db,$_POST['u_firstname']);
-        $u_lname = mysqli_real_escape_string($db,$_POST['u_lastname']);
-        $u_email = mysqli_real_escape_string($db,$_POST['u_email']);
-        $u_phone = mysqli_real_escape_string($db,$_POST['u_phone']);
-        $u_password = mysqli_real_escape_string($db,$_POST['u_password']);
-        $u_address = mysqli_real_escape_string($db,$_POST['u_address']);
-
-
-
-    }
-
-
 
 }
 

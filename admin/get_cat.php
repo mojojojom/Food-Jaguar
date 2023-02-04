@@ -6,7 +6,7 @@
     $query=mysqli_query($db,$sql);
         if(!mysqli_num_rows($query) > 0 )
         {
-            echo '<td colspan="7"><center>No Categories-Data!</center></td>';
+            echo '<td colspan="7"><center>No Categories Data!</center></td>';
         }
         else
         {				

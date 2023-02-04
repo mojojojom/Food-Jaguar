@@ -48,16 +48,18 @@
                     ?>
                         <?php
                             if(isset($_SESSION['check_cart_item'])) 
-                            {
+                            {                        
+                                // print_r($_SESSION['cart_item']);
+                                // echo '<br>';
+                                // print_r($_SESSION['check_cart_item']);
+
                                 $total_price = 0;
                                 $total_quantity = 0;
-                                // foreach($selectedItems as $item) 
                                 foreach($_SESSION['check_cart_item'] as $item) 
                                 {
                                     $get_menu = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
                                     if(mysqli_num_rows($get_menu) > 0) {
                                         while($menu = mysqli_fetch_array($get_menu)) {
-                                    // $total_price += ($item['price']*$item['quantity']);
                         ?>
                                     <div class="modal__checkout-wrap card p-2 mb-2 ms-3">
                                         <div class="row w-100">
@@ -103,7 +105,6 @@
                                         $item_count = count($_SESSION['check_cart_item']);
                                     ?>
                                     <p class="mb-0">Order Total(<?=$item_count?>)</p>
-                                    <!-- <p class="mb-0">₱<?=$total_price?></p> -->
                                 </div>
                             </div>
                         </div>

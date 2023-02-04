@@ -167,7 +167,7 @@ hr {
         font-weight: 600;
         font-family: $secondary-font;
         &:hover {
-            color: $red-col;
+            color: $light-col;
             background-color: $secondary-col;
             border: 1px solid $secondary-col;
         }
@@ -393,4 +393,30 @@ hr {
     &-not-allowed {
         cursor: not-allowed;
     }
+}
+
+.show-password-icon {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    text-align: center;
+    color: $primary-col;
+    transition: all ease-in-out 300ms;
+    cursor: pointer;
+    z-index: 99999;
+    &:hover {
+        color: $secondary-col;
+    }
+    &.show {
+        display: flex;
+    }
+    &.hide {
+        display: none;
+    }
+}
+
+input[type="password"]::after {
+    content: "";
+    background-image: none!important;
 }

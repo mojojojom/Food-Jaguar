@@ -49,7 +49,10 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-6 fj-input-wrap mb-3">
                                     <label for="password" class="mb-1 s-font">Password</label>
-                                    <input type="password" class="fj-input" name="password" placeholder="Password" required>
+                                    <div class="position-relative">
+                                        <input type="password" class="fj-input password_input" name="password" placeholder="Password" required>
+                                        <i class="fa-solid fa-eye show-password-icon"></i>
+                                    </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-6 fj-input-wrap mb-3">
                                     <label for="cpassword" class="mb-1 s-font">Confirm Password</label>
@@ -74,7 +77,11 @@
 
             <div class="col-12 col-sm-12 col-md-4 col-lg-6 p-0 order-1 order-sm-1 order-md-2 p-0">
                 <div class="r__register-right-wrap">
-                    <img src="imgs/icon.png" alt="" class="fj__logo-overlay">
+                    <?php 
+                        $site_logo = mysqli_query($db, "SELECT site_logo FROM site_settings"); 
+                        $sl = mysqli_fetch_assoc($site_logo);
+                    ?>
+                    <img src="admin/images/<?=$sl['site_logo']?>" class="fj__logo-overlay"/>
                     <div class="fj__overlay"></div>
                     <img src="imgs/login-bg.jpg" class="r__register-right-img" alt="">
                 </div>

@@ -24,6 +24,11 @@ if(!mysqli_num_rows($get_orders) > 0) {
                     <span class="badge bg-warning">Queue</span>
                 <?php 
                 }
+                if($status=="preparing") {
+                ?>
+                        <span class="badge bg-primary">Preparing</span>
+                <?php
+                }
                 if($status=="in process")
                 { ?>
                     <span class="badge bg-info">On The Way!</span>
@@ -32,7 +37,7 @@ if(!mysqli_num_rows($get_orders) > 0) {
                 if($status=="closed")
                 {
                 ?>
-                    <span class="badge bg-success">Delivered</span>
+                    <span class="badge bg-secondary">Delivered</span>
                 <?php 
                 } 
                 ?>
@@ -60,6 +65,11 @@ if(!mysqli_num_rows($get_orders) > 0) {
                     <span class="badge bg-warning">Queue</span>
                 <?php 
                 }
+                if($status=="preparing") {
+                ?>
+                    <span class="badge bg-primary">Preparing</span>
+                <?php
+                }
                 if($status=="in process")
                 { ?>
                     <span class="badge bg-info">On The Way!</span>
@@ -68,7 +78,7 @@ if(!mysqli_num_rows($get_orders) > 0) {
                 if($status=="closed")
                 {
                 ?>
-                    <span class="badge bg-success">Delivered</span>
+                    <span class="badge bg-secondary">Delivered</span>
                 <?php 
                 } 
                 ?>
@@ -133,7 +143,7 @@ if(!mysqli_num_rows($get_orders) > 0) {
                                                 
                                                 <div class="col-1 d-flex align-items-center">
                                                     <div class="d-flex align-items-center justify-content-center">
-                                                        <a href="#" id="cancel_order" data-id="<?=$dish['o_id']?>" class="o__order-card-item-cancel mb-0 cancel_order"><i class="fa-solid fa-square-xmark fs-5"></i></a>
+                                                        <a href="#" id="cancel_order" data-date="<?=$dish['date']?>" data-id="<?=$dish['o_id']?>" class="o__order-card-item-cancel mb-0 cancel_order"><i class="fa-solid fa-square-xmark fs-5"></i></a>
                                                     </div>
                                                 </div>
                                             </div>
