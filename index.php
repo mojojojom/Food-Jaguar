@@ -173,6 +173,85 @@
         </div>
     </section>
 
+    <!-- TESTIMONIAL SECTION -->
+    <section class="h__testi-wrap sec-pad">
+        <!-- <img class="accent_img" src="/images/footer_pattern.png" alt="">
+        <img class="accent_img-2" src="/images/city.png" alt=""> -->
+        <div class="container">
+            <div class="row">
+
+                <div class="col-6 d-flex align-items-center">
+                    <div class="h__testi-headings-wrap">
+                        <h1 class="fw-bold">Our Customers Love What We Make</h1>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea sint necessitatibus facilis odio eos. Necessitatibus debitis at tempore cum nemo iusto est beatae quae, accusamus voluptate voluptatum sit cumque atque?</p>
+                        <a href="#testiModal" class="c-btn-3 d-inline-flex" data-bs-toggle="modal" data-bs-target="#testiModal">ADD REVIEW</a>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    
+                    <div class="testimonial-slider">
+
+                        <?php
+                            $get_reviews = mysqli_query($db, "SELECT * FROM user_testimonials INNER JOIN users ON user_testimonials.u_id = users.u_id");
+                            if(mysqli_num_rows($get_reviews) > 0) {
+                                while($testi = mysqli_fetch_assoc($get_reviews)) {
+                                    $fullname = $testi['f_name']. ' ' .$testi['l_name'];
+                        ?>
+                                    <div class="h__testi-inner-wrap my-1">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="h__testi-img-wrap">
+                                                    <i class="fa-solid fa-quote-left"></i>
+                                                </div>
+                                                <div class="h__testi-info-wrap">
+                                                    <p class="mb-2 mt-2"><?=$testi['u_testi']?></p>
+                                                    <h5><?=$fullname?></h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                        <?php
+                                }
+                            } else {
+                                echo '<span class=" alert alert-danger d-flex align-items-center justify-content-center fw-bold">NO REVIEWS FOUND</span>';
+                            }
+                        ?>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ADD REVIEW MODAL -->
+    <div class="modal fade" id="testiModal" tabindex="-1" aria-labelledby="testiModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form method="POST" id="testi_form">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5 fw-bold" id="testiModalLabel">CREATE REVIEW</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="fj-input-wrap">
+                            <label for="review">Your Review</label>
+                            <textarea class="fj-input testi_review" name="review" rows="5" maxlength = "300" required></textarea>
+                            <p class="mb-0">Characters remaining: <span id="char-count">300</span></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="action" value="add_testi">
+                        <button type="submit" class="c-btn-3 c-btn-sm">POST</button>
+                        <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">CANCEL</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.title = "Food Jaguar"
     </script>
@@ -253,6 +332,106 @@
             });
         })
     })
+</script>
+<script>
+    jQuery(function($) {
+        $(document).ready(function(){
+            // SLIDER
+            $('.testimonial-slider').slick({
+                vertical: true,
+                slidesToShow: 2,
+                slidesToScroll: 1,
+                autoplay: false,
+                autoplaySpeed: 3000,
+                easing: 'linear',
+                pauseOnHover: true,
+                nextArrow: '<i class="fa-solid fa-circle-up custom-next"></i>',
+                prevArrow: '<i class="fa-solid fa-circle-down custom-prev"></i>'
+            });
 
+            // ADD TESTI 
+            $('#testi_form').on('submit', function(e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
 
+                $.ajax({
+                    type: "POST",
+                    url: "add_cart.php",
+                    data: formData,
+                    success: function (response) {
+                        if(response == 'success') 
+                        {
+                            $('#testiModal').modal('hide');
+                            $('.testi_review').val('');
+                            Swal.fire(
+                                'Thank You!',
+                                'Your Submission Has Been Sent.',
+                                'success'
+                            );
+
+                            $.ajax({
+                                type: "GET",
+                                url: "get_testi.php",
+                                success: function (response) {
+                                    $('.testimonial-slider').empty().html(response);
+                                    $('.testimonial-slider').slick('unslick');
+                                    $('.testimonial-slider').slick({
+                                        vertical: true,
+                                        slidesToShow: 2,
+                                        slidesToScroll: 1,
+                                        autoplay: false,
+                                        autoplaySpeed: 3000,
+                                        easing: 'linear',
+                                        pauseOnHover: true,
+                                        nextArrow: '<i class="fa-solid fa-circle-up custom-next"></i>',
+                                        prevArrow: '<i class="fa-solid fa-circle-down custom-prev"></i>'
+                                    });
+                                }
+                            });
+
+                        } 
+                        else if(response == 'error_login')
+                        {
+                            let timerInterval
+                            Swal.fire({
+                            title: 'Unable To Add Review!',
+                            html: 'Please Login Before Adding Review!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
+                            timer: 3000,
+                            timerProgressBar: false,
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                            }
+                            }).then((result) => {
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    window.location.href = 'login';
+                                }
+                            })
+                        }
+                        else if(response == 'error_exists')
+                        {
+                            Swal.fire(
+                                'Unable to Add Review!',
+                                'You already made a review!',
+                                'info'
+                            );
+                        }
+                        else 
+                        {
+                            alert(response);
+                        }
+                    }
+                });
+
+            })
+
+            // CHARACTER LIMIT
+            $('.testi_review').on('input', function() {
+                var charCount = 300 - $(this).val().length;
+                $('#char-count').html(charCount);
+            })
+
+        });
+    })
 </script>

@@ -29,7 +29,7 @@
                             <div class="row">
                                 <div class="col-12 fj-input-wrap mb-3">
                                     <label for="username" class="mb-1 s-font">Username</label>
-                                    <input type="text" class="fj-input" name="username" placeholder="Username" required>
+                                    <input type="text" class="fj-input" name="username" placeholder="Username" min="3" required>
                                 </div>
                                 <div class="col-xs-12 col-sm-6 fj-input-wrap mb-3">
                                     <label for="firstName" class="mb-1 s-font">First Name</label>

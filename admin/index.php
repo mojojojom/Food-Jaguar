@@ -3,6 +3,12 @@
     error_reporting(0); 
     session_start(); 
     include('header.php');
+    if(isset($_SESSION['user_id'])) {
+        header('Location: ../index');
+    }
+    if(isset($_SESSION['adm_id']) || isset($_SESSION['canteen_id'])) {
+        header('Location: dashboard');
+    }
 ?>
 
 <!-- LOGIN FORM -->

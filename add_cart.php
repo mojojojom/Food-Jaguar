@@ -299,4 +299,73 @@
         }
 
 
+        // ADD TO FAVORITE
+        if($_POST['action'] == 'add_to_fave') {
+            include('connection/connect.php');
+            $d_id = mysqli_escape_string($db, $_POST['d_id']);
+            $u_id = mysqli_escape_string($db, $_POST['u_id']);
+
+            if(isset($_SESSION['user_id'])) {
+                $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id'");
+                if(mysqli_num_rows($check_fave) > 0) {
+                    $delete_fave = mysqli_query($db, "DELETE FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id'");
+                    if($delete_fave) {
+                        echo 'removed';
+                    } else {
+                        echo 'error';
+                    }
+                } else {
+                    $insert_fave = mysqli_query($db, "INSERT INTO fave_table (u_id, d_id) VALUES('$u_id','$d_id')");
+                    if($insert_fave) {
+                        echo 'success';
+                    } else {
+                        echo 'error';
+                    }
+                }
+            } else {
+                echo 'error_login';
+            }
+
+        }
+
+        // REMOVE TO FAVORITE
+        if($_POST['action'] == 'remove_to_fave') {
+            include('connection/connect.php');
+            $d_id = mysqli_escape_string($db, $_POST['d_id']);
+            $remove_fave = mysqli_query($db, "DELETE FROM fave_table WHERE u_id = '".$_SESSION['user_id']."' AND d_id = '$d_id'");
+
+            if($remove_fave) {
+                echo 'success';
+            }
+            else {
+                echo 'error'.mysqli_error($db);
+            }
+        }
+
+
+        // ADD REVIEW
+        if($_POST['action'] == 'add_testi') {
+            include('connection/connect.php');
+            $testi = mysqli_escape_string($db, $_POST['review']);
+
+            if(isset($_SESSION['user_id'])) {
+                $check_review = mysqli_query($db, "SELECT * FROM user_testimonials WHERE u_id = '".$_SESSION['user_id']."'");
+                if(mysqli_num_rows($check_review) > 0) {
+                    echo 'error_exists';
+                } else {
+                    $add_review = mysqli_query($db, "INSERT INTO user_testimonials(u_id, u_testi) VALUES('".$_SESSION['user_id']."', '$testi')");
+                    if($add_review) {
+                        echo 'success';
+                    }
+                    else
+                    {
+                        echo 'error';
+                    }
+                }
+            } else {
+                echo 'error_login';
+            }
+
+        }
+
     }

@@ -257,7 +257,7 @@
                                                     <div class="row">
                                                         <div class="col-12 fj-input-wrap mb-3">
                                                             <label for="username" class="mb-1 s-font">Username</label>
-                                                            <input type="text" class="fj-input" name="u_username" value="<?= $print['username'] ?>" placeholder="Username">
+                                                            <input type="text" class="fj-input" name="u_username" value="<?= $print['username'] ?>" min="3" placeholder="Username">
                                                         </div>
                                                         <div class="col-6 fj-input-wrap mb-3">
                                                             <label for="firstName" class="mb-1 s-font">First Name</label>

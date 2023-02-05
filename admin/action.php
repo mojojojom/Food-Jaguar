@@ -20,26 +20,39 @@ if(isset($_POST['action'])) {
             echo 'empty_password';
         }
         else {
-            $checkAdmin = mysqli_query($db, "SELECT * FROM admin WHERE (BINARY username='$username' OR BINARY email='$username')") or die(mysql_error());
-
+            $checkAdmin = mysqli_query($db, "SELECT * FROM admin WHERE (BINARY username = '$username' OR BINARY email = '$username')");
             if(mysqli_num_rows($checkAdmin) > 0) {
                 $fetch = mysqli_fetch_assoc($checkAdmin);
                 $fetch_user = $fetch['username'];
                 $fetch_pass = $fetch['password'];
                 $fetch_email = $fetch['email'];
                 if(password_verify($password, $fetch_pass)) {
-                    session_start();
                     $_SESSION["adm_id"] = $fetch['adm_id'];
                     echo 'success';
-                }
-                else {
+                } else {
                     echo 'error_pass';
                 }
-            }   
-            else
-            {
-                echo 'error';
+            } else {
+                $checkCanteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE (BINARY c_email = '$username' OR BINARY c_user = '$username')");
+                if(mysqli_num_rows($checkCanteen) > 0) {
+                    $fetch = mysqli_fetch_assoc($checkCanteen);
+                    $fetch_user = $fetch['c_user'];
+                    $fetch_pass = $fetch['c_pass'];
+                    $fetch_email = $fetch['c_email'];
+                    if(password_verify($password, $fetch_pass)) {
+                        $_SESSION["canteen_id"] = $fetch['id'];
+                        $update_status = mysqli_query($db, "UPDATE canteen_table SET c_status = 1");
+                        if($update_status) {
+                            echo 'success';
+                        }
+                    } else {
+                        echo 'error_pass';
+                    }
+                } else {
+                    echo 'error_user';
+                }
             }
+            
         }
 
     }

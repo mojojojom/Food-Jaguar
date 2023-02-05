@@ -10,8 +10,8 @@
     <section class="fj__banner-wrap">
         <div class="container h-100 d-flex align-items-center justify-content-center">
             <div class="fj__banner-content-wrap text-center">
-                <p class="fj__banner-sub-heading s-font">Check Out</p>
-                <h1 class="fj__banner-heading s-font">OUR MENU</h1>
+                <!-- <p class="fj__banner-sub-heading s-font">Check Out</p> -->
+                <h1 class="fj__banner-heading s-font">MENU</h1>
             </div>
         </div>
     </section>
@@ -21,17 +21,24 @@
         <div class="container">
 
             <div class="m__menu-header-wrap">
-                <div class="m__menu-heading-wrap">
-                    <h1 class="m__menu-heading mb-0">Taste the best!</h1>
-                </div>
-                <div class="m__menu-header-cart-wrap">
-                    <a class="c-btn-3 m__menu-header-cart position-relative p-font" data-bs-toggle="offcanvas" href="#cartSideMenu" role="button" aria-controls="cartSideMenu">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                        <span id="cart_num" class="cart_num position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            0
-                            <span class="visually-hidden">unread messages</span>
-                        </span>
-                    </a>
+                <div class="row">
+                    <div class="m__menu-heading-wrap col-11">
+                        <div class="fj-input p-2">
+                            <label for="search_dish">Search Item</label>
+                            <input type="text" class="fj-input" id="search_input" placeholder="What food do you want to eat?">
+                        </div>
+                    </div>
+                    <div class="col-1 d-flex align-items-center justify-content-end">
+                        <div class="m__menu-header-cart-wrap">
+                            <a class="c-btn-3 m__menu-header-cart position-relative p-font" data-bs-toggle="offcanvas" href="#cartSideMenu" role="button" aria-controls="cartSideMenu">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                                <span id="cart_num" class="cart_num position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    0
+                                    <span class="visually-hidden">unread messages</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -58,20 +65,20 @@
 
                     <div class="row food-listing">
 
-                    <?php
-                        $menu = mysqli_query($db, "SELECT * FROM dishes");
-                        while($rows=mysqli_fetch_array($menu))
-                        {
-                            $query = mysqli_query($db, 'SELECT * FROM food_category WHERE f_catid="'.$rows['rs_id'].'"');
-                            $product = mysqli_fetch_array($query);
+                        <?php
+                            $menu = mysqli_query($db, "SELECT * FROM dishes");
+                            while($rows=mysqli_fetch_array($menu))
+                            {
+                                $query = mysqli_query($db, 'SELECT * FROM food_category WHERE f_catid="'.$rows['rs_id'].'"');
+                                $product = mysqli_fetch_array($query);
 
-                            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
-                            while($get_stock = mysqli_fetch_array($check_stock)) {
-                                $stocks = $get_stock['d_stock'];
-                            }
-                    ?>
+                                $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
+                                while($get_stock = mysqli_fetch_array($check_stock)) {
+                                    $stocks = $get_stock['d_stock'];
+                                }
+                        ?>
 
-                        <div class="col-12 col-sm-12 col-md- 12 col-lg-6 all <?=$product['f_catname']?>">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 all <?=$product['f_catname']?>">
 
                             <form id="menu_form" method="POST">
                                 <div class="m__menu-list-card">
@@ -82,21 +89,24 @@
                                         <div>
                                             <h1 class="m__menu-list-name s-font"><?=$rows['title']?></h1>
                                             <h1 class="m__menu-price s-font">₱<?=$rows['price']?></h1>
-                                            <?php
-                                            if($stocks >= 1) {
-                                            ?>
-                                            <p class="mb-0 fw-bold" style="font-size: 14px;">STOCK (<?=$stocks?>)</p>
-                                            <?php
-                                            } else {
-                                            ?>
-                                            <p class="mb-0 fw-bold" style="font-size: 14px;">STOCK (0)</p>
-                                            <?php
-                                            }
-                                            ?>
                                         </div>
                                     </div>
 
                                     <div class="m__menu-price-wrap text-end">
+                                        <div class="m__menu-fav-wrap">
+                                            <?php
+                                                $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id = '".$rows['d_id']."' AND u_id = '".$_SESSION['user_id']."'");
+                                                if(mysqli_num_rows($check_fave) > 0) {
+                                            ?>
+                                                <a href="#" class="m__menu-fav fave_btn active" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
+                                            <?php
+                                                } else {
+                                            ?>
+                                                <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                                            <?php
+                                                }
+                                            ?>
+                                        </div>
                                         <div class="m__menu-qty-wrap">
                                             <p class="m__menu-qty-name mb-0 me-2">Qty: </p>
                                             <input class="m__menu-qty" type="number" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required/>
@@ -105,12 +115,12 @@
                                         <?php
                                             if($stocks <= 0) {
                                         ?>
-                                        <input type="button" class="m__menu-cart-btn addCartBtn add_cart_btn disabled" disabled value="OUT OF STOCK" />
+                                        <input type="button" class="c-btn-3 c-btn-sm addCartBtn add_cart_btn disabled" disabled value="UNAVAILABLE" />
                                         <?php
                                             } else {
                                         ?>
                                             <input type="hidden" name="action" value="add_cart">
-                                            <input type="submit" class="m__menu-cart-btn addCartBtn add_cart_btn" name="submit" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add To Cart" />
+                                            <input type="submit" class=" c-btn-3 c-btn-sm addCartBtn add_cart_btn" name="submit" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add To Cart" />
                                         <?php
                                             }
                                         ?>
@@ -122,9 +132,9 @@
 
                         </div>
 
-                    <?php
-                        }
-                    ?>
+                        <?php
+                            }
+                        ?>
 
                     </div>
 
@@ -192,7 +202,7 @@
                             type: "GET",
                             url: "get_cart.php",
                             success: function (response) {
-                                $('.offcanvas-body').empty().html(response);
+                                $('.cart-offcanvas-body').empty().html(response);
                             }
                         });
 

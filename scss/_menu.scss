@@ -1,8 +1,8 @@
 .m__menu {
     &-header-wrap {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        // display: flex;
+        // align-items: center;
+        // justify-content: space-between;
         margin-bottom: 25px;
     }
     &-heading {
@@ -149,6 +149,12 @@
             margin: 15px 0;
             display: flex;
             justify-content: end;
+        }
+    }
+    &-fav {
+        color: $gray-col;
+        &:hover, &.active {
+            color: $red-col;
         }
     }
 }

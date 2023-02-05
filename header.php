@@ -20,6 +20,8 @@
         <!-- FONTAWESOME -->
         <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+        <!-- SLICK CAROUSEL -->
+        <link rel="stylesheet" href="node_modules/slick-carousel/slick/slick.css">
         <!-- ANIMSITION -->
         <link href="css/animsition.min.css" rel="stylesheet">
         <!-- ANIMATE -->
@@ -37,6 +39,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="site_icon/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="site_icon/favicon-16x16.png">
         <link rel="manifest" href="site_icon/site.webmanifest">
+
 
     </head>
     <body>
@@ -77,8 +80,27 @@
                             else
                             {
                             ?>
-                                <li class="nav-item"><a href="your_order" class="nav-link mx-2">My Orders</a> </li>
-                                <li class="nav-item"><a href="logout" class="nav-link mx-2">Logout</a> </li>
+                                <li class="nav-item"><a href="your_order" class="nav-link mx-2">Orders</a> </li>
+                                <!-- <li class="nav-item"><a href="logout" class="nav-link mx-2">Logout</a> </li> -->
+                                <?php
+                                    $get_user = mysqli_query($db, "SELECT * FROM users WHERE u_id='".$_SESSION['user_id']."'");
+                                    if(mysqli_num_rows($get_user) > 0) {
+                                        $user = mysqli_fetch_array($get_user);
+                                        $username = $user['username'];
+                                    }
+                                ?>
+                                <li class="nav-item">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link text-decoration-none nav-link mx-2 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <?=$username?>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <!-- <li><a href="profile" class="dropdown-item">Profile</a></li> -->
+                                            <li><a href="#faveList" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#faveList" aria-controls="#faveList">Favorites</a></li>
+                                            <li><a href="logout" class="dropdown-item">Logout</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
                             <?php
                             }
                             ?>

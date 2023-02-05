@@ -63,20 +63,10 @@ jQuery(function($) {
         
         // initialise
         headroom.init();
-        ////////Packages filter
-        // var $container = $(".restaurant-listing");
-        // $container.isotope({
-        //     filter: "*",
-        //     animationOptions: {
-        //         duration: 750,
-        //         easing: "linear",
-        //         queue: false,
-        //     }
-        // });
     
         var $container = $(".food-listing");
         $container.isotope({
-            filter: "*",
+            filter: "all",
             animationOptions: {
                 duration: 750,
                 easing: "linear",
@@ -84,7 +74,18 @@ jQuery(function($) {
             }
         });
     
-        /////// Isotope 
+        // $("nav.primary ul a").click(function() {
+        //     var selector = $(this).attr("data-filter");
+        //     $container.isotope({
+        //         filter: selector,
+        //         animationOptions: {
+        //             duration: 750,
+        //             easing: "linear",
+        //             queue: false,
+        //         }
+        //     });
+        //     return false;
+        // });
         $("nav.primary ul a").click(function() {
             var selector = $(this).attr("data-filter");
             $container.isotope({
@@ -95,14 +96,14 @@ jQuery(function($) {
                     queue: false,
                 }
             });
+            $container.isotope('layout'); // re-layout isotope after filtering
             return false;
         });
+        
         var $optionSets = $("nav.primary ul"),
             $optionLinks = $optionSets.find("a");
         $optionLinks.click(function() {
-            //alert( $optionLinks);
             var $this = $(this);
-            // don"t proceed if already selected
             if ($this.hasClass("selected")) {
                 return false;
             }
@@ -113,21 +114,20 @@ jQuery(function($) {
     
     
         
-        //// Range slider seetings
+        // Range slider seetings
         $("#slider-range").slider({
             range: true,
             min: 0,
             max: 500,
             values: [75, 300],
             slide: function(event, ui) {
-                //$( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
                 $(".minvalue").html("$" + ui.values[0]);
                 $(".maxvalue").html("$" + ui.values[1]);
             }
         });
         $("#amount").val("$" + $("#slider-range").slider("values", 0) + " - $" + $("#slider-range").slider("values", 1));
     
-        ////// Increment and decrement select box
+        // Increment and decrement select box
         $(".up").on("click", function() {
             var thisObj = $(this);
             var thisInput = thisObj.parent().find("input");

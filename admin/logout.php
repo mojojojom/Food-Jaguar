@@ -1,6 +1,6 @@
 <?php
     session_start();
     session_destroy();
-    $url = 'index.php';
+    $url = 'index';
     header('Location: ' . $url);
 ?>

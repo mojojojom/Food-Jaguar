@@ -1,3 +1,70 @@
+        <!-- FAVORITE SIDEBAR -->
+        <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="faveList" aria-labelledby="faveListLabel">
+            <div class="offcanvas-header bg-danger">
+                <h5 class="offcanvas-title fw-bold" id="faveListLabel">YOUR FAVORITES</h5>
+                <button type="button" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-square-xmark text-white"></i></button>
+            </div>
+            <div class="offcanvas-body fave-offcanvas-body">
+                <?php
+                    $get_faves = mysqli_query($db, "SELECT * FROM fave_table INNER JOIN dishes ON fave_table.d_id = dishes.d_id WHERE u_id='".$_SESSION['user_id']."'");
+
+                    if(mysqli_num_rows($get_faves) > 0) 
+                    {
+                        while($dish = mysqli_fetch_assoc($get_faves)) 
+                        {
+                            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$dish['d_id']."'");
+                            while($get_stock = mysqli_fetch_array($check_stock)) {
+                                $stocks = $get_stock['d_stock'];
+                            }
+                ?>
+                <div class="card mb-3 position-relative">
+                    <form method="post" id="add_cart">
+                        <div class="row no-gutters p-2">
+                            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                                <img src="admin/Res_img/dishes/<?=$dish['img']?>" class="card-img img-thumbnail" alt="Product Image">
+                            </div>
+                            <div class="col-md-8 ps-0">
+                                <div class="d-flex align-items-center justify-content-center h-100">
+                                    <div class="card-body p-0">
+                                        <a href="#" type="button" class="position-absolute delete_fave" product-id="<?=$dish['d_id']?>" style="right: 10px; top: 10px;"><i class="fa-solid fa-square-xmark text-danger"></i></a>
+                                        <h6 class="card-title mb-0 fw-bold"><?=$dish['title']?></h6>
+                                        <p class="card-text mb-0 fw-semibold">₱<?=$dish['price']?></p>
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div class="fj-input-wrap d-flex align-items-center mb-0 gap-2" style="max-width: 65px">
+                                                <label for="quantity" style="font-size: 14px;">Qty:</label>
+                                                <input type="number" class="w-100" id="quantity" style="padding: 0 2px;" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required>
+                                            </div>
+                                            <?php
+                                                if($stocks <= 0) {
+                                            ?>
+                                                <button type="button" class="c-btn-3 c-btn-sm addCartBtn disabled" disabled style="font-size: 12px;" data-action-id="add_cart" data-dish-id="<?= $dish['d_id']?>"><i class="fa-solid fa-cart-shopping"></i></button>
+                                            <?php
+                                                } else {
+                                            ?>
+                                                <input type="hidden" name="action" value="add_cart">
+                                                <button type="submit" class="c-btn-3 c-btn-sm addCartBtn fave_add_cart_btn" style="font-size: 12px;" data-action-id="add_cart" data-dish-id="<?= $dish['d_id']?>"><i class="fa-solid fa-cart-shopping"></i></button>
+                                            <?php
+                                                }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <?php
+                        }
+                    } 
+                    else 
+                    {
+                        echo '<span class="alert alert-danger text-center d-flex align-items-center justify-content-center fw-bold">NO ITEMS IN YOUR FAVORITE</span>';
+                    }
+                ?>
+            </div>
+        </div>
+        
+        
         <!-- CHECKOUT POPUP -->
         <div class="modal fade" id="checkoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down">
@@ -143,11 +210,10 @@
         <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSideMenu" aria-labelledby="cartSideMenuLabel">
             <div class="offcanvas-header">
                 <h5 class="offcanvas-title fw-bold" id="offcanvasExampleLabel">YOUR CART</h5>
-                <!-- <button type="button" class="btn-close text-light" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
                 <button type="button" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-square-xmark text-white"></i></button>
             </div>
 
-            <div class="offcanvas-body">
+            <div class="offcanvas-body cart-offcanvas-body">
                 <?php
                     if(empty($_SESSION['cart_item'])) {
                 ?>
@@ -243,7 +309,7 @@
                     <label for="cart__item-checkbox">All</label>
                 </div>
                 <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
-                    <p class="total-price mb-0 fw-semibold">₱0.00</p>
+                    <!-- <p class="total-price mb-0 fw-semibold">₱0.00</p> -->
                     <!-- <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)"> -->
                     <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-btn" value="Checkout(0)">
                 </div>
@@ -254,7 +320,7 @@
         <footer class="fj__footer bottom-0">
             <div class="container">
                 <div class="fj__inner-wrap row">
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-4 fj__footer-img-wrap text-start d-flex align-items-center justify-content-center justify-content-sm-center justify-content-md-start">
+                    <div class="col-12 col-sm-12 col-md-6 fj__footer-img-wrap text-start d-flex align-items-center justify-content-center justify-content-sm-center justify-content-md-start">
                         <?php 
                             $site_logo = mysqli_query($db, "SELECT site_logo FROM site_settings"); 
                             $sl = mysqli_fetch_assoc($site_logo);
@@ -268,29 +334,17 @@
                         ?>
                         </a>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-4 fj__footer-links-wrap d-flex align-items-center justify-content-center py-4 py-sm-4 py-md-0 py-lg-0">
-                        <ul class="mx-auto gap-5 d-flex mb-0">
-                            <li> <a class="fj__footer-links s-font" href="index">Home</a> </li>
-                            <li> <a class="fj__footer-links s-font" href="about">About</a> </li>
-                            <li> <a class="fj__footer-links s-font" href="menu">Menu</a> </li>
-                        </ul>
+                    <div class="col-12 col-sm-12 col-md-6 d-flex justify-content-end align-items-center">
+                        <div class="fj__copyright-wrap d-flex justify-content-end align-items-center">
+                            <p class="s-font fj__copyright mb-0">Copyright © <?= date('Y') ?> <a href="./">
+                            <?php 
+                                $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                                $sn = mysqli_fetch_assoc($site_name);
+                                echo $sn['site_name'];
+                            ?>
+                            </a></p>
+                        </div>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-4 fj__footer-sm-wrap d-flex align-items-center justify-content-center justify-content-sm-center justify-content-md-center justify-content-lg-end">
-                        <ul class=" gap-3 d-flex mb-0">
-                            <li><a class="fj__footer-sm-links" href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
-                            <li><a class="fj__footer-sm-links" href="#"><i class="fa-brands fa-instagram"></i></a></li>
-                            <li><a class="fj__footer-sm-links" href="#"><i class="fa-brands fa-twitter"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="fj__copyright-wrap pt-4">
-                    <p class="s-font fj__copyright mb-0">Copyright © <?= date('Y') ?> <a href="./">
-                    <?php 
-                        $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
-                        $sn = mysqli_fetch_assoc($site_name);
-                        echo $sn['site_name'];
-                    ?>
-                    </a></p>
                 </div>
             </div>
         </footer>
@@ -305,8 +359,102 @@
                     var checkout = $('#cart__item-footer-btn');
                     var cartBtn = $('#cart__item-btn');
 
+                    // NEWWWWW FAVE ADD TO CART
+                    $('.fave-offcanvas-body').on('click', '.fave_add_cart_btn', function(e) {
+                        e.preventDefault();
+                        var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
+                        var productId = $(this).attr('data-dish-id');
+                        // FIRST SECTION
+                        $.ajax({
+                            type: "POST",
+                            url: "add_cart.php",
+                            data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
+                            success: function (response) {
+                                if(response == 'success') 
+                                {
+                                    // SECOND SECTION
+                                    // UPDATE THE CART
+                                    updateCartItems();
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Added to Cart!'
+                                    })
+
+                                    // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "get_cart.php",
+                                        success: function (response) {
+                                            $('.cart-offcanvas-body').empty().html(response);
+                                        }
+                                    });
+
+                                    // UPDATE CART NUMBER
+                                    setInterval(updateCart, 1000);
+                                }
+                                else
+                                {
+                                    $(this).val('Add to Cart');
+                                    $(this).removeClass('disabled');
+                                    $(this).prop('disabled', false);
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Can\'t Add to Cart!',
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    })
+
+                    // REMOVE TO FAVE
+                    $('.fave-offcanvas-body').on('click', '.delete_fave', function(e) {
+                        e.preventDefault();
+                        var d_id = $(this).attr('product-id');
+                        $.ajax({
+                            type: "POST",
+                            url: "add_cart.php",
+                            data: {d_id: d_id, action: 'remove_to_fave'},
+                            success: function (response) {
+                                if(response == 'success') {
+
+                                    // UPDATE FAVE LIST
+                                    updateFave();
+                                    updateFaveList();
+
+                                    // SHOW STATUS
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1000,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Item Removed!'
+                                    })
+                                } 
+                                else {
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Unable to Remove Item!',
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    })
+
                     // NEWWWW EMPTY ACTION
-                    $('.offcanvas-body').on('click', '.m__cart-empty-btn', function(e) {
+                    $('.cart-offcanvas-body').on('click', '.m__cart-empty-btn', function(e) {
                         e.preventDefault();
                         var emptyForm = $('#empty_form').serialize();
                         var action = $('input[data-action-id="empty"]').val();
@@ -344,7 +492,7 @@
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
-                                            $('.offcanvas-body').empty().html(response);
+                                            $('.cart-offcanvas-body').empty().html(response);
                                         }
                                     });
 
@@ -372,7 +520,7 @@
                     })
 
                     // NEWWWWW REMOVE ACTION
-                    $('.offcanvas-body').on('click', '.remove-item', function(e) {
+                    $('.cart-offcanvas-body').on('click', '.remove-item', function(e) {
                         e.preventDefault();
                         var productId = $(this).attr('product-id');
                         // console.log(productId);
@@ -409,7 +557,7 @@
                                         type: "GET",
                                         url: "get_cart.php",
                                         success: function (response) {
-                                            $('.offcanvas-body').empty().html(response);
+                                            $('.cart-offcanvas-body').empty().html(response);
                                         }
                                     });
 
@@ -715,7 +863,6 @@
 
                     updateCart();
 
-
                     // SHOW PASSWORD 
                     $('.show-password-icon').on('click', function() {
                         var inputType = $("input.password_input").attr("type") === "text" ? "password" : "text";
@@ -723,8 +870,129 @@
                         $(this).toggleClass("fa-eye-slash fa-eye");
                     })
 
+                    // ADD TO FAVORITE
+                    $('.food-listing').on('click','.fave_btn', function(e) {
+                        e.preventDefault();
+                        var d_id = $(this).data('item'); 
+                        var u_id = $(this).data('user'); 
+                        $(this).toggleClass('active');
+
+                        $.ajax({
+                            type: "POST",
+                            url: "add_cart.php",
+                            data: {d_id: d_id, u_id: u_id, action: 'add_to_fave'},
+                            success: function (response) {
+                                if(response == 'success') 
+                                {
+                                    updateFave();
+                                    updateFaveList()
+
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Added To Favorite'
+                                    })
+                                } 
+                                else if(response == 'removed')
+                                {
+                                    updateFave();
+                                    updateFaveList()
+
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Removed From Favorite'
+                                    })
+                                }
+                                else if(response == 'error_login'){
+                                    let timerInterval
+                                    Swal.fire({
+                                    title: 'Unable To Add Item to Favorites!',
+                                    html: 'Please Login Before Adding to Favorites!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
+                                    timer: 3000,
+                                    timerProgressBar: false,
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    willClose: () => {
+                                        clearInterval(timerInterval)
+                                    }
+                                    }).then((result) => {
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            window.location.href = 'login';
+                                        }
+                                    })
+                                }
+                                else 
+                                {
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Unable to Add Item to Favorites.',
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+
+                    })
+
+                    // SEARCH ITEM FUNCTION
+                    $('#search_input').on('input', function() {
+                        var query = $(this).val();
+                        $.ajax({
+                            type: "POST",
+                            url: "search.php",
+                            data: {query: query},
+                            success: function (response) {
+                                $('.food-listing').empty().html(response);
+                            }
+                        });
+                    })
+                    $('#search_input').on('blur', function() {
+                        if ($(this).val().length === 0) {
+                            $('.m__menu-cat-wrap').show(500);
+                        }
+                    });
+                    $('#search_input').on('focus', function() {
+                        $('.m__menu-cat-wrap').hide(500);
+                    });
+
+
                 })
             })
+
+            // UPDATE MENU
+            function updateFave() {
+                $.ajax({
+                    type: "GET",
+                    url: "get_fav_item.php",
+                    success: function (response) {
+                        $('.food-listing').empty().html(response);
+                    }
+                });
+            }
+
+            // UPDATE FAVE
+            function updateFaveList() {
+                $.ajax({
+                    type: "GET",
+                    url: "get_fav_list.php",
+                    success: function (response) {
+                        $('.fave-offcanvas-body').empty().html(response);
+                    }
+                });
+            }
 
             // UPDATE CART NUMBER
             function updateCart() {
@@ -751,7 +1019,7 @@
                     type: "GET",
                     url: "get_cart.php",
                     success: function (response) {
-                        $('.offcanvas-body').empty().html(response);
+                        $('.cart-offcanvas-body').empty().html(response);
                     }
                 });
             }
@@ -785,6 +1053,7 @@
         <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="js/animsition.min.js"></script>
         <script src="js/bootstrap-slider.min.js"></script>
+        <script src="node_modules/slick-carousel/slick/slick.min.js"></script>
         <script src="js/jquery.isotope.min.js"></script>
         <script src="js/headroom.js"></script>
         <script src="js/foodpicky.min.js"></script>

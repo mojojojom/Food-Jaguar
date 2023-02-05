@@ -404,7 +404,7 @@ hr {
     color: $primary-col;
     transition: all ease-in-out 300ms;
     cursor: pointer;
-    z-index: 99999;
+    z-index: 999;
     &:hover {
         color: $secondary-col;
     }
