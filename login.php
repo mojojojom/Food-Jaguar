@@ -9,7 +9,7 @@
     <section class="fj__banner-wrap">
         <div class="container h-100 d-flex align-items-center justify-content-center">
             <div class="fj__banner-content-wrap text-center">
-                <h1 class="fj__banner-heading s-font">LOGIN</h1>
+                <!-- <h1 class="fj__banner-heading s-font">LOGIN</h1> -->
             </div>
         </div>
     </section>

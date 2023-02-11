@@ -7,7 +7,7 @@
     {
         while($dish = mysqli_fetch_assoc($get_faves)) 
         {
-            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$dish['d_id']."'");
+            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$dish['d_id']."' AND c_id='".$dish['c_id']."'");
             while($get_stock = mysqli_fetch_array($check_stock)) {
                 $stocks = $get_stock['d_stock'];
             }

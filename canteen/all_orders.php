@@ -2,13 +2,13 @@
     include("../connection/connect.php");
     error_reporting(0);
     session_start();
-    if(empty($_SESSION["adm_id"]))
+    if(empty($_SESSION["canteen_id"])) 
     {
-        header('location:index');
+        header('location: ../admin/index');
     }
     else
     {
-        $query = mysqli_query($db, "SELECT * FROM admin WHERE adm_id='".$_SESSION['adm_id']."'");
+        $query = mysqli_query($db, "SELECT * FROM canteen_table WHERE id='".$_SESSION['canteen_id']."'");
         while($row = mysqli_fetch_array($query)) {
         include('header.php');
     ?>
@@ -53,18 +53,6 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <a class="nav-link" href="site_settings">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></div>
-                            Site
-                        </a>
-                        <a class="nav-link" href="canteen">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
-                            Canteen
-                        </a>
-                        <a class="nav-link" href="reviews">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-quote-left"></i></div>
-                            Reviews
-                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -76,9 +64,6 @@
                                 <a class="nav-link" href="all_menu">
                                     All Menu
                                 </a>
-                                <a class="nav-link" href="add_category">
-                                    Add Category
-                                </a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed active" href="all_orders">
@@ -89,7 +74,7 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    <?=$row['username']?>
+                    <?=$row['c_user']?>
                 </div>
             </nav>
         </div>
@@ -135,10 +120,12 @@
 
                             <tbody>
                                 <?php
-                                    $get_orders = mysqli_query($db, "SELECT SUM(quantity) as quantity,SUM(price) as price, u_id, mop, s_fee, s_address, original_address, status, order_number, date FROM user_orders GROUP BY u_id, order_number, mop, s_fee,s_address, original_address, status, date");
+                                    $get_orders = mysqli_query($db, "SELECT SUM(quantity) as quantity, SUM(price) as price, u_id, c_id, mop, s_fee, s_address, original_address, status, order_number, date FROM user_orders WHERE c_id = '".$_SESSION['canteen_id']."' GROUP BY u_id, c_id, order_number, mop, s_fee, s_address, original_address, status, date");
+
                                     if($get_orders) {
                                         while($row = mysqli_fetch_array($get_orders)) {
 
+                                            // $get_user  = mysqli_query($db, "SELECT users.*, user_orders.* FROM users LEFT JOIN user_orders ON users.u_id = user_orders.u_id WHERE user_orders.u_id = '".$row['u_id']."'");
                                             $get_user  = mysqli_query($db, "SELECT users.*, user_orders.* FROM users LEFT JOIN user_orders ON users.u_id = user_orders.u_id WHERE user_orders.u_id = '".$row['u_id']."'");
                                             while($user = mysqli_fetch_assoc($get_user)) {
                                                 $fullname = $user['f_name'] . " " . $user["l_name"];
@@ -299,7 +286,7 @@
                                                                         ?>
                                                                         </p>
                                                                 </div>
-                                                                <!-- <div class="col-6 mb-3">
+                                                                <div class="col-6 mb-3">
                                                                     <p class="mb-0 fw-bold">CHANGE STATUS</p>
                                                                     <select id="order_status" name="order_status" class="form-select order_status-<?=$row['order_number']?>" aria-label="Default select example" required>
                                                                         <option selected value="">Select Status</option>
@@ -315,14 +302,14 @@
                                                                         <textarea class="form-control order_remark-<?=$row['order_number']?>" name="remark" id="remark" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
                                                                         <label for="floatingTextarea2">Message</label>
                                                                     </div>
-                                                                </div> -->
+                                                                </div>
 
                                                             </div>
 
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <!-- <input type="hidden" name="action" value="update_status">
-                                                            <button type="submit" class="c-btn-3 c-btn-sm update_status" id="update_status" order-id="<?=$row['order_number']?>" data-bs-dismiss="modal">Update Status</button> -->
+                                                            <input type="hidden" name="action" value="update_status">
+                                                            <button type="submit" class="c-btn-3 c-btn-sm update_status" id="update_status" order-id="<?=$row['order_number']?>" data-bs-dismiss="modal">Update Status</button>
                                                             <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Close</button>
                                                         </div>
                                                     </form>
@@ -386,15 +373,16 @@
 
     </div>
 
-    <script>
-        document.title = "Orders List | Food Jaguar"
-    </script>
-
 <?php
         }
     }
     include('footer.php');
 ?>
+
+    <!-- PAGE TITLE -->
+    <script>
+        document.title = "All Orders | Food Jaguar"
+    </script>
 
 <script>
     jQuery(function($) {
@@ -408,7 +396,7 @@
                 // FIRST FUNCTION
                 $.ajax({
                     type: "POST",
-                    url: "action.php",
+                    url: "../admin/action.php",
                     data: {orderId: orderId, action: 'delete_order'},
                     success: function (response) {
                         if(response == 'success') {
@@ -449,7 +437,7 @@
                 var remark = $('textarea.order_remark-'+orderId).val();
                 $.ajax({
                     type: "POST",
-                    url: "action.php",
+                    url: "../admin/action.php",
                     data: {orderId: orderId, order_status: status, remark: remark, action: 'update_status'},
                     success: function (response) {
                         if(response == 'success') {

@@ -36,14 +36,20 @@
             <div class="m__menu-price-wrap text-end">
                 <div class="m__menu-fav-wrap">
                     <?php
-                        $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id = '".$rows['d_id']."' AND u_id = '".$_SESSION['user_id']."'");
-                        if(mysqli_num_rows($check_fave) > 0) {
+                        if(isset($_SESSION['user_id'])) {
+                            $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id = '".$rows['d_id']."' AND u_id = '".$_SESSION['user_id']."'");
+                            if(mysqli_num_rows($check_fave) > 0) {
                     ?>
-                        <a href="#" class="m__menu-fav fave_btn active" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
+                            <a href="#" class="m__menu-fav fave_btn active" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
                     <?php
+                            } else {
+                    ?>
+                            <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                    <?php
+                            }
                         } else {
                     ?>
-                        <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                            <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
                     <?php
                         }
                     ?>

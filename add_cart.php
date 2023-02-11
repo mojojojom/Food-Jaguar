@@ -29,6 +29,7 @@
                 $fetch = mysqli_fetch_object($get_order);
                 $itemArray = array(
                                     $fetch->d_id=>array(
+                                                        'c_id'=>$fetch->c_id,
                                                         'title'=>$fetch->title,
                                                         'd_id'=>$fetch->d_id,
                                                         'quantity'=>$quantity,
@@ -82,7 +83,7 @@
             }
         }
 
-        // EMPTY CART - AJAX - FINAL
+        // EMPTY CART - AJAX - FINAL - FINAL
         if($_POST['action'] == 'empty')
         {
             if(!empty($_SESSION['cart_item']))
@@ -96,7 +97,7 @@
             }
         }
 
-        // CHECKOUT - AJAX - WORKING
+        // CHECKOUT - AJAX - WORKING - FINAL
         if($_POST['action'] == 'check')
         {
             // header('Location: checkout');
@@ -154,7 +155,7 @@
             }
         }
 
-        // CHECKOUT ORDER - AJAX - WORKING
+        // CHECKOUT ORDER - AJAX - WORKING - FINAL
         if($_POST['action'] == 'checkOutOrder') 
         {
             if(empty($_SESSION['user_id'])) {
@@ -175,13 +176,13 @@
             }
         }          
 
-        // UNSET CART SESSION
+        // UNSET CART SESSION - FINAL
         if($_POST['action'] == 'unset') {
                 unset($_SESSION['check_cart_item']);
                 echo 'success';
         }
 
-        // PLACE ORDER
+        // PLACE ORDER - FINAL
         if($_POST['action'] == 'place_order') {
             $mop = $_POST['ship'];
             $last_order_number = 1;
@@ -236,9 +237,9 @@
                             $get = mysqli_fetch_assoc($get_address);
                             $orig_address = $get['address'];
 
-                            $query = mysqli_query($db, "INSERT INTO user_orders (u_id, title, quantity, price, original_price, mop, s_fee, s_address, original_address, status, order_number, date) VALUES ('".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$total_price."', '".$dish['price']."', '$mop', '$sfee', '$new_address', '$orig_address', '', '$order_number', '$current_date')");
+                            $query = mysqli_query($db, "INSERT INTO user_orders (c_id, u_id, title, quantity, price, original_price, mop, s_fee, s_address, original_address, status, order_number, date) VALUES ('".$dish['c_id']."','".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$total_price."', '".$dish['price']."', '$mop', '$sfee', '$new_address', '$orig_address', '', '$order_number', '$current_date')");
                             if($query) {
-                                $update_stock = mysqli_query($db, "UPDATE dishes SET d_stock = d_stock - ".$item['quantity']." WHERE d_id='".$item['id']."'");
+                                $update_stock = mysqli_query($db, "UPDATE dishes SET d_stock = d_stock - ".$item['quantity']." WHERE d_id='".$item['id']."' AND c_id='".$dish['c_id']."'");
                                 if($update_stock) {
 
                                     $items_cart = array_column($_SESSION['cart_item'], 'd_id');
@@ -299,23 +300,24 @@
         }
 
 
-        // ADD TO FAVORITE
+        // ADD TO FAVORITE - ajax - WORKING - FINAL
         if($_POST['action'] == 'add_to_fave') {
             include('connection/connect.php');
-            $d_id = mysqli_escape_string($db, $_POST['d_id']);
-            $u_id = mysqli_escape_string($db, $_POST['u_id']);
+            $d_id = mysqli_real_escape_string($db, $_POST['d_id']);
+            $u_id = mysqli_real_escape_string($db, $_POST['u_id']);
+            $c_id = mysqli_real_escape_string($db, $_POST['c_id']);
 
             if(isset($_SESSION['user_id'])) {
-                $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id'");
+                $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id' AND c_id='$c_id'");
                 if(mysqli_num_rows($check_fave) > 0) {
-                    $delete_fave = mysqli_query($db, "DELETE FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id'");
+                    $delete_fave = mysqli_query($db, "DELETE FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id' AND c_id='$c_id'");
                     if($delete_fave) {
                         echo 'removed';
                     } else {
                         echo 'error';
                     }
                 } else {
-                    $insert_fave = mysqli_query($db, "INSERT INTO fave_table (u_id, d_id) VALUES('$u_id','$d_id')");
+                    $insert_fave = mysqli_query($db, "INSERT INTO fave_table (u_id, d_id, c_id) VALUES('$u_id','$d_id','$c_id')");
                     if($insert_fave) {
                         echo 'success';
                     } else {
@@ -331,7 +333,7 @@
         // REMOVE TO FAVORITE
         if($_POST['action'] == 'remove_to_fave') {
             include('connection/connect.php');
-            $d_id = mysqli_escape_string($db, $_POST['d_id']);
+            $d_id = mysqli_real_escape_string($db, $_POST['d_id']);
             $remove_fave = mysqli_query($db, "DELETE FROM fave_table WHERE u_id = '".$_SESSION['user_id']."' AND d_id = '$d_id'");
 
             if($remove_fave) {
@@ -353,7 +355,7 @@
                 if(mysqli_num_rows($check_review) > 0) {
                     echo 'error_exists';
                 } else {
-                    $add_review = mysqli_query($db, "INSERT INTO user_testimonials(u_id, u_testi) VALUES('".$_SESSION['user_id']."', '$testi')");
+                    $add_review = mysqli_query($db, "INSERT INTO user_testimonials(u_id, u_testi, testi_approval) VALUES('".$_SESSION['user_id']."', '$testi', 'No')");
                     if($add_review) {
                         echo 'success';
                     }
@@ -365,6 +367,37 @@
             } else {
                 echo 'error_login';
             }
+
+        }
+
+
+        // ADD CANTEEN
+        if($_POST['action'] == 'add_canteen') {
+            include('connection/connect.php');
+            $c_name = mysqli_real_escape_string($db, $_POST['c_name']);
+            $c_owner = mysqli_real_escape_string($db, $_POST['c_owner_name']);
+            $c_contact = mysqli_real_escape_string($db, $_POST['c_contact']);
+            $c_email = mysqli_real_escape_string($db, $_POST['c_email']);
+            $c_address = mysqli_real_escape_string($db, $_POST['c_address']);
+            $c_type = "canteen";
+            $c_status = 0;
+            $c_pass= "";
+            $new_cname = strtolower($c_name);
+            $c_user = preg_replace('/\s+/', '_', $new_cname);
+            $c_verify = "No";
+
+            $check_canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE canteen_name = '$c_name' OR c_oname = '$c_owner'");
+            if(mysqli_num_rows($check_canteen) > 0) {
+                echo 'err_exists';
+            } else {
+                $insert_canteen = mysqli_query($db, "INSERT INTO canteen_table(`canteen_name`, `c_oname`, `c_phone`, `c_email`, `c_user`, `c_pass`, `c_address`, `type`, `c_status`, `c_verify`, `c_email_sent`) VALUES ('$c_name', '$c_owner', '$c_contact', '$c_email', '$c_user','$c_pass','$c_address', '$c_type', '$c_status', '$c_verify', '')");
+                if($insert_canteen) {
+                    echo 'success';
+                } else {
+                    echo 'error';
+                }
+            }
+
 
         }
 

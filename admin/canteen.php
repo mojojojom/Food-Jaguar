@@ -2,7 +2,7 @@
     include("../connection/connect.php");
     error_reporting(0);
     session_start();
-    if(empty($_SESSION["adm_id"]) && empty($_SESSION["canteen_id"])) {
+    if(empty($_SESSION["adm_id"])) {
         header('location: login.php');
     }
     else
@@ -10,47 +10,6 @@
         $query = mysqli_query($db, "SELECT * FROM admin WHERE adm_id='".$_SESSION['adm_id']."'");
         while($row = mysqli_fetch_array($query)) {
         include('header.php');
-
-
-        // SHIPPING
-        if($_POST['action'] == 'set_sfee') {
-            $s_fee = $_POST['s_fee'];
-            $insert_fee = mysqli_query($db, "INSERT INTO shipping_settings (s_fee) VALUES ('$s_fee')");
-            if($insert_fee) {
-                $_SESSION['message'] = '
-                <div class="alert alert-success alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
-                    SHIPPING FEE HAS BEEN SET.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                ';
-            } else {
-                $_SESSION['message'] = '
-                <div class="alert alert-danger alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
-                    SHIPPING FEE CANNOT BE SET!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                ';
-            }
-        }
-        if($_POST['action'] == 'update_sfee') {
-            $s_fee = $_POST['s_fee'];
-            $insert_fee = mysqli_query($db, "UPDATE shipping_settings SET s_fee = '$s_fee'");
-            if($insert_fee) {
-                $_SESSION['message'] = '
-                <div class="alert alert-success alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
-                    SHIPPING FEE HAS BEEN SET.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                ';
-            } else {
-                $_SESSION['message'] = '
-                <div class="alert alert-danger alert-dismissible fade show fw-bold text-center d-flex align-items-center justify-content-center" role="alert">
-                    SHIPPING FEE CANNOT BE SET!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                ';
-            }
-        }
     ?>
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -98,8 +57,12 @@
                             Site
                         </a>
                         <a class="nav-link active" href="canteen">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-utensils"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
                             Canteen
+                        </a>
+                        <a class="nav-link" href="reviews">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-quote-left"></i></div>
+                            Reviews
                         </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
@@ -134,9 +97,9 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Dashboard</h1>
+                    <h1 class="mt-4 fw-bold">Canteen</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Dashboard</li>
+                        <li class="breadcrumb-item active">Canteen List</li>
                     </ol>
 
                     <!-- MESSAGE -->
@@ -146,256 +109,147 @@
                             unset($_SESSION['message']);
                         }
                     ?>
-                    <!-- SHIPPING FEE -->
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <form action="" method="POST">
-                                <div class="fj-input-wrap">
-                                    <?php
-                                        $sfee = mysqli_query($db, "SELECT s_fee FROM shipping_settings"); 
-                                        $sf = mysqli_fetch_assoc($sfee);
-                                    ?>
-                                    <label for="s_fee">Shipping Fee</label>
-                                    <input type="number" name="s_fee" class="fj-input" min="1" required value="<?=$sf['s_fee']?>">
-                                </div>
-                                <?php
-                                $check_fee = mysqli_query($db, "SELECT * FROM shipping_settings");
-                                if(mysqli_num_rows($check_fee) > 0) {
-                                ?>
-                                    <input type="hidden" name="action" value="update_sfee">
-                                    <button type="submit" class="c-btn-3 c-btn-sm mt-2">SET</button>
-                                <?php
-                                } else {
-                                ?>
-                                    <input type="hidden" name="action" value="set_sfee">
-                                    <button type="submit" class="c-btn-3 c-btn-sm mt-2">SET</button>
-                                <?php
-                                }
-                                ?>
-                            </form>
-                        </div>
-                    </div>
 
-                    <!-- CARDS -->
-                    <div class="row">
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-utensils fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $sql="select * from dishes";
-                                                $result=mysqli_query($db,$sql); 
-                                                $rws=mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">DISHES</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-users fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $sql="select * from users";
-                                                $result=mysqli_query($db,$sql); 
-                                                $rws=mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">USERS</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-cart-shopping fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $sql="select * from user_orders";
-                                                $result=mysqli_query($db,$sql); 
-                                                $rws=mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">TOTAL ORDERS</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-spinner fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $sql="select * from user_orders WHERE status = 'in process' ";
-                                                $result=mysqli_query($db,$sql); 
-                                                $rws=mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">PROCESSING ORDERS</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-list-check fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $sql="select * from user_orders WHERE status = 'closed' ";
-                                                $result=mysqli_query($db,$sql); 
-                                                $rws=mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">DELIVERED ORDERS</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-xmark fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $sql="select * from user_orders WHERE status = 'rejected' ";
-                                                $result=mysqli_query($db,$sql); 
-                                                $rws=mysqli_num_rows($result);
-                                                echo $rws;
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">CANCELLED ORDERS</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body d-flex align-items-center justify-content-between">
-                                    <i class="fa-solid fa-peso-sign fs-1"></i>
-                                    <div class="dashboard__info-wrap">
-                                        <h5 class="fs-2 mb-0 text-end">
-                                            <?php
-                                                $result = mysqli_query($db, 'SELECT SUM(price) AS value_sum FROM user_orders WHERE status = "closed"'); 
-                                                $row = mysqli_fetch_assoc($result); 
-                                                $sum = $row['value_sum'];
-                                                if($sum == '') {
-                                                    echo '0';
-                                                } else {
-                                                    echo $sum;
-                                                }
-                                            ?>
-                                        </h5>
-                                        <p class="mb-0 fw-bold">TOTAL EARNINGS</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- USERS TABLER -->
+                    <!-- CANTEEN TABLE -->
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
                             <i class="fas fa-table me-1"></i>
-                            <p class="mb-0 fw-bold">Users Table</p>
+                            <p class="mb-0 fw-bold">Canteen Table</p>
                         </div>
                         <div class="card-body">
-                        <table id="users_table" class="table table-striped table-bordered users_table">
+                        <table id="canteen_table" class="table table-striped table-responsive table-bordered canteen_table">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone Number</th>
+                                    <th scope="col">Canteen Name</th>
+                                    <th scope="col">Canteen Owner/Manager</th>
                                     <th scope="col">Address</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Verification</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    $get_users = mysqli_query($db, "SELECT * FROM users ORDER BY u_id desc");
+                                    $get_canteen = mysqli_query($db, "SELECT * FROM canteen_table ORDER BY id desc");
                                     $count = 1;
-                                    if(mysqli_num_rows($get_users) > 0) {
-                                        while($rows = mysqli_fetch_array($get_users)){
-                                            $fullname = $rows['f_name'] . " " . $rows["l_name"];
+                                    if(mysqli_num_rows($get_canteen) > 0) {
+                                        while($rows = mysqli_fetch_array($get_canteen)){
+
                                 ?>
                                             <tr>
                                                 <td scope="row"><?=$count?></td>
-                                                <td><?=$fullname?></td>
-                                                <td><?= $rows['username']?></td>
-                                                <td><?= $rows['email']?></td>
-                                                <td><?= $rows['phone']?></td>
-                                                <td><?= $rows['address']?></td>
-                                                <td class="d-flex justify-content-around admin__table-actions">
-                                                    <a href="#viewModal<?php echo htmlentities($rows['u_id']);?>" data-bs-toggle="modal" data-bs-target="#viewModal<?php echo htmlentities($rows['u_id']);?>"><i class="fas fa-eye"></i></a>
-                                                    <a href="#editModal<?php echo htmlentities($rows['u_id']); ?>" data-bs-toggle="modal" data-bs-target="#editModal<?php echo htmlentities($rows['u_id']);?>"><i class="fas fa-pen"></i></a>
-                                                    <a href="#deleteModal<?=$rows['u_id']?>" class="delete delete_user-btn" data-bs-toggle="modal" data-bs-target="#deleteModal<?=$rows['u_id']?>" data-id="<?=$rows['u_id']?>"><i class="fas fa-trash"></i></a>
+                                                <td><?=$rows['canteen_name']?></td>
+                                                <td><?= $rows['c_oname']?></td>
+                                                <td><?= $rows['c_address']?></td>
+                                                <td><?= $rows['c_phone']?></td>
+                                                <td><?= $rows['c_email']?></td>
+                                                <td>
+                                                    <?php
+                                                    if($rows['c_status'] === '1') {
+                                                    ?>
+                                                    <span class="badge bg-success">OPEN</span>
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                    <span class="badge bg-danger">CLOSE</span>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    if($rows['c_verify'] === 'Yes') {
+                                                    ?>
+                                                    <span class="badge bg-success">VERIFIED</span>
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                    <span class="badge bg-danger">FOR VERIFICATION</span>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td class="admin__table-actions-col">
+                                                    <div class="d-flex justify-content-around admin__table-actions">
+                                                        <!-- <a href="#viewModal<?=$rows['id']?>" data-bs-toggle="modal" data-bs-target="#viewModal<?=$rows['id']?>"><i class="fas fa-eye"></i></a> -->
+                                                        <a href="#editModal<?=$rows['id']?>" data-bs-toggle="modal" data-bs-target="#editModal<?=$rows['id']?>"><i class="fas fa-pen"></i></a>
+                                                        <a href="#deleteModal<?=$rows['id']?>" class="delete delete_user-btn text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?=$rows['id']?>" data-id="<?=$rows['id']?>"><i class="fas fa-trash"></i></a>
+                                                        <?php
+                                                        if($rows['c_verify'] === 'Yes'){
+                                                        ?>
+                                                        <a href="#resendModal<?=$rows['id']?>" data-bs-toggle="modal" data-bs-target="#resendModal<?=$rows['id']?>"><i class="fa-solid fa-rotate-right text-warning"></i></a>
+                                                        <?php
+                                                        }
+                                                        ?>
+                                                    </div>
                                                 </td>
                                             </tr>
 
 
                                             <!-- VIEW MODAL -->
-                                            <div class="modal fade" id="viewModal<?php echo htmlentities($rows['u_id']);?>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="viewModal<?=$rows['id']?>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content view_user-modal">
                                                         <div class="modal-header">
-                                                            <h1 class="modal-title fs-5 fw-bold" id="viewModalLabel">VIEW USER</h1>
+                                                            <h1 class="modal-title fs-5 fw-bold" id="viewModalLabel">VIEW CANTEEN</h1>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <?php
-                                                                $get_user = mysqli_query($db, "SELECT * FROM users WHERE u_id='".$rows['u_id']."'");
-                                                                $fetch = mysqli_fetch_array($get_user);
-                                                                $full_name = $fetch['f_name'].' '.$fetch['l_name'];
+                                                                $canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE id='".$rows['id']."'");
+                                                                $fetch = mysqli_fetch_array($canteen);
                                                             ?>
                                                             <div class="row">
                                                                 <div class="col-6 mb-3 fj-input-wrap">
-                                                                    <label for="name">Name</label>
-                                                                    <div class="fj-input cursor-default"><?=$full_name?></div>
+                                                                    <label for="name">Canteen Name</label>
+                                                                    <div class="fj-input cursor-default"><?=$fetch['canteen_name']?></div>
                                                                 </div>
                                                                 <div class="col-6 mb-3 fj-input-wrap">
-                                                                    <label for="name">Username</label>
-                                                                    <div class="fj-input cursor-default"><?=$fetch['username']?></div>
+                                                                    <label for="name">Owner/Manager</label>
+                                                                    <div class="fj-input cursor-default"><?=$fetch['c_oname']?></div>
                                                                 </div>
                                                                 <div class="col-6 mb-3 fj-input-wrap">
                                                                     <label for="name">Phone Number</label>
-                                                                    <div class="fj-input cursor-default"><?=$fetch['phone']?></div>
+                                                                    <div class="fj-input cursor-default"><?=$fetch['c_phone']?></div>
+                                                                </div>
+                                                                <div class="col-6 mb-3 fj-input-wrap">
+                                                                    <label for="name">Email</label>
+                                                                    <div class="fj-input cursor-default"><?=$fetch['c_email']?></div>
+                                                                </div>
+                                                                <div class="col-6 mb-3 fj-input-wrap">
+                                                                    <label for="name">Canteen Status</label>
+                                                                    <?php
+                                                                    if($fetch['c_status'] == '1') {
+                                                                    ?>
+                                                                    <div class="fj-input cursor-default bg-success text-light">Open</div>
+                                                                    <?php
+                                                                    } else {
+                                                                    ?>
+                                                                    <div class="fj-input cursor-default bg-danger text-light">Close</div>
+                                                                    <?php
+                                                                    }
+                                                                    ?>
                                                                 </div>
                                                                 <div class="col-6 mb-3 fj-input-wrap">
                                                                     <label for="name">Verification Status</label>
                                                                     <?php
-                                                                    if($fetch['u_verify'] == 'Yes') {
+                                                                    if($fetch['c_verify'] == 'Yes') {
                                                                     ?>
                                                                     <div class="fj-input cursor-default bg-success text-light">Verified</div>
                                                                     <?php
                                                                     } else {
                                                                     ?>
-                                                                    <div class="fj-input cursor-default bg-danger text-light">Not Verified</div>
+                                                                    <div class="fj-input cursor-default bg-danger text-light">For Verification</div>
                                                                     <?php
                                                                     }
                                                                     ?>
                                                                 </div>
                                                                 <div class="col-12 mb-3">
-                                                                    <label for="address">Address</label>
-                                                                    <div class="fj-input"><?=$fetch['address']?></div>
+                                                                    <label for="address">Address/Location</label>
+                                                                    <div class="fj-input"><?=$fetch['c_address']?></div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -407,48 +261,79 @@
                                             </div>
 
                                             <!-- EDIT MODAL -->
-                                            <div class="modal fade" id="editModal<?php echo htmlentities($rows['u_id']);?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editModal<?=$rows['id']?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
-                                                        <form method="POST" action="action.php" id="edit_user" class="edit_user">
+                                                        <form method="POST" action="action.php" id="edit_canteen" class="edit_canteen">
                                                             <div class="modal-header">
-                                                                <h1 class="modal-title fs-5 fw-bold" id="editModalLabel">EDIT USER DETAILS</h1>
+                                                                <h1 class="modal-title fs-5 fw-bold" id="editModalLabel">EDIT CANTEEN DETAILS</h1>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <?php
-                                                                    $get_user = mysqli_query($db, "SELECT * FROM users WHERE u_id='".$rows['u_id']."'");
-                                                                    $fetch = mysqli_fetch_array($get_user);
-                                                                    $full_name = $fetch['f_name'].' '.$fetch['l_name'];
+                                                                    $edit_canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE id='".$rows['id']."'");
+                                                                    $fetch = mysqli_fetch_array($edit_canteen);
                                                                 ?>
                                                                 <div class="row">
-                                                                    <input type="hidden" name="user_id" value="<?=$rows['u_id']?>">
+                                                                    <input type="hidden" name="c_id" value="<?=$rows['id']?>">
                                                                     <div class="col-6 mb-3 fj-input-wrap">
-                                                                        <label for="name">First Name</label>
-                                                                        <input type="text" name="f_name" class="fj-input f_name" value="<?=$fetch['f_name']?>">
+                                                                        <label for="name">Canteen Name</label>
+                                                                        <input type="text" name="c_name" class="fj-input f_name" value="<?=$fetch['canteen_name']?>">
                                                                     </div>
                                                                     <div class="col-6 mb-3 fj-input-wrap">
-                                                                        <label for="name">Last Name</label>
-                                                                        <input type="text" name="l_name" class="fj-input l_name" value="<?=$fetch['l_name']?>">
-                                                                    </div>
-                                                                    <div class="col-6 mb-3 fj-input-wrap">
-                                                                        <label for="name">Email</label>
-                                                                        <input type="email" name="email" class="fj-input email" value="<?=$fetch['email']?>">
+                                                                        <label for="name">Owner/Manager</label>
+                                                                        <input type="text" name="c_oname" class="fj-input l_name" value="<?=$fetch['c_oname']?>">
                                                                     </div>
                                                                     <div class="col-6 mb-3 fj-input-wrap">
                                                                         <label for="name">Phone Number</label>
-                                                                        <input type="text" name="phone" class="fj-input phone" value="<?=$fetch['phone']?>">
+                                                                        <input type="text" name="c_phone" class="fj-input phone" value="<?=$fetch['c_phone']?>">
+                                                                    </div>
+                                                                    <div class="col-6 mb-3 fj-input-wrap">
+                                                                        <label for="name">Email</label>
+                                                                        <input type="email" name="c_email" class="fj-input email" value="<?=$fetch['c_email']?>">
+                                                                    </div>
+                                                                    <div class="col-6 mb-3 fj-input-wrap">
+                                                                        <label for="name">Canteen Status</label>
+                                                                        <?php
+                                                                        if($fetch['c_status'] == '1') {
+                                                                        ?>
+                                                                        <div class="fj-input cursor-default bg-success text-light">Open</div>
+                                                                        <?php
+                                                                        } else {
+                                                                        ?>
+                                                                        <div class="fj-input cursor-default bg-danger text-light">Close</div>
+                                                                        <?php
+                                                                        }
+                                                                        ?>
+                                                                    </div>
+                                                                    <div class="col-6 mb-3 fj-input-wrap">
+                                                                        <label for="name">Verification Status</label>
+                                                                        <select name="c_verify" class="fj-input">
+                                                                            <?php
+                                                                                if($fetch['c_verify'] === 'Yes') {
+                                                                            ?>
+                                                                                    <option selected value="<?=$fetch['c_verify']?>">Verified</option>
+                                                                                    <option value="No">For Verification</option>
+                                                                            <?php
+                                                                                } else {
+                                                                            ?>
+                                                                                    <option selected value="<?=$fetch['c_verify']?>">For Verification</option>
+                                                                                    <option value="Yes">Verified</option>
+                                                                            <?php
+                                                                                }
+                                                                            ?>
+                                                                        </select>
                                                                     </div>
                                                                     <div class="col-12 mb-3 fj-input-wrap">
-                                                                        <label for="address">Address</label>
-                                                                        <textarea name="address" rows="3" class="fj-input address"><?=$fetch['address']?></textarea>
+                                                                        <label for="address">Address/Location</label>
+                                                                        <textarea name="address" rows="3" class="fj-input address"><?=$fetch['c_address']?></textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <input type="hidden" name="u_id" value="<?=$rows['u_id']?>">
-                                                                <input type="hidden" name="action" value="edit_user">
-                                                                <button type="submit" class="c-btn-3 c-btn-sm edit_user-btn" data-id="<?=$rows['u_id']?>">Save</button>
+                                                                <input type="hidden" name="id" value="<?=$rows['id']?>">
+                                                                <input type="hidden" name="action" value="edit_canteen">
+                                                                <button type="submit" class="c-btn-3 c-btn-sm edit_user-btn" data-id="<?=$rows['id']?>">Save</button>
                                                                 <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
                                                             </div>
                                                         </form>
@@ -457,20 +342,20 @@
                                             </div>
 
                                             <!-- DELETE MODAL -->
-                                            <div class="modal fade" id="deleteModal<?php echo htmlentities($rows['u_id']);?>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="deleteModal<?=$rows['id']?>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content view_user-modal">
                                                         <form action="action.php" method="POST">
                                                             <div class="modal-header">
-                                                                <h1 class="modal-title fs-5 fw-bold" id="viewModalLabel">DELETE USER</h1>
+                                                                <h1 class="modal-title fs-5 fw-bold" id="viewModalLabel">DELETE CANTEEN</h1>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <p class="text-center">Are you sure you want to delete this user?</p>
-                                                                <input type="hidden" name="id" value="<?=$rows['u_id']?>">
+                                                                <p class="text-center">Are you sure you want to delete this canteen?</p>
+                                                                <input type="hidden" name="id" value="<?=$rows['id']?>">
                                                             </div>
                                                             <div class="modal-footer">
-                                                                <input type="hidden" name="action" value="delete_user">
+                                                                <input type="hidden" name="action" value="delete_canteen">
                                                                 <button type="submit" class="c-btn-3 c-btn-sm">Confirm</button>
                                                                 <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
                                                             </div>
@@ -478,12 +363,36 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <!-- RESEND EMAIL MODAL -->
+                                            <div class="modal fade" id="resendModal<?=$rows['id']?>" tabindex="-1" aria-labelledby="resendModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content view_user-modal">
+                                                        <form action="action.php" method="POST">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5 fw-bold" id="resendModalLabel">RESEND VERIFICATION EMAIL</h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p class="text-center">You are about to resend a verification email to <b><?=$rows['c_email']?></b></p>
+                                                                <input type="hidden" name="id" value="<?=$rows['id']?>">
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <input type="hidden" name="action" value="resend_email">
+                                                                <button type="submit" class="c-btn-3 c-btn-sm">Confirm</button>
+                                                                <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
                                 <?php
                                     $count = $count+1;
                                         }
                                     } else {
                                 ?>
-                                    <td colspan="7" class="text-center fw-bold text-danger">No Users Availabe</td>
+                                    <td colspan="7" class="text-center fw-bold text-danger">No Canteen Availabe</td>
                                 <?php
                                     }
                                 ?>
@@ -511,6 +420,10 @@
 
     </div>
 
+    <script>
+        document.title = "Canteens List | Food Jaguar"
+    </script>
+
 <?php
         }
     }
@@ -520,74 +433,7 @@
 <script>
     jQuery(function($) {
         $(document).ready(function () {
-            $('#users_table').DataTable();
-
-            // EDIT USER FUNCTION
-            // $('#edit_user').on('submit', function(e) {
-            // $('#edit_user').on('click', '.edit_user-btn', function(e) {
-            // $('.edit_user-btn').on('click', function(e) {
-            //     e.preventDefault();
-            //     // var formData = $(this).serialize();
-            //     var formData = $('#edit_user').serialize();
-            //     // alert('success');
-
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "action.php",
-            //         data: formData,
-            //         success: function (response) {
-            //             if(response == 'success') {
-
-            //                 // SHOW STATUS
-            //                 const Toast = Swal.mixin({
-            //                     toast: true,
-            //                     position: 'top-end',
-            //                     showConfirmButton: false,
-            //                     timer: 1500,
-            //                     timerProgressBar: true
-            //                 })
-            //                 Toast.fire({
-            //                     icon: 'success',
-            //                     title: 'User Info Has Been Edited'
-            //                 })
-
-            //                 // REFRESH THE TABLE
-            //                 // $.ajax({
-            //                 //     type: "GET",
-            //                 //     url: "get_users.php",
-            //                 //     success: function (response) {
-            //                 //         $('.users_table').empty().html(response);
-            //                 //     }
-            //                 // });
-            //                 get_users();
-            //                 get_view_user();
-
-            //             } else {
-            //                 alert(response);
-            //             }
-            //         }
-            //     });
-
-            // })
-
-            // REMOVE USER FUNCTION
-            // $('.delete_user-btn').on('click', function(e) {
-            //     e.preventDefault();
-            //     var id = $(this).data('id');
-                
-            //     $.ajax({
-            //         type: "POST",
-            //         url: "action.php",
-            //         data: {id: id, action: 'delete_user'},
-            //         success: function (response) {
-            //             if(response == 'success') {
-            //                 alert('success');
-            //             } else {
-            //                 alert('error');
-            //             }
-            //         }
-            //     });
-            // })
+            $('#canteen_table').DataTable();
         })
 
         function get_users() {

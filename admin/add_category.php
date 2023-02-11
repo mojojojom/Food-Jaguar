@@ -57,6 +57,14 @@
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></i></div>
                             Site
                         </a>
+                        <a class="nav-link" href="canteen">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
+                            Canteen
+                        </a>
+                        <a class="nav-link" href="reviews">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-quote-left"></i></div>
+                            Reviews
+                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed active" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -90,7 +98,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Add Category</h1>
+                    <h1 class="mt-4 fw-bold">Add Category</h1>
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Category</li>
                     </ol>
@@ -252,6 +260,10 @@
         <!-- END OF CONTENT -->
 
     </div>
+
+    <script>
+        document.title = "Add Category | Food Jaguar"
+    </script>
 
 <?php
         }

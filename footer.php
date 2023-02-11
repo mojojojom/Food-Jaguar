@@ -12,7 +12,7 @@
                     {
                         while($dish = mysqli_fetch_assoc($get_faves)) 
                         {
-                            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$dish['d_id']."'");
+                            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$dish['d_id']."' AND c_id='".$dish['c_id']."'");
                             while($get_stock = mysqli_fetch_array($check_stock)) {
                                 $stocks = $get_stock['d_stock'];
                             }
@@ -26,7 +26,7 @@
                             <div class="col-md-8 ps-0">
                                 <div class="d-flex align-items-center justify-content-center h-100">
                                     <div class="card-body p-0">
-                                        <a href="#" type="button" class="position-absolute delete_fave" product-id="<?=$dish['d_id']?>" style="right: 10px; top: 10px;"><i class="fa-solid fa-square-xmark text-danger"></i></a>
+                                        <a href="#" type="button" class="position-absolute delete_fave" data-canteen="<?=$dish['c_id']?>" product-id="<?=$dish['d_id']?>" style="right: 10px; top: 10px;"><i class="fa-solid fa-square-xmark text-danger"></i></a>
                                         <h6 class="card-title mb-0 fw-bold"><?=$dish['title']?></h6>
                                         <p class="card-text mb-0 fw-semibold">₱<?=$dish['price']?></p>
                                         <div class="d-flex align-items-center justify-content-between">
@@ -63,7 +63,6 @@
                 ?>
             </div>
         </div>
-        
         
         <!-- CHECKOUT POPUP -->
         <div class="modal fade" id="checkoutModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
@@ -256,7 +255,7 @@
                                 <div class="cart__item-wrap">
                                     <label for="cart-checkbox-<?=$item['d_id']?>-<?=$item['title']?>">
                                         <div class="cart__item-checkbox-wrap">
-                                            <input type="checkbox" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-check="check-box" data-id="<?=$item['d_id']?>" data-price="<?=$item['price']?>">
+                                            <input type="checkbox" data-canteen="<?=$item['c_id']?>" id="cart__item-checkbox-<?=$item['d_id']?>-<?=$item['title']?>" class="cart__item-checkbox" data-check="check-box" data-id="<?=$item['d_id']?>" data-price="<?=$item['price']?>">
                                             <input type="hidden" name="qyt_hidden" data-qty-id="cart_qty_val-<?=$item['quantity']?>" value="<?=$item['quantity']?>">
                                             <label for="cbx" class="cbx"></label>
                                         </div>
@@ -295,6 +294,7 @@
                         ?>
                         <input type="hidden" data-qty-id="cart_qty_val-<?=$item['d_id']?>" name="cart_qty" value="<?=$item['quantity']?>">
                         <input type="hidden" name="cart_dish_id" value="<?=$item['d_id']?>">
+                        <input type="hidden" class="c_id" name="c_id" data-canteen="<?=$item['c_id']?>" value="<?=$item['c_id']?>">
                         <?php
                             }
                         }
@@ -311,7 +311,8 @@
                 <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
                     <!-- <p class="total-price mb-0 fw-semibold">₱0.00</p> -->
                     <!-- <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)"> -->
-                    <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-btn" value="Checkout(0)">
+                    <!-- <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-btn" value="Checkout(0)"> -->
+                    <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-btn" value="Checkout">
                 </div>
             </div>
         </div>
@@ -334,8 +335,8 @@
                         ?>
                         </a>
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6 d-flex justify-content-end align-items-center">
-                        <div class="fj__copyright-wrap d-flex justify-content-end align-items-center">
+                    <div class="col-12 col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end align-items-center">
+                        <div class="fj__copyright-wrap d-flex align-items-center">
                             <p class="s-font fj__copyright mb-0">Copyright © <?= date('Y') ?> <a href="./">
                             <?php 
                                 $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
@@ -418,10 +419,11 @@
                     $('.fave-offcanvas-body').on('click', '.delete_fave', function(e) {
                         e.preventDefault();
                         var d_id = $(this).attr('product-id');
+                        var c_id = $(this).data('canteen');
                         $.ajax({
                             type: "POST",
                             url: "add_cart.php",
-                            data: {d_id: d_id, action: 'remove_to_fave'},
+                            data: {d_id: d_id, c_id: c_id, action: 'remove_to_fave'},
                             success: function (response) {
                                 if(response == 'success') {
 
@@ -576,53 +578,79 @@
                         });
                     })
 
-                    // CHECK ALL
-                    $('#cart__item-footer-checkbox').change(function() {
-                        if($('.cart__item-checkbox').length == 0) {
+                    // // CHECK ALL
+                    // $('#cart__item-footer-checkbox').change(function() {
+                    //     if($('.cart__item-checkbox').length == 0) {
+                    //         Swal.fire(
+                    //             'Your Cart is Empty!',
+                    //             'Please Add Items to the Cart.',
+                    //             'warning'
+                    //         );
+                    //     }
+                    //     else
+                    //     {
+                    //         $('.cart__item-checkbox').prop('checked', $(this).prop('checked'));
+                    //         var checkedNum = $('.cart__item-checkbox:checked').length;
+                    //         // $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                    //         var totalPrice = 0;
+                    //         if(checkedNum > 0) {
+                    //             $('.cart__item-checkbox:checked').each(function() {
+                    //                 var dish_id = $(this).data('id');
+                    //                 var item_price = $(this).data('price');
+                    //                 var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                    //                 totalPrice += item_price*item_qty;
+                    //             });
+                    //             $('.total-price').text('₱'+totalPrice.toFixed(2));
+                    //         } else {
+                    //             $('.total-price').text('₱0.00');
+                    //         }
+                    //     }
+                    // });
+
+                    // // CHECK SINGLE ITEM
+                    // $(document).on('change', '.cart__item-checkbox', function() {
+                    //     var checkedNum = $('.cart__item-checkbox:checked').length;
+                    //     // $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
+                    //     var totalPrice = 0;
+                    //     if(checkedNum > 0) {
+                    //         $('.cart__item-checkbox:checked').each(function() {
+                    //             var dish_id = $(this).data('id');
+                    //             var item_price = $(this).data('price');
+                    //             var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                    //             totalPrice += item_price*item_qty;
+                    //         });
+                    //         $('.total-price').text('₱'+totalPrice.toFixed(2));
+                    //     } else {
+                    //         $('.total-price').text('₱0.00');
+                    //     }
+                    // });
+                    $(document).on('change', '.cart__item-checkbox, #cart__item-footer-checkbox', function() {
+                        if ($('.cart__item-checkbox').length == 0) {
                             Swal.fire(
                                 'Your Cart is Empty!',
                                 'Please Add Items to the Cart.',
                                 'warning'
                             );
-                        }
-                        else
-                        {
-                            $('.cart__item-checkbox').prop('checked', $(this).prop('checked'));
+                        } else {
+                            if (this.id === 'cart__item-footer-checkbox') {
+                                $('.cart__item-checkbox').prop('checked', $(this).prop('checked'));
+                            }
                             var checkedNum = $('.cart__item-checkbox:checked').length;
-                            $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
                             var totalPrice = 0;
-                            if(checkedNum > 0) {
+                            if (checkedNum > 0) {
                                 $('.cart__item-checkbox:checked').each(function() {
                                     var dish_id = $(this).data('id');
                                     var item_price = $(this).data('price');
-                                    var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
-                                    totalPrice += item_price*item_qty;
+                                    var item_qty = $('input[data-qty-id="cart_qty_val-' + dish_id + '"]').val();
+                                    totalPrice += item_price * item_qty;
                                 });
-                                $('.total-price').text('₱'+totalPrice.toFixed(2));
+                                $('.total-price').text('₱' + totalPrice.toFixed(2));
                             } else {
                                 $('.total-price').text('₱0.00');
                             }
                         }
                     });
-
-                    // CHECK SINGLE ITEM
-                    $(document).on('change', '.cart__item-checkbox', function() {
-                        var checkedNum = $('.cart__item-checkbox:checked').length;
-                        $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                        var totalPrice = 0;
-                        if(checkedNum > 0) {
-                            $('.cart__item-checkbox:checked').each(function() {
-                                var dish_id = $(this).data('id');
-                                var item_price = $(this).data('price');
-                                var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
-                                totalPrice += item_price*item_qty;
-                            });
-                            $('.total-price').text('₱'+totalPrice.toFixed(2));
-                        } else {
-                            $('.total-price').text('₱0.00');
-                        }
-                    });
-
+                    
                     $(cartBtn).on('click', function(e) {
                         e.preventDefault();
                         var cartForm = $('#cart_checkout').serialize();
@@ -638,8 +666,10 @@
                                     $('.cart__item-checkbox:checked').each(function() {
                                         var dish_id = $(this).data('id');
                                         var items_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
+                                        var c_id = $(this).data('canteen');
                                         selectedItems.push({
                                             'id': $(this).data('id'),
+                                            'c_id': $(this).data('canteen'),
                                             'quantity': items_qty
                                         });
                                     });
@@ -711,10 +741,11 @@
                                     Swal.fire({
                                     title: 'Unable To Checkout!',
                                     html: 'Please Login Before Checking Out!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
-                                    timer: 3000,
+                                    timer: 3500,
                                     timerProgressBar: false,
                                     showCancelButton: false,
                                     showConfirmButton: false,
+                                    allowOutsideClick: false,
                                     willClose: () => {
                                         clearInterval(timerInterval)
                                     }
@@ -875,12 +906,13 @@
                         e.preventDefault();
                         var d_id = $(this).data('item'); 
                         var u_id = $(this).data('user'); 
+                        var c_id = $(this).data('canteen');
                         $(this).toggleClass('active');
 
                         $.ajax({
                             type: "POST",
                             url: "add_cart.php",
-                            data: {d_id: d_id, u_id: u_id, action: 'add_to_fave'},
+                            data: {d_id: d_id, u_id: u_id, c_id: c_id, action: 'add_to_fave'},
                             success: function (response) {
                                 if(response == 'success') 
                                 {
@@ -921,10 +953,11 @@
                                     Swal.fire({
                                     title: 'Unable To Add Item to Favorites!',
                                     html: 'Please Login Before Adding to Favorites!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
-                                    timer: 3000,
+                                    timer: 3500,
                                     timerProgressBar: false,
                                     showCancelButton: false,
                                     showConfirmButton: false,
+                                    allowOutsideClick: false,
                                     willClose: () => {
                                         clearInterval(timerInterval)
                                     }

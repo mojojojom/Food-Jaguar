@@ -57,6 +57,14 @@
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></div>
                             Site
                         </a>
+                        <a class="nav-link" href="canteen">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
+                            Canteen
+                        </a>
+                        <a class="nav-link" href="reviews">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-quote-left"></i></div>
+                            Reviews
+                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -227,8 +235,52 @@
 
     </div>
 
+    <script>
+        document.title = "Site Settings | Food Jaguar"
+    </script>
+
 <?php
         }
     }
     include('footer.php');
 ?>
+
+
+<script>
+
+
+jQuery(function($) {
+		
+    $(document).ready(function() {
+        $('.help-areas-bullet').on('click', '.issue-link', function(e) {
+            e.preventDefault();
+            var issue = $(this).data('issue');
+            var list = $(this).data('list');
+            
+            if(list === 'Clinical') {
+                $('#clinical_experts').slideToggle();
+                $('#general_experts').hide();
+            } else if(list === 'General') {
+                $('#general_experts').slideToggle();
+                $('#clinical_experts').hide();
+            }
+            
+            $.ajax({
+                url: '/wp-admin/admin-ajax.php',
+                data: {
+                    action: 'doctor_filter'
+                },
+                success: function(response) {
+                    console.log(response);
+                    $.each(response, function(index, doctor) {
+                        console.log(doctor.meta.imgUrlL);
+                    })
+                }
+            })
+            
+        })
+    })
+})
+
+
+</script>

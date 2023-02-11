@@ -18,13 +18,21 @@
             <div class="card">
                 <div class="card-body p-4">
                     <div class="admin__login-logo-wrap">
-                        <img src="../images/icon.png" class="admin__login-logo" alt="">
+                        <?php 
+                            $site_logo = mysqli_query($db, "SELECT site_logo FROM site_settings"); 
+                            $sl = mysqli_fetch_assoc($site_logo);
+                        ?>
+                        <img src="images/<?=$sl['site_logo']?>" class="admin__login-logo" alt="">
                     </div>
                     <div class="admin__login-header">
-                        <p class="admin__login-header-heading mb-0">Welcome to Food Jaguar!👋</p>
+                        <?php 
+                            $site_name = mysqli_query($db, "SELECT site_name FROM site_settings"); 
+                            $sn = mysqli_fetch_assoc($site_name);
+                        ?>
+                        <p class="admin__login-header-heading mb-0">Welcome to <?=$sn['site_name']?>!👋</p>
                         <p class="admin__login-header-sub">Please sign in with your account. </p>
                     </div>
-                    <form id="admin_login">
+                    <form id="admin_login" method="POST">
                         <div class="admin_login-input-wrap mb-3">
                             <label class="mb-1 admin__login-input-label" for="username">EMAIL OR USERNAME</label>
                             <input class="l__login-username admin__login-input" type="text" placeholder="Username" name="username" autofocus>
@@ -100,6 +108,25 @@
 
                             setTimeout(' window.location.href = "dashboard"; ', 1000);
                         }
+                        else if(response == 'canteen_login') {
+                            $('#admin_login_btn').val('Logging In');
+                            $('#admin_login_btn').addClass('disabled');
+                            $('#admin_login_btn').prop('disabled', true);
+
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1000,
+                                timerProgressBar: true
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Signed in successfully!'
+                            })
+
+                            setTimeout(' window.location.href = "../canteen/dashboard"; ', 1000);
+                        }
                         else if(response == 'error_pass')
                         {
                             $('#admin_login_btn').val('Login');
@@ -142,6 +169,17 @@
                                 'Empty Fields!',
                                 'Please Enter Your Password!',
                                 'error'
+                            );
+                        }
+                        else if(response == 'error_verify')
+                        {
+                            $('#admin_login_btn').val('Login');
+                            $('#admin_login_btn').removeClass('disabled');
+                            $('#admin_login_btn').prop('disabled', false);
+                            Swal.fire(
+                                'Unable To Login!',
+                                'Your canteen is not verified yet. <br>Please Contact us to verify.',
+                                'info'
                             );
                         }
                         else

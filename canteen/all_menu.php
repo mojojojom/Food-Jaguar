@@ -2,13 +2,13 @@
     include("../connection/connect.php");
     error_reporting(0);
     session_start();
-    if(empty($_SESSION["adm_id"]))
+    if(empty($_SESSION["canteen_id"])) 
     {
-        header('location:index');
+        header('location: ../admin/index');
     }
     else
     {
-        $query = mysqli_query($db, "SELECT * FROM admin WHERE adm_id='".$_SESSION['adm_id']."'");
+        $query = mysqli_query($db, "SELECT * FROM canteen_table WHERE id='".$_SESSION['canteen_id']."'");
         while($row = mysqli_fetch_array($query)) {
         include('header.php');
     ?>
@@ -53,18 +53,6 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
-                        <a class="nav-link" href="site_settings">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-globe"></i></div>
-                            Site
-                        </a>
-                        <a class="nav-link" href="canteen">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
-                            Canteen
-                        </a>
-                        <a class="nav-link" href="reviews">
-                            <div class="sb-nav-link-icon"><i class="fa-solid fa-quote-left"></i></div>
-                            Reviews
-                        </a>
                         <div class="sb-sidenav-menu-heading">Log</div>
                         <a class="nav-link collapsed active" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                             <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
@@ -76,9 +64,6 @@
                                 <a class="nav-link active" href="all_menu">
                                     All Menu
                                 </a>
-                                <a class="nav-link" href="add_category">
-                                    Add Category
-                                </a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="all_orders">
@@ -89,7 +74,7 @@
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logged in as:</div>
-                    <?=$row['username']?>
+                    <?=$row['c_user']?>
                 </div>
             </nav>
         </div>
@@ -137,7 +122,7 @@
                             </thead>
                             <tbody>
                                 <?php
-                                    $get_menu = mysqli_query($db, "SELECT * FROM dishes ORDER BY d_id desc");
+                                    $get_menu = mysqli_query($db, "SELECT * FROM dishes WHERE c_id='".$_SESSION['canteen_id']."' ORDER BY d_id desc");
                                     if(mysqli_num_rows($get_menu) > 0) {
                                         while($rows = mysqli_fetch_array($get_menu)){
                                             $single_dish = mysqli_query($db, "SELECT * FROM food_category WHERE f_catid='".$rows['rs_id']."'");
@@ -151,11 +136,11 @@
                                                 <td><?= $rows['d_stock']?></td>
                                                 <td>
                                                     <div class="col-12">
-                                                        <center><img src="Res_img/dishes/<?= $rows['img']?>" class="img-thumbnail" style="height:80px; width: 80px; object-fit: cover;" alt=""></center>
+                                                        <center><img src="../admin/Res_img/dishes/<?= $rows['img']?>" class="img-thumbnail" style="height:80px; width: 80px; object-fit: cover;" alt=""></center>
                                                     </div>
                                                 </td>
                                                 <td class="admin__table-actions text-center">
-                                                    <!-- <a href="#editModal<?=$rows['d_id'] ?>"data-bs-toggle="modal" data-bs-target="#editModal<?=$rows['d_id']?>"><i class="fas fa-pen"></i></a> -->
+                                                    <a href="#editModal<?=$rows['d_id'] ?>"data-bs-toggle="modal" data-bs-target="#editModal<?=$rows['d_id']?>"><i class="fas fa-pen"></i></a>
                                                     <a href="#deleteModal<?=$rows['d_id']?>" data-bs-toggle="modal" data-bs-target="#deleteModal<?=$rows['d_id']?>" data-item="<?=$rows['d_id']?>"><i class="fas fa-trash"></i></a>
                                                 </td>
                                             </tr>
@@ -166,7 +151,7 @@
                                             <div class="modal fade" id="editModal<?=$rows['d_id']?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
-                                                        <form id="dish_form" method="POST" action="action.php" enctype="multipart/form-data">
+                                                        <form id="dish_form" method="POST" action="../admin/action.php" enctype="multipart/form-data">
                                                             <div class="modal-header">
                                                                 <h1 class="modal-title fs-5 fw-bold" id="editModalLabel">Edit Item</h1>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -189,7 +174,7 @@
                                                                     <div class="mb-3 col-6">
                                                                         <label for="formFile" class="form-label">Item Image</label>
                                                                         <input class="form-control" name="dish_img" type="file" id="dish_img">
-                                                                        <img class="img-thumbnail" src="Res_img/dishes/<?=$rows['img']?>" alt="item image">
+                                                                        <img class="img-thumbnail" src="../admin/Res_img/dishes/<?=$rows['img']?>" alt="item image">
                                                                     </div>
                                                                     <div class="mb-3 col-6">
                                                                         <label for="formFile" class="form-label">Item Category</label>
@@ -228,7 +213,7 @@
                                             <div class="modal fade" id="deleteModal<?=$rows['d_id']?>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content view_user-modal">
-                                                        <form action="action.php" method="POST">
+                                                        <form action="../admin/action.php" method="POST">
                                                             <div class="modal-header">
                                                                 <h1 class="modal-title fs-5 fw-bold" id="deleteModalLabel">DELETE ITEM</h1>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -288,7 +273,7 @@
     <div class="modal fade" id="add_menu_modal" tabindex="-1" aria-labelledby="add_menu_modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="action.php" method="POST" id="add_item_form" enctype="multipart/form-data">
+                <form action="../admin/action.php" method="POST" id="add_item_form" enctype="multipart/form-data">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5 fw-bold" id="add_menu_modalLabel">ADD ITEM TO THE MENU</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -360,16 +345,17 @@
         </div>
     </div>
 
-    <script>
-        document.title = "Menu List | Food Jaguar"
-    </script>
-
 
 <?php
         }
     }
     include('footer.php');
 ?>
+
+    <!-- PAGE TITLE -->
+    <script>
+        document.title = "All Menu | Food Jaguar"
+    </script>
 
 <script>
     jQuery(function($) {

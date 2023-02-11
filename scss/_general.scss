@@ -420,3 +420,16 @@ input[type="password"]::after {
     content: "";
     background-image: none!important;
 }
+
+.t-{
+    &primary {
+        color: $primary-col;
+    }
+    &secondary {
+        color: $secondary-col;
+    }
+}
+
+.bg-unset {
+    background-color: unset!important;
+}
