@@ -67,7 +67,7 @@
 
                         <?php
                             // $menu = mysqli_query($db, "SELECT * FROM dishes");
-                            $menu = mysqli_query($db, "SELECT * FROM dishes INNER JOIN canteen_table ON dishes.c_id = canteen_table.id WHERE canteen_table.c_status = '1'");
+                            $menu = mysqli_query($db, "SELECT * FROM dishes INNER JOIN canteen_table ON dishes.c_id = canteen_table.id WHERE canteen_table.c_status = '1' AND dishes.d_status = 'Post'");
                             if(mysqli_num_rows($menu) > 0) {
                                 while($rows=mysqli_fetch_array($menu))
                                 {

@@ -677,7 +677,7 @@
                                     {
                                         let selectedItemsJson = JSON.stringify(selectedItems);
                                         checkOutOrders(selectedItemsJson, 'checkOutOrder');
-                                        console.log(selectedItemsJson);
+                                        // console.log(selectedItemsJson);
                                     } 
                                     else 
                                     {
@@ -855,7 +855,7 @@
                                                     'Unable To Place Order!',
                                                     'error'
                                                 );
-                                                alert(response);
+                                                // alert(response);
                                             }
                                         }
                                     });
@@ -867,7 +867,7 @@
                                         'Unable To Place Order!',
                                         'error'
                                     );
-                                    alert(response);
+                                    // alert(response);
                                 }
                             }
                         })

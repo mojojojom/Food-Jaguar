@@ -118,6 +118,7 @@ if(isset($_POST['action'])) {
         $d_desc = mysqli_real_escape_string($db, $_POST['d_desc']);
         $d_cat = mysqli_real_escape_string($db, $_POST['d_cat']);
         $d_stock = mysqli_real_escape_string($db, $_POST['d_stock']);
+        $d_stat = mysqli_real_escape_string($db, $_POST['d_stat']);
 
         $img_name = $_FILES['d_img']['name'];
         $img_temp = $_FILES['d_img']['tmp_name'];
@@ -152,7 +153,7 @@ if(isset($_POST['action'])) {
                 }
                 else 
                 {
-                    $insert_item = mysqli_query($db, "INSERT INTO dishes (c_id, rs_id, title, slogan, price, img, d_stock) VALUES ('".$_SESSION['canteen_id']."','$d_cat', '$d_name', '$d_desc', '$d_price', '$new_img', '$d_stock')");
+                    $insert_item = mysqli_query($db, "INSERT INTO dishes (c_id, rs_id, title, slogan, price, img, d_stock, d_status) VALUES ('".$_SESSION['canteen_id']."','$d_cat', '$d_name', '$d_desc', '$d_price', '$new_img', '$d_stock', '$d_stat')");
                     if($insert_item) {
                         move_uploaded_file($img_temp, $store);
                         $_SESSION['message'] = '

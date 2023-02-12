@@ -64,7 +64,7 @@ hr {
         &.active {
             cursor: progress;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 16px;
         }
     }
@@ -85,7 +85,7 @@ hr {
         &.active {
             cursor: progress;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 16px;
         }
     }
@@ -106,7 +106,7 @@ hr {
         &.active {
             cursor: progress;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 16px;
         }
     }
@@ -127,7 +127,7 @@ hr {
         &.active {
             cursor: progress;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 16px;
         }
     }
@@ -148,7 +148,7 @@ hr {
         &.active {
             cursor: progress;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 16px;
         }
     }
@@ -174,7 +174,7 @@ hr {
         &.active {
             cursor: progress;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 16px;
         }
     }

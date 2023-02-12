@@ -46,8 +46,8 @@
             color: $dark-col;
             font-weight: bolder;
             font-size: 50px;
-            @include media('<=phone') {
-                font-size: 40px;
+            @include media('<=lg-phone') {
+                font-size: 30px;
             }
         }
         &-sub-heading {
@@ -96,7 +96,7 @@
         @include media('<desktop') {
             font-size: 50px;
         }
-        @include media('<=phone') {
+        @include media('<=lg-phone') {
             font-size: 30px;
         }
     }
@@ -210,8 +210,16 @@
 // TESTI
 .h__testi {
     &-inner-wrap {
+        @include media('<=lg-phone') {
+            display: flex!important;
+            justify-content: center;
+        }
         .card {
             min-height: 250px;
+            @include media('<=lg-phone') {
+                min-height: 300px;
+                width: 95%;
+            }
         }
     }
     &-wrap {
@@ -243,7 +251,7 @@
                 @include media('<desktop') {
                     font-size: 50px;
                 }
-                @include media('<=phone') {
+                @include media('<=lg-phone') {
                     font-size: 30px;
                 }
             }
@@ -262,6 +270,9 @@
     &-info-wrap {
         p {
             color: $primary-col;
+            @include media('<=lg-phone') {
+                font-size: 14px;
+            }
         }
         h5 {
             font-weight: bold;
@@ -282,17 +293,26 @@
         &:hover {
             color: $secondary-col;
         }
+        @include media('<=lg-phone') {
+            display: none;
+        }
     }
     .custom-prev {
         top: 30px;
+        @include media('<=lg-phone') {
+            display: none!important;
+        }
     }
     .custom-next {
         top: 0px;
+        @include media('<=lg-phone') {
+            display: none!important;
+        }
     }
 }
 
 
-// CANTEEN
+// CANTEEN BANNER
 .h__canteen {
     &-wrap {
         background-image: linear-gradient(0deg, rgba(46,42,255,1) 0%, rgba(0,0,0,0.3) 0%), url('/imgs/canteen.svg');
@@ -304,9 +324,15 @@
         padding: 40px 0;
         h1 {
             color: $light-col;
+            @include media('<=lg-phone') {
+                font-size: 30px;
+            }
         }
         h5 {
             color: $light-col;
+            @include media('<=tablet') {
+                font-size: 18px;
+            }
         }
     }
 }
@@ -324,7 +350,7 @@
             @include media('<desktop') {
                 font-size: 50px;
             }
-            @include media('<=phone') {
+            @include media('<=lg-phone') {
                 font-size: 30px;
             }
         }

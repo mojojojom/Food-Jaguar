@@ -108,9 +108,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-                        <table id="menu_table" class="table table-striped table-bordered table-responsive">
+                        <table id="menu_table" class="table table-hover table-striped table-bordered table-responsive">
                             <thead>
                                 <tr>
+                                    <th scope="col">Status</th>
                                     <th scope="col">Category</th>
                                     <th scope="col">Item</th>
                                     <th scope="col">Description</th>
@@ -129,7 +130,20 @@
                                             $fetch = mysqli_fetch_array($single_dish);
                                 ?>
                                             <tr>
-                                                <td scope="row"><?=$fetch['f_catname']?></td>
+                                                <td scope="row">
+                                                    <?php
+                                                    if($rows['d_status'] === 'Post') {
+                                                    ?>
+                                                    <div class="badge bg-success">POSTED</div>
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                    <div class="badge bg-info">DRAFT</div>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </td>
+                                                <td><?=$fetch['f_catname']?></td>
                                                 <td><?= $rows['title']?></td>
                                                 <td><?= $rows['slogan']?></td>
                                                 <td><?= $rows['price']?></td>
@@ -192,9 +206,25 @@
                                                                             ?>
                                                                         </select>
                                                                     </div>
-                                                                    <div class="mb-3 col-12">
-                                                                        <label for="stock">Stocks</label>
+                                                                    <div class="mb-3 col-6">
+                                                                        <label for="stock" class="form-label">Stocks</label>
                                                                         <input class="form-control" type="number" name="dish_stock" value="<?=$rows['d_stock']?>">
+                                                                    </div>
+                                                                    <div class="mb-3 col-6">
+                                                                        <label for="formFile" class="form-label">Item Status</label>
+                                                                        <select class="form-select" name="d_status" aria-label="Default select example">
+                                                                            <option selected value="<?=$rows['d_status']?>"><?=$rows['d_status']?></option>
+                                                                            <?php
+                                                                                $get_stat = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$rows['d_id']."'");
+                                                                                if(mysqli_num_rows($get_stat) > 0) {
+                                                                                    while($stat = mysqli_fetch_array($get_stat)) {
+                                                                            ?>
+                                                                                        <option value="<?=$stat['d_status']?>"><?=$stat['d_status']?></option>
+                                                                            <?php
+                                                                                    }
+                                                                                }
+                                                                            ?>
+                                                                        </select>
                                                                     </div>
                                                                 </div>
 
@@ -326,10 +356,21 @@
                                 </div>
                             </div>
 
-                            <div class="col-12 mb-3">
+                            <div class="col-6 mb-3">
                                 <div class="fj-input-wrap">
                                     <label for="d_stock">Item Stock</label>
                                     <input type="number" name="d_stock" class="fj-input" placeholder="Enter Item Stock" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class=" fj-input-wrap">
+                                    <label for="d_stat">Item Status</label>
+                                    <select name="d_stat" class="fj-input" data-placeholder="Choose a Category" tabindex="1" required>
+                                        <option>Select Status</option>
+                                        <option value="Post">Post</option>
+                                        <option value="Draft">Draft</option>
+                                    </select>
                                 </div>
                             </div>
 

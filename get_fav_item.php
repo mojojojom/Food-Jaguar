@@ -1,7 +1,7 @@
 <?php
     session_start();
     include('connection/connect.php');
-    $menu = mysqli_query($db, "SELECT * FROM dishes");
+    $menu = mysqli_query($db, "SELECT * FROM dishes WHERE d_status = 'Post'");
     while($rows=mysqli_fetch_array($menu))
     {
         $query = mysqli_query($db, 'SELECT * FROM food_category WHERE f_catid="'.$rows['rs_id'].'"');

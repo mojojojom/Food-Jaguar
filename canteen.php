@@ -25,10 +25,10 @@
             if($stat['c_status'] == '1') {
             ?>
                 <?php
-                $get_dishes = mysqli_query($db, "SELECT * FROM dishes WHERE c_id = '".$_GET['id']."'");
+                $get_dishes = mysqli_query($db, "SELECT * FROM dishes WHERE c_id = '".$_GET['id']."' AND dishes.d_status = 'Post'");
                 if(mysqli_num_rows($get_dishes) > 0) {
                 ?>
-                <div class="row">
+                <div class="row d-flex justify-content-center">
                     <?php
                     while($dishes = mysqli_fetch_array($get_dishes)) {
                     ?>

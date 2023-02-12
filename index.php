@@ -121,9 +121,9 @@
                     <span class="h__menu-divider"></span>
                 </div>
                 <div class="h__menu-list-wrap">
-                    <div class="row">
+                    <div class="row d-flex justify-content-center">
                         <?php
-                            $menu = mysqli_query($db, "SELECT * FROM dishes INNER JOIN canteen_table ON dishes.c_id = canteen_table.id WHERE canteen_table.c_status = '1' LIMIT 6");
+                            $menu = mysqli_query($db, "SELECT * FROM dishes INNER JOIN canteen_table ON dishes.c_id = canteen_table.id WHERE canteen_table.c_status = '1' AND dishes.d_status = 'Post' LIMIT 6");
                             if(mysqli_num_rows($menu) > 0) {
                                 while($rows=mysqli_fetch_array($menu))
                                 {
@@ -502,7 +502,31 @@
                 easing: 'linear',
                 pauseOnHover: true,
                 nextArrow: '<i class="fa-solid fa-circle-up custom-next"></i>',
-                prevArrow: '<i class="fa-solid fa-circle-down custom-prev"></i>'
+                prevArrow: '<i class="fa-solid fa-circle-down custom-prev"></i>',
+                responsive: [
+                    {
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    },
+                    {
+                        breakpoint: 600,
+                        settings: {
+                            vertical: false,
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
+                    }
+                ]
             });
 
             // ADD TESTI 
@@ -576,7 +600,12 @@
                         }
                         else 
                         {
-                            alert(response);
+                            // alert(response);
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable to Add Review',
+                                'error'
+                            );
                         }
                     }
                 });
@@ -609,12 +638,17 @@
                         else if(response == 'err_exists') {
                             Swal.fire(
                                 'Registration Failed!',
-                                'This Is Already Registered',
+                                'This Canteen Is Already Registered',
                                 'error'
                             );
                         }
                         else {    
-                            alert(response);
+                            // alert(response);
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable to Register Canteen',
+                                'error'
+                            );
                         }
                     }
                 });
