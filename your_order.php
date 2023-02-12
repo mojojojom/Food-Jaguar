@@ -164,6 +164,43 @@
                                                                 $total_price = $dish['total_price'];
                                                     ?>
 
+                                                                <?php
+                                                                if($dish['status'] === 'closed') {
+                                                                ?>
+                                                                <div class="card mb-3 bg-success">
+                                                                    <div class="card-body">
+                                                                        <div class="modal__checkout-wrap">
+                                                                            <div class="row">
+                                                                                <div class="modal__checkout-item-desc-wrap col-11">
+                                                                                    <p class="modal__checkout-item-name mb-1 fs-5 text-white"><?=$dish["title"]?></p>
+                                                                                    <div class="d-flex align-items-center gap-2">
+                                                                                        <p class="modal__checkout-item-price mb-0 text-white">₱<?=$dish['original_price']?></p>
+                                                                                        <p class="modal__checkout-item-qty mb-0 text-white">x<?=$dish['quantity']?></p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                
+                                                                                <div class="col-1 d-flex align-items-center">
+                                                                                    <div class="d-flex align-items-center justify-content-center">
+                                                                                        <?php
+                                                                                        if($dish['status'] === '') {
+                                                                                        ?>
+                                                                                        <a id="cancel_order" data-date="<?=$dish['date']?>" data-id="<?=$dish['o_id']?>" data-num="<?=$row['order_number']?>" class="o__order-card-item-cancel mb-0 cancel_order"><i class="fa-solid fa-square-xmark fs-5"></i></a>
+                                                                                        <?php
+                                                                                        } else {
+                                                                                        ?>
+                                                                                        <a href="#" class="o__order-card-item-cancel mb-0 text-white" disabled><i class="fa-solid fa-square-xmark fs-5"></i></a>
+                                                                                        <?php
+                                                                                        }
+                                                                                        ?>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <?php
+                                                                } else {
+                                                                ?>
                                                                 <div class="card mb-3">
                                                                     <div class="card-body">
                                                                         <div class="modal__checkout-wrap">
@@ -178,13 +215,26 @@
                                                                                 
                                                                                 <div class="col-1 d-flex align-items-center">
                                                                                     <div class="d-flex align-items-center justify-content-center">
-                                                                                        <a href="#" id="cancel_order" data-date="<?=$dish['date']?>" data-id="<?=$dish['o_id']?>" data-num="<?=$row['order_number']?>" class="o__order-card-item-cancel mb-0 cancel_order"><i class="fa-solid fa-square-xmark fs-5"></i></a>
+                                                                                        <?php
+                                                                                        if($dish['status'] === '') {
+                                                                                        ?>
+                                                                                        <a id="cancel_order" data-date="<?=$dish['date']?>" data-id="<?=$dish['o_id']?>" data-num="<?=$row['order_number']?>" class="o__order-card-item-cancel mb-0 cancel_order"><i class="fa-solid fa-square-xmark fs-5"></i></a>
+                                                                                        <?php
+                                                                                        } else {
+                                                                                        ?>
+                                                                                        <a href="#" class="o__order-card-item-cancel mb-0 text-secondary" disabled><i class="fa-solid fa-square-xmark fs-5"></i></a>
+                                                                                        <?php
+                                                                                        }
+                                                                                        ?>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                <?php
+                                                                }
+                                                                ?>
                                                     <?php
                                                             }
                                                         }

@@ -361,7 +361,7 @@
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="action" value="add_canteen">
-                        <button type="submit" class="c-btn-3 c-btn-sm" data-bs-dismiss="modal">REGISTER</button>
+                        <button type="submit" class="c-btn-3 c-btn-sm">REGISTER</button>
                         <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">CANCEL</button>
                     </div>
                 </form>
@@ -634,6 +634,7 @@
                                 'We\'ll send you an email once your registration has been verified.',
                                 'success'
                             );
+                            $('#addCanteenModal').modal('toggle');
                         } 
                         else if(response == 'err_exists') {
                             Swal.fire(

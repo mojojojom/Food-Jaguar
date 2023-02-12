@@ -4,7 +4,7 @@
     // get the search query from the AJAX call
     $query = $_POST['query'];
     // retrieve the matching dishes from the database
-    $menu = mysqli_query($db, "SELECT * FROM dishes WHERE title LIKE '%$query%'");
+    $menu = mysqli_query($db, "SELECT * FROM dishes WHERE title LIKE '%$query%' AND d_status='Post'");
     // format the response as a list of dishes
 ?>
 <?php

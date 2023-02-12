@@ -2,6 +2,7 @@
     include("../connection/connect.php");
     error_reporting(0);
     session_start();
+    include('session_expire.php');
     if(empty($_SESSION["canteen_id"])) 
     {
         header('location: ../admin/index');

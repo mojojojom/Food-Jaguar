@@ -44,7 +44,7 @@
 
             <div class="m__menu-content-wrap">
 
-                <div class="m__menu-cat-wrap">
+                <!-- <div class="m__menu-cat-wrap">
                     <div class="m__menu-filter-wrap">
                         <nav class="primary">
                             <ul class="m__menu-filter-list">
@@ -59,7 +59,7 @@
                             </ul>
                         </nav>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="m__menu-list-wrap">
 
