@@ -303,11 +303,11 @@
                 </form>
             </div>
 
-            <div class="offcanvas-footer d-flex align-items-center justify-content-between">
-                <div class="cart__item-footer-all-wrap d-flex align-items-center gap-2 ps-2">
+            <div class="offcanvas-footer d-flex align-items-center justify-content-end">
+                <!-- <div class="cart__item-footer-all-wrap d-flex align-items-center gap-2 ps-2">
                     <input type="checkbox" id="cart__item-footer-checkbox" class="cart__item-footer-checkbox">
                     <label for="cart__item-checkbox">All</label>
-                </div>
+                </div> -->
                 <div class="cart__item-footer-btn-wrap d-flex align-items-center gap-2">
                     <!-- <p class="total-price mb-0 fw-semibold">₱0.00</p> -->
                     <!-- <input type="submit" class="cart__item-footer-btn border-0" data-action-id="check_user" id="cart__item-footer-btn" value="Checkout(0)"> -->
@@ -578,52 +578,6 @@
                         });
                     })
 
-                    // // CHECK ALL
-                    // $('#cart__item-footer-checkbox').change(function() {
-                    //     if($('.cart__item-checkbox').length == 0) {
-                    //         Swal.fire(
-                    //             'Your Cart is Empty!',
-                    //             'Please Add Items to the Cart.',
-                    //             'warning'
-                    //         );
-                    //     }
-                    //     else
-                    //     {
-                    //         $('.cart__item-checkbox').prop('checked', $(this).prop('checked'));
-                    //         var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //         // $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                    //         var totalPrice = 0;
-                    //         if(checkedNum > 0) {
-                    //             $('.cart__item-checkbox:checked').each(function() {
-                    //                 var dish_id = $(this).data('id');
-                    //                 var item_price = $(this).data('price');
-                    //                 var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
-                    //                 totalPrice += item_price*item_qty;
-                    //             });
-                    //             $('.total-price').text('₱'+totalPrice.toFixed(2));
-                    //         } else {
-                    //             $('.total-price').text('₱0.00');
-                    //         }
-                    //     }
-                    // });
-
-                    // // CHECK SINGLE ITEM
-                    // $(document).on('change', '.cart__item-checkbox', function() {
-                    //     var checkedNum = $('.cart__item-checkbox:checked').length;
-                    //     // $('.cart__item-footer-btn').val('Checkout('+checkedNum+')');
-                    //     var totalPrice = 0;
-                    //     if(checkedNum > 0) {
-                    //         $('.cart__item-checkbox:checked').each(function() {
-                    //             var dish_id = $(this).data('id');
-                    //             var item_price = $(this).data('price');
-                    //             var item_qty = $('input[data-qty-id="cart_qty_val-'+dish_id+'"]').val();
-                    //             totalPrice += item_price*item_qty;
-                    //         });
-                    //         $('.total-price').text('₱'+totalPrice.toFixed(2));
-                    //     } else {
-                    //         $('.total-price').text('₱0.00');
-                    //     }
-                    // });
                     $(document).on('change', '.cart__item-checkbox, #cart__item-footer-checkbox', function() {
                         if ($('.cart__item-checkbox').length == 0) {
                             Swal.fire(
@@ -677,7 +631,7 @@
                                     {
                                         let selectedItemsJson = JSON.stringify(selectedItems);
                                         checkOutOrders(selectedItemsJson, 'checkOutOrder');
-                                        // console.log(selectedItemsJson);
+                                        console.log(selectedItemsJson);
                                     } 
                                     else 
                                     {

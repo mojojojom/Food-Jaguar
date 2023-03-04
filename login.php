@@ -190,6 +190,7 @@
                                 'User Doesn\'t Exists!!',
                                 'error'
                             );
+                            alert(response);
                         }
                     }
                 });

@@ -188,7 +188,8 @@
             $last_order_number = 1;
 
             // CHECK SESSION
-            if(!empty($_SESSION['check_cart_item'])) {
+            if(!empty($_SESSION['check_cart_item'])) 
+            {
                 // INCLUDE CONNECTION
                 include('connection/connect.php');
                 
@@ -204,8 +205,11 @@
                 $last_order_number = $row['max_order_number'];
                 $order_number = $last_order_number + 1;
 
+                $success = 'success';
+
                 // GET ITEMS FROM THE SESSION
-                foreach($_SESSION['check_cart_item'] as $item) {
+                foreach($_SESSION['check_cart_item'] as $item) 
+                {
 
                     // GET ITEMS FROM THE DISHES DB
                     $get_dish = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$item['id']."'");
@@ -216,65 +220,89 @@
 
                     // SHIPPING FEE
                     $sfee = 0;
-                    if($mop == 'deliver') {
+                    if($mop == 'deliver') 
+                    {
                         $sfee = $sf['s_fee'];
-                    } else {
+                    } 
+                    else 
+                    {
                         $sfee = 0;
                     }
 
                     // ADD ADDRESS
-                    if($_POST['new_address'] === "") {
+                    if($_POST['new_address'] === "") 
+                    {
                         $new_address = null;
-                    } else {
+                    } 
+                    else 
+                    {
                         $new_address = $_POST['new_address'];
                     }
 
                     // CHECK IF THE DISH EXISTS
-                    if(mysqli_num_rows($get_dish) > 0) {
-                        while($dish = mysqli_fetch_array($get_dish)) {
+                    if(mysqli_num_rows($get_dish) > 0) 
+                    {
+                        while($dish = mysqli_fetch_array($get_dish)) 
+                        {
                             $total_price = $item['quantity']*$dish['price'];
                             $get_address = mysqli_query($db, "SELECT address from users WHERE u_id='".$_SESSION['user_id']."'");
                             $get = mysqli_fetch_assoc($get_address);
                             $orig_address = $get['address'];
 
                             $query = mysqli_query($db, "INSERT INTO user_orders (c_id, u_id, title, quantity, price, original_price, mop, s_fee, s_address, original_address, status, order_number, date) VALUES ('".$dish['c_id']."','".$_SESSION["user_id"]."', '".$dish['title']."', '".$item['quantity']."', '".$total_price."', '".$dish['price']."', '$mop', '$sfee', '$new_address', '$orig_address', '', '$order_number', '$current_date')");
-                            if($query) {
+                            if($query) 
+                            {
                                 $update_stock = mysqli_query($db, "UPDATE dishes SET d_stock = d_stock - ".$item['quantity']." WHERE d_id='".$item['id']."' AND c_id='".$dish['c_id']."'");
-                                if($update_stock) {
+                                if($update_stock) 
+                                {
 
                                     $items_cart = array_column($_SESSION['cart_item'], 'd_id');
                                     $checkout_cart = array_column($_SESSION['check_cart_item'], 'id');
                                     
                                     $common = array_intersect($items_cart, $checkout_cart);
-                                    foreach($common as $id) {
-                                        foreach ($_SESSION['cart_item'] as $key => $item) {
-                                            if ($item['d_id'] == $id) {
+                                    foreach($common as $id) 
+                                    {
+                                        foreach ($_SESSION['cart_item'] as $key => $item) 
+                                        {
+                                            if ($item['d_id'] == $id) 
+                                            {
                                                 unset($_SESSION['cart_item'][$key]);
                                                 break;
                                             }
                                         }
-                                        foreach ($_SESSION['check_cart_item'] as $key => $item) {
-                                            if ($item['id'] == $id) {
+                                        foreach ($_SESSION['check_cart_item'] as $key => $item) 
+                                        {
+                                            if ($item['id'] == $id) 
+                                            {
                                                 unset($_SESSION['check_cart_item'][$key]);
                                                 break;
                                             }
                                         }
                                     }
-                                    echo 'success';
-                                } else {
-                                    // echo 'error' . mysqli_error($db);
-                                    echo 'error';
+                                    // echo 'success';
+                                    $success = 'success';
+                                } 
+                                else 
+                                {
+                                    // echo 'error';
+                                    $success = 'error';
                                 }
-                            } else {
-                                echo 'error';
+                            } 
+                            else 
+                            {
+                                $success = 'error';
                             }
                         }
-                    } else {
-                        echo 'error';
+                    } 
+                    else 
+                    {
+                        $success = 'error';
                     }
                 }
+                echo $success;
             }
-            else {
+            else 
+            {
                 echo 'error';
             }
         }
@@ -286,20 +314,54 @@
             include('connection/connect.php');
             $check_order = mysqli_query($db, "SELECT * FROM user_orders WHERE o_id='$id'");
             if(mysqli_num_rows($check_order) > 0) {
-                $cancel = mysqli_query($db, "UPDATE user_orders SET status='rejected' WHERE o_id='$id'");
-                if($cancel) {
-                    echo 'success';
+        
+                $fetch = mysqli_fetch_assoc($check_order);
+                $order_quantity = $fetch['quantity'];
+
+                $get_dishes = mysqli_query($db, "SELECT d_stock FROM dishes WHERE c_id = '".$fetch['c_id']."' AND title = '".$fetch['title']."'");
+                $get = mysqli_fetch_assoc($get_dishes);
+                $get_stock = $get['d_stock'];
+        
+                // Define the variables $stocks, $cid, and $title
+                // $stocks = $get_stock;
+                $cid = $fetch['c_id'];
+                $title = $fetch['title'];
+        
+                // $stocks += $order_quantity;
+                $stocks = $order_quantity + $get_stock;
+        
+                $update_stock = mysqli_query($db, "UPDATE dishes SET d_stock='$stocks' WHERE c_id='$cid' AND title='$title'");
+        
+                if($update_stock)
+                {
+                    $cancel = mysqli_query($db, "UPDATE user_orders SET status='rejected' WHERE o_id='$id'");
+                    if($cancel) 
+                    {
+                        echo 'success';
+                        header('Location: your_order');
+                        exit();
+                    }
+                    else 
+                    {
+                        echo 'error';
+                        header('Location: your_order');
+                        exit();
+                    }
+                }
+                else 
+                {
+                    echo 'error';
                     header('Location: your_order');
                     exit();
-                }
-                else {
-                    echo 'error';
                 }
             }
             else {
                 echo 'error';
+                header('Location: your_order');
+                exit();
             }
         }
+        
 
 
         // ADD TO FAVORITE - ajax - WORKING - FINAL
