@@ -1,6 +1,36 @@
 <?php
 session_start();
 if(isset($_POST['action'])) {
+
+    // ADMIN PROFILE
+    if($_POST['action'] == 'admin_edit')
+    {
+        include('../connection/connect.php');
+        $user = mysqli_real_escape_string($db, $_POST['username']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+        if(empty($pass)) {
+            $update_user_profile = mysqli_query($db, "UPDATE admin SET username='$user', email='$email' WHERE adm_id='".$_SESSION['adm_id']."'");
+            if($update_user_profile) {
+                echo 'success';
+            } else {
+                echo 'err_edit';
+            }
+        } else {
+            $hashedPass = password_hash($pass, PASSWORD_DEFAULT);
+
+            $query = mysqli_query($db, "UPDATE admin SET username='$user', email='$email', password='$hashedPass' WHERE adm_id='".$_SESSION['adm_id']."'");
+    
+            if($query) {
+                echo 'success';
+            } else {
+                echo 'err_edit';
+            }
+        }
+
+    }
+
     // LOGIN - working
     if($_POST['action'] == 'admin_login')
     {
@@ -202,6 +232,7 @@ if(isset($_POST['action'])) {
         $dish_cat = mysqli_real_escape_string($db, $_POST['dish_cat']);
         $dish_id = mysqli_real_escape_string($db, $_POST['dish_id']);
         $dish_stock = mysqli_real_escape_string($db, $_POST['dish_stock']);
+        $dish_status = mysqli_real_escape_string($db, $_POST['d_status']);
 
         $img_name = $_FILES['dish_img']['name'];
         $img_temp = $_FILES['dish_img']['tmp_name'];
@@ -214,7 +245,7 @@ if(isset($_POST['action'])) {
 
         if($_FILES['dish_img']['error'] === 4) 
         {
-            $update_dish = mysqli_query($db, "UPDATE dishes SET rs_id='$dish_cat', title='$dish_name', slogan='$dish_desc', price='$dish_price', d_stock='$dish_stock' WHERE d_id='$dish_id' AND c_id = '".$_SESSION['canteen_id']."'");
+            $update_dish = mysqli_query($db, "UPDATE dishes SET rs_id='$dish_cat', title='$dish_name', slogan='$dish_desc', price='$dish_price', d_stock='$dish_stock', d_status='$dish_status' WHERE d_id='$dish_id' AND c_id = '".$_SESSION['canteen_id']."'");
             if($update_dish) 
             {
                 header('Location: ../canteen/all_menu');
@@ -252,7 +283,7 @@ if(isset($_POST['action'])) {
                 }
                 else 
                 {
-                    $update_dish = mysqli_query($db, "UPDATE dishes SET rs_id='$dish_cat',title='$dish_name',slogan='$dish_desc',price='$dish_price', img='$new_img', d_stock='$dish_stock' WHERE d_id='$dish_id' AND c_id = '".$_SESSION['canteen_id']."'");
+                    $update_dish = mysqli_query($db, "UPDATE dishes SET rs_id='$dish_cat',title='$dish_name',slogan='$dish_desc',price='$dish_price', img='$new_img', d_stock='$dish_stock', d_status='$dish_status' WHERE d_id='$dish_id' AND c_id = '".$_SESSION['canteen_id']."'");
                     move_uploaded_file($img_temp, $store);
                     if($update_dish) {
                         header('Location: ../canteen/all_menu');

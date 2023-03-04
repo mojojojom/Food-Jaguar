@@ -289,6 +289,8 @@
                 $cancel = mysqli_query($db, "UPDATE user_orders SET status='rejected' WHERE o_id='$id'");
                 if($cancel) {
                     echo 'success';
+                    header('Location: your_order');
+                    exit();
                 }
                 else {
                     echo 'error';
@@ -402,3 +404,4 @@
         }
 
     }
+?>

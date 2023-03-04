@@ -7,13 +7,6 @@ include('connection/connect.php');
 
 use Dompdf\Dompdf;
 
-$html .= '
-        <div class="container">
-            <h2 style="font-weight: 800; color:black; margin-bottom: 0; padding: 0;" align="center">FOOD JAGUAR</h2>
-            <p align="center" style="margin-bottom:0; font-size: 12px;">President Ramon Magsaysay State University, Iba Zambales, <br>Quality Assurance Building, Ground Floor</p>
-            <hr style="border: solid 0.5px black">
-';
-
 if(isset($_SESSION['user_id'])) 
 {
     $get_user = mysqli_query($db, "SELECT * FROM users WHERE u_id = '".$_SESSION['user_id']."'");
@@ -21,7 +14,7 @@ if(isset($_SESSION['user_id']))
     $fullname = $fetch['f_name']. ' '.$fetch['l_name'];
     $order_id = $_GET['id'];
     // GET ALL ORDERS
-    $get_orders = mysqli_query($db,'SELECT user_orders.*, (SELECT SUM(price) FROM user_orders WHERE status != "rejected" AND order_number="'.$row['order_number'].'") as total_price FROM user_orders WHERE u_id="'.$_SESSION["user_id"].'" AND order_number="'.$order_id.'"');
+    $get_orders = mysqli_query($db,'SELECT user_orders.*, (SELECT SUM(price) FROM user_orders WHERE status != "rejected" AND order_number="'.$row['order_number'].'") as total_price FROM user_orders WHERE u_id="'.$_SESSION["user_id"].'" AND order_number="'.$order_id.'" AND status != "rejected"');
     // GET TOTAL PRICE
     $get_total_price = mysqli_query($db, "SELECT SUM(price) as total_price FROM user_orders WHERE status != 'rejected' AND order_number = '".$order_id."'");
     $get_all_total_price = mysqli_fetch_array($get_total_price);
@@ -38,8 +31,21 @@ if(isset($_SESSION['user_id']))
     $get_sfee = mysqli_query($db, "SELECT s_fee FROM user_orders WHERE u_id='".$_SESSION['user_id']."' AND status <> 'rejected' GROUP BY s_fee");
     $get_all_sfee = mysqli_fetch_assoc($get_sfee);
     // $all_sfee = $get_all_sfee['s_fee'];
+    // GET CANTEEN
+    $get_canteen = mysqli_query($db, "SELECT c_id FROM user_orders WHERE u_id='".$_SESSION['user_id']."' AND status <> 'rejected' GROUP BY c_id");
+    $fetch_cid = mysqli_fetch_assoc($get_canteen);
+    $get_canteen_name = mysqli_query($db, "SELECT * FROM canteen_table WHERE id='".$fetch_cid['c_id']."'");
+    $fcname = mysqli_fetch_assoc($get_canteen_name);
+    $cname = $fcname['canteen_name'];
 
     $final_price = $get_all_sfee['s_fee']+$total_price;
+
+    $html .= '
+        <div class="container">
+            <h2 style="font-weight: 800; color:black; margin-bottom: 0; padding: 0;" align="center">'.$cname.'</h2>
+            <p align="center" style="margin-bottom:0; font-size: 12px;">President Ramon Magsaysay State University, Iba Zambales, <br>Quality Assurance Building, Ground Floor</p>
+            <hr style="border: solid 0.5px black">
+    ';
 
     $html .= '
         <div style="display: flex; align-items: center; justify-content: space-between;">

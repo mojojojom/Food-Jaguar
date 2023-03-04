@@ -252,40 +252,39 @@
                                                                     <p class="mb-0 fw-bold">STATUS</p>
                                                                     <p class="mb-0 card p-2">
                                                                         <?php 
-                                                                            $status=$rows['status'];
-                                                                            if($status=="" or $status=="NULL")
+                                                                            $status=$row['status'];
+                                                                            if($status=="preparing") 
                                                                             {
-                                                                        ?>
-                                                                            <span class="badge bg-warning text-center fw-medium">Queue</span>
-                                                                        <?php 
+                                                                                ?>
+                                                                                    <span class="badge bg-primary text-center fw-medium">Preparing</span>
+                                                                                <?php
                                                                             }
-                                                                            if($status=="preparing") {
-                                                                        ?>
-                                                                            <span class="badge bg-primary text-center fw-medium">Preparing</span>
-                                                                        <?php
-                                                                            }
-                                                                            if($status=="in process")
+                                                                            else if($status=="in process")
                                                                             { 
-                                                                        ?>
-                                                                            <span class="badge bg-info text-center fw-medium">On The Way</span>
-                                                                        <?php
+                                                                                ?>
+                                                                                    <span class="badge bg-info text-center fw-medium">On The Way</span>
+                                                                                <?php
                                                                             }
-                                                                            if($status=="closed")
+                                                                            else if($status=="closed")
                                                                             {
-                                                                        ?>
-                                                                            <span class="badge bg-success text-center fw-medium">Delivered</span>
-                                                                        <?php 
+                                                                                ?>
+                                                                                    <span class="badge bg-success text-center fw-medium">Delivered</span>
+                                                                                <?php 
                                                                             } 
-                                                                        ?>
-                                                                        <?php
-                                                                            if($status=="rejected")
+                                                                            else if($status=="rejected")
                                                                             {
+                                                                                ?>
+                                                                                    <span class="badge bg-danger text-center fw-medium">Cancelled</span>
+                                                                                <?php 
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                ?>
+                                                                                    <span class="badge bg-warning text-center fw-medium">Queue</span>
+                                                                                <?php
+                                                                            }
                                                                         ?>
-                                                                            <span class="badge bg-danger text-center fw-medium">Cancelled</span>
-                                                                        <?php 
-                                                                            } 
-                                                                        ?>
-                                                                        </p>
+                                                                    </p>
                                                                 </div>
                                                                 <div class="col-6 mb-3">
                                                                     <p class="mb-0 fw-bold">CHANGE STATUS</p>

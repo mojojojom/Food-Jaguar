@@ -215,16 +215,8 @@
                                                                         <label for="formFile" class="form-label">Item Status</label>
                                                                         <select class="form-select" name="d_status" aria-label="Default select example">
                                                                             <option selected value="<?=$rows['d_status']?>"><?=$rows['d_status']?></option>
-                                                                            <?php
-                                                                                $get_stat = mysqli_query($db, "SELECT * FROM dishes WHERE d_id='".$rows['d_id']."'");
-                                                                                if(mysqli_num_rows($get_stat) > 0) {
-                                                                                    while($stat = mysqli_fetch_array($get_stat)) {
-                                                                            ?>
-                                                                                        <option value="<?=$stat['d_status']?>"><?=$stat['d_status']?></option>
-                                                                            <?php
-                                                                                    }
-                                                                                }
-                                                                            ?>
+                                                                            <option selected value="Post">Post</option>
+                                                                            <option selected value="Draft">Draft</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>

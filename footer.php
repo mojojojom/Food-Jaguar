@@ -855,7 +855,7 @@
                                                     'Unable To Place Order!',
                                                     'error'
                                                 );
-                                                // alert(response);
+                                                alert(response);
                                             }
                                         }
                                     });
@@ -867,7 +867,7 @@
                                         'Unable To Place Order!',
                                         'error'
                                     );
-                                    // alert(response);
+                                    alert(response);
                                 }
                             }
                         })
