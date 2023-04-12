@@ -1,6 +1,6 @@
 <?php
     session_start();
-    include('connection/connect.php');
+    include('../connection/connect.php');
     $get_faves = mysqli_query($db, "SELECT * FROM fave_table INNER JOIN dishes ON fave_table.d_id = dishes.d_id WHERE u_id='".$_SESSION['user_id']."'");
 
     if(mysqli_num_rows($get_faves) > 0) 

@@ -17,7 +17,7 @@
     </section>
 
     <section class="c__canteen-wrap sec-pad">
-        <div class="container">
+        <div class="container-lg canteen-food-listing d-flex justify-content-center">
             <?php
             $check_status = mysqli_query($db, "SELECT c_status FROM canteen_table WHERE id = '".$_GET['id']."'");
             $stat = mysqli_fetch_assoc($check_status);
@@ -30,33 +30,54 @@
                 ?>
                 <div class="row d-flex justify-content-center">
                     <?php
-                    while($dishes = mysqli_fetch_array($get_dishes)) {
+                    while($rows = mysqli_fetch_array($get_dishes)) {
                     ?>
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="h__menu-list-card">
-                                <div class="h__menu-card-img-wrap">
-                                    <img class="h__menu-card-img" src="admin/Res_img/dishes/<?=$dishes['img']?>" alt="Menu">
-                                </div>
-                                <div class="h__menu-card-inner-wrap p-4">
-                                    <div class="h__menu-card-name-wrap">
-                                        <h1 class="h__menu-card-name s-font"><?=$dishes['title']?></h1>
+                        
+                        <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3 mb-3">
+                            <div class="h__menu-list-box card">
+                                
+                                <div class="card-body">
+                                    <!-- TITLE -->
+                                    <div class="h__menu-list-box-name-wrap text-center">
+                                        <h1 class="h__menu-list-box-name"><?=$rows['title']?></h1>
                                     </div>
-                                    <div class="h__menu-card-price-wrap">
-                                        <h4 class="h__menu-card-price s-font">₱<?=$dishes['price']?></h4>
+
+                                    <!-- IMAGE -->
+                                    <div class="h__menu-list-box-img-wrap">
+                                        <img src="admin/Res_img/dishes/<?=$rows['img']?>" alt="Menu" class="h__menu-list-box-img">
                                     </div>
-                                    <div class="h__menu-card-desc-wrap">
-                                        <p class="h__menu-card-desc s-font"><?=$dishes['slogan']?></p>
-                                    </div>
+
+                                    <!-- ADD TO CART BUTTON -->
                                     <input type="hidden" class="m__menu-qty" id="menu_qty" type="number" name="quantity"  value="1" size="2" />
-                                    <div class="h__menu-card-btn-wrap">
-                                        <button href="#qtyModal<?=htmlentities($dishes['d_id'])?>" class="h__menu-card-btn addCartBtn" data-bs-toggle="modal" data-bs-target="#qtyModal<?=htmlentities($dishes['d_id'])?>"><i class="fa-solid fa-plus"></i></button>
+                                    <div class="h__menu-list-btn-wrap d-flex align-items-center justify-content-center gap-2 mt-3">
+                                        <button href="#qtyModal<?=htmlentities($rows['d_id'])?>" class="h__menu-list-btn addCartBtn" data-bs-toggle="modal" data-bs-target="#qtyModal<?=htmlentities($rows['d_id'])?>">ADD TO CART</button>
+                                        <div class="h__menu-list-fave-wrap">
+                                            <?php
+                                                if(isset($_SESSION['user_id'])) {
+                                                    $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id = '".$rows['d_id']."' AND u_id = '".$_SESSION['user_id']."'");
+                                                    if(mysqli_num_rows($check_fave) > 0) {
+                                            ?>
+                                                    <a href="#" class="h__menu-list-fave-btn fave_btn active" data-canteen="<?=$rows['c_id']?>" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
+                                            <?php
+                                                    } else {
+                                            ?>
+                                                    <a href="#" class="h__menu-list-fave-btn fave_btn" data-canteen="<?=$rows['c_id']?>" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                                            <?php
+                                                    }
+                                                } else {
+                                            ?>
+                                                    <a href="#" class="h__menu-list-fave-btn fave_btn" data-canteen="<?=$rows['c_id']?>" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                                            <?php
+                                                }
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
-
                         <!-- QUANTITY MODAL -->
-                        <div class="modal fade quantity_modal-<?=htmlentities($dishes['d_id'])?>" id="qtyModal<?=htmlentities($dishes['d_id'])?>" tabindex="-1" aria-labelledby="qtyModalLabel" aria-hidden="true">
+                        <div class="modal fade quantity_modal-<?=htmlentities($rows['d_id'])?>" id="qtyModal<?=htmlentities($rows['d_id'])?>" tabindex="-1" aria-labelledby="qtyModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
 
@@ -66,11 +87,12 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body py-4">
-                                            <input type="hidden" class="add__cart-dish-id" data-product-id="<?=$dishes['d_id']?>" value="<?= $dishes['d_id']?>">
+                                            <input type="hidden" class="add__cart-dish-id" data-product-id="<?=$rows['d_id']?>" value="<?= $rows['d_id']?>">
                                             <div class="card py-2">
                                                 <div class="card-body">
                                                     <div class="add__cart-dish-name-wrap mb-4">
-                                                        <h1 class="add__cart-dish-name"><?=$dishes['title']?></h1>
+                                                        <h1 class="add__cart-dish-name"><?=$rows['title']?></h1>
+                                                        <h5 class="fw-bold text-center"><?=$rows['price']?>/order</h5>
                                                     </div>
 
                                                     <div class="add__cart-dish-qty-wrap d-block text-center">
@@ -82,7 +104,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <?php
-                                                $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$dishes['d_id']."'");
+                                                $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
                                                 while($get_stock = mysqli_fetch_array($check_stock)) {
                                                     $stocks = $get_stock['d_stock'];
                                                 }
@@ -94,7 +116,7 @@
                                                 } else {
                                             ?>
                                             <input type="hidden" name="action" class="add_action" value="add_cart">
-                                            <input type="submit" name="submit" class="c-btn-3 add_cart_btn" data-action-id="add_cart" data-dish-id="<?= $dishes['d_id']?>" value="Add to Cart" data-bs-dismiss="modal">
+                                            <input type="submit" name="submit" class="c-btn-3 add_cart_btn" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add to Cart" data-bs-dismiss="modal">
                                             <?php
                                                 }
                                             ?>
@@ -111,14 +133,14 @@
                 <?php
                 } else {
                 ?>
-                <span class="alert alert-danger fw-bold text-center d-flex justify-content-center align-items-center mb-0">NO MENU AVAILABLE</span>
+                <span class="alert alert-danger fw-bold text-center d-flex justify-content-center align-items-center mb-0 w-100">NO MENU AVAILABLE</span>
                 <?php
                 }
                 ?>
             <?php
             } else {
             ?>
-            <span class="alert alert-danger d-flex align-items-center justify-content-center fw-bold text-center text-uppercase"><?=$_GET['canteen']?> IS CLOSE.</span>
+            <span class="alert alert-danger d-flex align-items-center justify-content-center fw-bold text-center text-uppercase w-100"><?=$_GET['canteen']?> IS CLOSE.</span>
             <?php
             }
             ?>
@@ -179,7 +201,7 @@
                     // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
                     $.ajax({
                         type: "GET",
-                        url: "get_cart.php",
+                        url: "/templates/cart-bar-template.php",
                         success: function (response) {
                             $('.offcanvas-body').empty().html(response);
                         }
@@ -202,4 +224,98 @@
             }
         });
     })
+
+    jQuery(function($) {
+        $(document).ready(function () {
+            // ADD TO FAVE
+            $('.canteen-food-listing').on('click','.fave_btn', function(e) {
+                e.preventDefault();
+                var d_id = $(this).data('item'); 
+                var u_id = $(this).data('user'); 
+                var c_id = $(this).data('canteen');
+                $(this).toggleClass('active');
+
+                $.ajax({
+                    type: "POST",
+                    url: "add_cart.php",
+                    data: {d_id: d_id, u_id: u_id, c_id: c_id, action: 'add_to_fave'},
+                    success: function (response) {
+                        if(response == 'success') 
+                        {
+                            updateFave();
+                            updateFaveList();
+
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Added To Favorite'
+                            })
+                        } 
+                        else if(response == 'removed')
+                        {
+                            updateFave();
+                            updateFaveList()
+
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: true
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Removed From Favorite'
+                            })
+                        }
+                        else if(response == 'error_login'){
+                            let timerInterval
+                            Swal.fire({
+                            title: 'Unable To Add Item to Favorites!',
+                            html: 'Please Login Before Adding to Favorites!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
+                            timer: 3500,
+                            timerProgressBar: false,
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            willClose: () => {
+                                clearInterval(timerInterval)
+                            }
+                            }).then((result) => {
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    window.location.href = 'login';
+                                }
+                            })
+                        }
+                        else 
+                        {
+                            Swal.fire(
+                                'Something Went Wrong!',
+                                'Unable to Add Item to Favorites.',
+                                'error'
+                            );
+                        }
+                    }
+                });
+
+            })
+        })
+    })
+
+    // UPDATE MENU
+    function updateFave() {
+        $.ajax({
+            type: "GET",
+            url: "/templates/canteen-page-template.php",
+            success: function (response) {
+                $('.canteen-food-listing').empty().html(response);
+            }
+        });
+    }
 </script>

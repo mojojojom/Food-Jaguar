@@ -7,13 +7,13 @@
         background-repeat: no-repeat;
         background-size: cover;
         position: relative;
-        padding: 0 40px;
-        height: 100vh;
+        padding: 200px 40px;
+        height: 100%;
         @include media('<lg-phone') {
-            padding: 0 20px;
+            padding: 100px 20px;
         }
         @include media('<=phone') {
-            padding: 0;
+            padding: 80px 0;
         }
     }
     &-content-wrap {
@@ -207,6 +207,69 @@
     }
 }
 
+.h__menu
+{
+    &-list
+    {
+        &-box
+        {
+            position: relative;
+            overflow: hidden;
+            &:hover
+            {
+                .menu__canteen-name-wrap
+                {
+                    right: -19%!important;
+                    opacity: 1;
+                }
+            }
+            &-name
+            {
+                color: $dark-col;
+                font-family: $secondary-font;
+                font-size: 16px;
+                font-weight: 900;
+                text-transform: uppercase;
+                &-wrap
+                {
+                    min-height: 50px;
+                }
+            }
+            &-img
+            {
+                height: 250px;
+                width: 100%;
+                object-fit: cover;
+                border-radius: 15px;
+            }
+        }
+        &-btn
+        {
+            padding: 5px 15px;
+            border: none;
+            background-color: $primary-col;
+            color: $light-col;
+            font-weight: bold;
+            transition: all ease-in-out 300ms;
+            &:hover
+            {
+                background-color: $p-hover;
+            }
+        }
+        &-fave
+        {
+            &-btn
+            {
+                color: $gray-col;
+                font-size: 20px;
+                &:hover, &.active {
+                    color: $red-col;
+                }
+            }
+        }
+    }
+}
+
 // TESTI
 .h__testi {
     &-inner-wrap {
@@ -389,5 +452,33 @@
         filter: blur(1px);
         transition: transform 0.5s ease;
         border-radius: 10px;
+    }
+}
+
+// CANTEEN NAME
+.menu__
+{
+    &canteen
+    {
+        &-name
+        {
+            margin: 0;
+            color: $light-col;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            &-wrap
+            {
+                position: absolute;
+                right: -30%;
+                opacity: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                transform: rotate(90deg);
+                background-color: $dark-col;
+                padding: 5px 15px;
+                transition: all ease-in-out 300ms;
+            }
+        }
     }
 }

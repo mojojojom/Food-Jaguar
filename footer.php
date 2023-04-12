@@ -352,15 +352,253 @@
 
         <!-- CART AJAX SCRIPT -->
         <script>
-            jQuery(function($) {
+
+        jQuery(function($) {
+            // **************** HOME PAGE SCRIPT **************** //
+                // ADD TO FAVORITE HOMEPAGE
                 $(document).ready(function () {
+                    $('.best-food-list').on('click','.fave_btn', function(e) {
+                        e.preventDefault();
+                        var d_id = $(this).data('item'); 
+                        var u_id = $(this).data('user'); 
+                        var c_id = $(this).data('canteen');
+                        $(this).toggleClass('active');
+
+                        $.ajax({
+                            type: "POST",
+                            url: "add_cart.php",
+                            data: {d_id: d_id, u_id: u_id, c_id: c_id, action: 'add_to_fave'},
+                            success: function (response) {
+                                if(response == 'success') 
+                                {
+                                    updateBestMenu();
+                                    updateFaveList();
+
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Added To Favorite'
+                                    })
+                                } 
+                                else if(response == 'removed')
+                                {
+                                    updateBestMenu();
+                                    updateFaveList()
+
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Removed From Favorite'
+                                    })
+                                }
+                                else if(response == 'error_login'){
+                                    let timerInterval
+                                    Swal.fire({
+                                    title: 'Unable To Add Item to Favorites!',
+                                    html: 'Please Login Before Adding to Favorites!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
+                                    timer: 3500,
+                                    timerProgressBar: false,
+                                    showCancelButton: false,
+                                    showConfirmButton: false,
+                                    allowOutsideClick: false,
+                                    willClose: () => {
+                                        clearInterval(timerInterval)
+                                    }
+                                    }).then((result) => {
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            window.location.href = 'login';
+                                        }
+                                    })
+                                }
+                                else 
+                                {
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Unable to Add Item to Favorites.',
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+
+                    })
+                });
+            // **************** END OF HOME PAGE SCRIPT **************** //
+
+
+            // **************** MENU SCRIPT **************** //
+                // ADD TO FAVORITE
+                $('.menu-food-list').on('click','.fave_btn', function(e) {
+                    e.preventDefault();
+                    var d_id = $(this).data('item'); 
+                    var u_id = $(this).data('user'); 
+                    var c_id = $(this).data('canteen');
+                    $(this).toggleClass('active');
+                    $.ajax({
+                        type: "POST",
+                        url: "add_cart.php",
+                        data: {d_id: d_id, u_id: u_id, c_id: c_id, action: 'add_to_fave'},
+                        success: function (response) {
+                            if(response == 'success') 
+                            {
+                                updateMenu();
+                                updateFaveList();
+
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    timerProgressBar: true
+                                })
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Added To Favorite'
+                                })
+                            } 
+                            else if(response == 'removed')
+                            {
+                                updateMenu();
+                                updateFaveList();
+
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 1500,
+                                    timerProgressBar: true
+                                })
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Removed From Favorite'
+                                })
+                            }
+                            else if(response == 'error_login'){
+                                let timerInterval
+                                Swal.fire({
+                                title: 'Unable To Add Item to Favorites!',
+                                html: 'Please Login Before Adding to Favorites!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
+                                timer: 3500,
+                                timerProgressBar: false,
+                                showCancelButton: false,
+                                showConfirmButton: false,
+                                allowOutsideClick: false,
+                                willClose: () => {
+                                    clearInterval(timerInterval)
+                                }
+                                }).then((result) => {
+                                    if (result.dismiss === Swal.DismissReason.timer) {
+                                        window.location.href = 'login';
+                                    }
+                                })
+                            }
+                            else 
+                            {
+                                Swal.fire(
+                                    'Something Went Wrong!',
+                                    'Unable to Add Item to Favorites.',
+                                    'error'
+                                );
+                            }
+                        }
+                    });
+
+                });
+            // **************** END OF MENU SCRIPT **************** //
+
+
+            // **************** GENERAL SCRIPT **************** //
+                $(document).ready(function () {
+
                     var emptyBtn = document.getElementById('empty-cart');
                     var removeBtn = document.querySelector('.remove-item');
                     var allCheck = document.getElementById('cart__item-footer-checkbox');
                     var checkout = $('#cart__item-footer-btn');
                     var cartBtn = $('#cart__item-btn');
 
-                    // NEWWWWW FAVE ADD TO CART
+                    // ADD TO CART
+                    $(document).on('click', '.add_cart_btn', function(e) {
+                        e.preventDefault();
+                        var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
+                        var productId = $(this).attr('data-dish-id');
+                        // FIRST SECTION
+                        $.ajax({
+                            type: "POST",
+                            url: "add_cart.php",
+                            data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
+                            beforeSend: function() {
+                                $(this).val('Adding to Cart');
+                                $(this).addClass('disabled');
+                                $(this).prop('disabled', true);
+                            },
+                            success: function (response) {
+                                if(response == 'success') 
+                                {
+                                    // UPDATE THE CART
+                                    updateBestMenu();
+                                    updateMenu();
+                                    updateCartItems();
+
+                                    // SHOW STATUS
+                                    $(this).val('Add to Cart');
+                                    $(this).removeClass('disabled');
+                                    $(this).prop('disabled', false);
+                                    const Toast = Swal.mixin({
+                                        toast: true,
+                                        position: 'top-end',
+                                        showConfirmButton: false,
+                                        timer: 1500,
+                                        timerProgressBar: true
+                                    })
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Added to Cart!'
+                                    })
+
+                                    // CHANGE THE CHECKBOX
+                                    $('.cart__item-checkbox').change();
+                                    // $('#cart__item-footer-checkbox').change();
+
+                                    // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "get_cart.php",
+                                        success: function (response) {
+                                            $('.cart-offcanvas-body').empty().html(response);
+                                        }
+                                    });
+
+                                    // UPDATE CART NUMBER
+                                    setInterval(updateCart, 1000);
+                                }
+                                else
+                                {
+                                    $(this).val('Add to Cart');
+                                    $(this).removeClass('disabled');
+                                    $(this).prop('disabled', false);
+                                    Swal.fire(
+                                        'Something Went Wrong!',
+                                        'Can\'t Add to Cart!',
+                                        'error'
+                                    );
+                                }
+                            }
+                        });
+                    });
+
+                    // ADD CART THE ITEM/S FROM FAVORITES
                     $('.fave-offcanvas-body').on('click', '.fave_add_cart_btn', function(e) {
                         e.preventDefault();
                         var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
@@ -415,7 +653,7 @@
                         });
                     })
 
-                    // REMOVE TO FAVE
+                    // REMOVE ITEM/S FROM FAVORITES
                     $('.fave-offcanvas-body').on('click', '.delete_fave', function(e) {
                         e.preventDefault();
                         var d_id = $(this).attr('product-id');
@@ -428,7 +666,8 @@
                                 if(response == 'success') {
 
                                     // UPDATE FAVE LIST
-                                    updateFave();
+                                    updateMenu();
+                                    updateBestMenu();
                                     updateFaveList();
 
                                     // SHOW STATUS
@@ -455,7 +694,7 @@
                         });
                     })
 
-                    // NEWWWW EMPTY ACTION
+                    // EMPTY CART
                     $('.cart-offcanvas-body').on('click', '.m__cart-empty-btn', function(e) {
                         e.preventDefault();
                         var emptyForm = $('#empty_form').serialize();
@@ -521,7 +760,7 @@
                         });
                     })
 
-                    // NEWWWWW REMOVE ACTION
+                    // REMOVE ITEM/S FROM THE CART
                     $('.cart-offcanvas-body').on('click', '.remove-item', function(e) {
                         e.preventDefault();
                         var productId = $(this).attr('product-id');
@@ -578,6 +817,7 @@
                         });
                     })
 
+                    // CART CHECKBOX FUNCTION
                     $(document).on('change', '.cart__item-checkbox, #cart__item-footer-checkbox', function() {
                         if ($('.cart__item-checkbox').length == 0) {
                             Swal.fire(
@@ -605,6 +845,7 @@
                         }
                     });
                     
+                    // ITEM CHECKOUT FUNCTION
                     $(cartBtn).on('click', function(e) {
                         e.preventDefault();
                         var cartForm = $('#cart_checkout').serialize();
@@ -615,7 +856,6 @@
                             success: function (response) {
                                 if(response == 'success') 
                                 {
-                                    // NEWWWWW CHECKBOX FUNCTION
                                     var selectedItems = [];
                                     $('.cart__item-checkbox:checked').each(function() {
                                         var dish_id = $(this).data('id');
@@ -729,7 +969,7 @@
                         });
                     }
 
-                    // CANCEL BUTTON
+                    // CANCEL CHECKOUT FUNCTION
                     $('#unset_btn').on('click', function(e) {
                         e.preventDefault();
 
@@ -739,7 +979,6 @@
                             data: {action: 'unset'},
                             success: function (response) {
                                 if(response == 'success') {
-                                    // window.location.href='menu';
                                     $('#checkoutModal').modal('hide');
                                 }
                                 else
@@ -751,7 +990,7 @@
 
                     })
 
-                    // ADD ADDRESS
+                    // ADD ADDRESS TO THE CHECKOUT
                     $('.checkout_modal-wrap').on('click', '.add_address_btn', function() {
                         $(this).toggleClass('show');
                         if($(this).hasClass('show')) {
@@ -827,6 +1066,7 @@
                         })
                     })
 
+                    // UNSET CHECKOUT ORDER SESSION
                     $(window).on('beforeunload', function(){
                         $.ajax({
                             type: "POST",
@@ -835,6 +1075,8 @@
                             async: false
                         });
                     });
+
+                    // UNSET CHECKOUT ORDER SESSION
                     $(document).ready(function () {
                         $.ajax({
                             type: "POST",
@@ -846,192 +1088,135 @@
                         });
                     });
 
-                    updateCart();
-
-                    // SHOW PASSWORD 
+                    // SHOW PASSWORD FOR FIELDS
                     $('.show-password-icon').on('click', function() {
                         var inputType = $("input.password_input").attr("type") === "text" ? "password" : "text";
                         $("input.password_input").attr("type", inputType);
                         $(this).toggleClass("fa-eye-slash fa-eye");
                     })
 
-                    // ADD TO FAVORITE
-                    $('.food-listing').on('click','.fave_btn', function(e) {
-                        e.preventDefault();
-                        var d_id = $(this).data('item'); 
-                        var u_id = $(this).data('user'); 
-                        var c_id = $(this).data('canteen');
-                        $(this).toggleClass('active');
-
-                        $.ajax({
-                            type: "POST",
-                            url: "add_cart.php",
-                            data: {d_id: d_id, u_id: u_id, c_id: c_id, action: 'add_to_fave'},
-                            success: function (response) {
-                                if(response == 'success') 
-                                {
-                                    updateFave();
-                                    updateFaveList()
-
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 1500,
-                                        timerProgressBar: true
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'Added To Favorite'
-                                    })
-                                } 
-                                else if(response == 'removed')
-                                {
-                                    updateFave();
-                                    updateFaveList()
-
-                                    const Toast = Swal.mixin({
-                                        toast: true,
-                                        position: 'top-end',
-                                        showConfirmButton: false,
-                                        timer: 1500,
-                                        timerProgressBar: true
-                                    })
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'Removed From Favorite'
-                                    })
-                                }
-                                else if(response == 'error_login'){
-                                    let timerInterval
-                                    Swal.fire({
-                                    title: 'Unable To Add Item to Favorites!',
-                                    html: 'Please Login Before Adding to Favorites!<br><b class="text-danger">Redirecting You To Login Form.</b><br>Please Wait.',
-                                    timer: 3500,
-                                    timerProgressBar: false,
-                                    showCancelButton: false,
-                                    showConfirmButton: false,
-                                    allowOutsideClick: false,
-                                    willClose: () => {
-                                        clearInterval(timerInterval)
-                                    }
-                                    }).then((result) => {
-                                        if (result.dismiss === Swal.DismissReason.timer) {
-                                            window.location.href = 'login';
-                                        }
-                                    })
-                                }
-                                else 
-                                {
-                                    Swal.fire(
-                                        'Something Went Wrong!',
-                                        'Unable to Add Item to Favorites.',
-                                        'error'
-                                    );
-                                }
-                            }
-                        });
-
-                    })
-
-                    // SEARCH ITEM FUNCTION
-                    $('#search_input').on('input', function() {
-                        var query = $(this).val();
-                        $.ajax({
-                            type: "POST",
-                            url: "search.php",
-                            data: {query: query},
-                            success: function (response) {
-                                $('.food-listing').empty().html(response);
-                            }
-                        });
-                    })
-                    $('#search_input').on('blur', function() {
-                        if ($(this).val().length === 0) {
-                            $('.m__menu-cat-wrap').show(500);
+                    // TOGGLE SEARCH BAR
+                    $('.nav-search-btn').on('click', function() {
+                        var searchBtn = $(this);
+                        $('.site__nav-search-form').toggleClass('show');
+                    });
+                    
+                    // TOGGLE SEARCH BAR
+                    $(document).on('click', function(e) {
+                        if (!$(e.target).closest('.site__nav-search-form').length && !$(e.target).closest('.nav-search-btn').length) {
+                            $('.site__nav-search-form').removeClass('show');
                         }
                     });
-                    $('#search_input').on('focus', function() {
-                        $('.m__menu-cat-wrap').hide(500);
-                    });
 
+                    // UPDATE CART NUMBER
+                    updateCart();
 
                 })
-            })
+            // **************** END OF GENERAL SCRIPT **************** //
 
-            // UPDATE MENU
-            function updateFave() {
-                $.ajax({
-                    type: "GET",
-                    url: "get_fav_item.php",
-                    success: function (response) {
-                        $('.food-listing').empty().html(response);
-                    }
-                });
-            }
 
-            // UPDATE FAVE
-            function updateFaveList() {
-                $.ajax({
-                    type: "GET",
-                    url: "get_fav_list.php",
-                    success: function (response) {
-                        $('.fave-offcanvas-body').empty().html(response);
-                    }
-                });
-            }
+            // **************** FUNCTIONS **************** //
 
-            // UPDATE CART NUMBER
-            function updateCart() {
-                $.ajax({
-                    type: "POST",
-                    url: "get_cart_num.php",
-                    success: function (response) {
-                        $('.cart_num').html(response);
-                        localStorage.setItem('cartNumber', response);
+                //** HOME PAGE FUNCTIONS ** //
+                    // UPDATE MENU
+                    function updateBestMenu() {
+                        $.ajax({
+                            type: "GET",
+                            url: "/templates/home-food-section-template.php",
+                            success: function (response) {
+                                $('.best-food-list').empty().html(response);
+                            }
+                        });
                     }
-                });
-            }
-            // check if cartNumber exists in localStorage
-            if (localStorage.getItem('cartNumber')) {
-                // retrieve the cartNumber
-                var cartNumber = localStorage.getItem('cartNumber');
-                // update the cart number
-                $('.cart_num').html(cartNumber);
-            }
+                //** END OF HOME PAGE FUNCTIONS ** //
 
-            // UPDATE CART ITEMS
-            function updateCartItems() {
-                $.ajax({
-                    type: "GET",
-                    url: "get_cart.php",
-                    success: function (response) {
-                        $('.cart-offcanvas-body').empty().html(response);
+                //** MENU PAGE FUNCTIONS ** //
+                    // UPDATE MENU FAVORITES
+                    function updateMenu() {
+                        $.ajax({
+                            type: "GET",
+                            url: "/templates/menu-food-list-template.php",
+                            success: function (response) {
+                                $('.menu-food-list').empty().html(response);
+                            }
+                        });
                     }
-                });
-            }
+                //** END OF HOME PAGE FUNCTIONS ** //
 
-            // UPDATE CHECKOUT MODAL SESSION
-            function updateModalCheckout() {
-                $.ajax({
-                    type: "GET",
-                    url: "checkout_session.php",
-                    success: function (response) {
-                        console.log(response);
+                // ** GENERAL FUNCTIONS ** //
+                    // UPDATE FAVE
+                    function updateFaveList() {
+                        $.ajax({
+                            type: "GET",
+                            url: "/templates/favorites-list-template.php",
+                            success: function (response) {
+                                $('.fave-offcanvas-body').empty().html(response);
+                            }
+                        });
                     }
-                });
-            }
+                    // UPDATE CART NUMBER
+                    function updateCart() {
+                        $.ajax({
+                            type: "POST",
+                            url: "/templates/cart-number-template.php",
+                            success: function (response) {
+                                $('.cart_num').html(response);
+                                localStorage.setItem('cartNumber', response);
+                            }
+                        });
+                    }
+                    // check if cartNumber exists in localStorage
+                    if (localStorage.getItem('cartNumber')) {
+                        // retrieve the cartNumber
+                        var cartNumber = localStorage.getItem('cartNumber');
+                        // update the cart number
+                        $('.cart_num').html(cartNumber);
+                    }
+                    // UPDATE CART ITEMS
+                    function updateCartItems() {
+                        $.ajax({
+                            type: "GET",
+                            url: "get_cart.php",
+                            success: function (response) {
+                                $('.cart-offcanvas-body').empty().html(response);
+                            }
+                        });
+                    }
+                    // UPDATE CHECKOUT MODAL SESSION
+                    function updateModalCheckout() {
+                        $.ajax({
+                            type: "GET",
+                            url: "checkout_session.php",
+                            success: function (response) {
+                                console.log(response);
+                            }
+                        });
+                    }
+                    // UPDATE THE ITEMS IN CHECKOUT MODAL
+                    function updateCheckout() {
+                        $.ajax({
+                            type: "GET",
+                            url: "get_checkout.php",
+                            success: function (response) {
+                                $('.checkout_modal-wrap').empty().html(response);
+                            }
+                        });
+                    }
+                    // UPDATE SEARCHED MENU
+                    function updateSearch() {
+                        $.ajax({
+                            type: "GET",
+                            url: "/templates/search-result-template.php",
+                            success: function(response) {
+                                $('.search-result').empty().html(response);
+                            }
+                        })
+                    }
+                // ** END OF GENERAL FUNCTIONS ** //
 
-            // UPDATE THE ITEMS IN CHECKOUT MODAL
-            function updateCheckout() {
-                $.ajax({
-                    type: "GET",
-                    url: "get_checkout.php",
-                    success: function (response) {
-                        $('.checkout_modal-wrap').empty().html(response);
-                    }
-                });
-            }
+            // **************** END OF FUNCTIONS **************** //
+
+        });
 
         </script>
 

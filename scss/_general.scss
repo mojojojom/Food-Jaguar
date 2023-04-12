@@ -38,6 +38,16 @@ hr {
     border-top: 1px solid $desc-col;
 }
 
+.bg-none
+{
+    background: none!important;
+}
+
+.o-hidden
+{
+    overflow: hidden;
+}
+
 /* CUSTOM CLASSES */
 .p-font {
     font-family: $primary-font;

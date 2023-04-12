@@ -119,7 +119,7 @@
                     ?>
 
 
-                    <div class="card">
+                    <div class="card mb-3">
                         <div class="card-header py-2">
                             <h6 class="fw-bold mb-0">Customize your site</h6>
                         </div>
@@ -148,6 +148,18 @@
                                                     <input type="text" name="site_tag" class="fj-input" placeholder="Enter your site tagline" value="<?=$site['site_tag']?>" required>
                                                 </div>
                                             </div>
+                                            <div class="col-6 mb-3">
+                                                <div class="fj-input-wrap">
+                                                    <label for="site_email">Site Email</label>
+                                                    <input type="email" name="site_email" class="fj-input" placeholder="Enter your site email" value="<?=$site['site_email']?>" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 mb-3">
+                                                <div class="fj-input-wrap">
+                                                    <label for="site_email">Site Email</label>
+                                                    <input type="text" name="site_phone" class="fj-input" placeholder="Enter your site mobile number" value="<?=$site['site_phone']?>" required>
+                                                </div>
+                                            </div>
                                             <div class="col-12 mb-3">
                                                 <div class="fj-input-wrap">
                                                     <label for="site_desc">About Site</label>
@@ -155,6 +167,30 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- BEST SELLERS SECTION -->
+                                        <div class="card">
+                                            <div class="card-header py-2">
+                                                <h6 class="fw-bold mb-0">Choose what to display as "Best Sellers"</h6>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <select class="form-select" name="site_best" aria-label="Default select example">
+                                                    <option selected><?=$site['site_best']?></option>
+                                                    <?php
+                                                    $get_cats = mysqli_query($db, 'SELECT * FROM food_category');
+                                                    while($cat = mysqli_fetch_assoc($get_cats))
+                                                    {
+                                                    ?>
+                                                    <option value="<?=$cat['f_catname']?>"><?=$cat['f_catname']?></option>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
                                     </div>
 
                                     <div class="col-4 mb-3">
@@ -245,43 +281,3 @@
     }
     include('footer.php');
 ?>
-
-
-<script>
-
-
-jQuery(function($) {
-		
-    $(document).ready(function() {
-        $('.help-areas-bullet').on('click', '.issue-link', function(e) {
-            e.preventDefault();
-            var issue = $(this).data('issue');
-            var list = $(this).data('list');
-            
-            if(list === 'Clinical') {
-                $('#clinical_experts').slideToggle();
-                $('#general_experts').hide();
-            } else if(list === 'General') {
-                $('#general_experts').slideToggle();
-                $('#clinical_experts').hide();
-            }
-            
-            $.ajax({
-                url: '/wp-admin/admin-ajax.php',
-                data: {
-                    action: 'doctor_filter'
-                },
-                success: function(response) {
-                    console.log(response);
-                    $.each(response, function(index, doctor) {
-                        console.log(doctor.meta.imgUrlL);
-                    })
-                }
-            })
-            
-        })
-    })
-})
-
-
-</script>

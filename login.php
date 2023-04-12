@@ -127,12 +127,9 @@
                     },
                     success: function(response)
                     {
-                        if(response == "success")
+                        // if(response === "success")
+                        if(typeof response === "string" && response.trim() === "success")
                         {
-                            $('input.l__login-btn').val('Please Wait');
-                            $('input.l__login-btn').addClass('disabled');
-                            $('input.l__login-btn').prop('disabled', true);
-
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: 'top-end',
@@ -146,24 +143,27 @@
                             })
 
                             setTimeout(' window.location.href = "index"; ', 1500);
+                            
+                            $('input.l__login-btn').val('Please Wait');
+                            $('input.l__login-btn').addClass('disabled');
+                            $('input.l__login-btn').prop('disabled', true);
                         }
-                        else if(response == "error_xpass")
+                        // else if(response === "error_xpass")
+                        else if(typeof response === "string" && response.trim() === "error_xpass")
                         {
-                            $('input.l__login-btn').val('Login');
-                            $('input.l__login-btn').removeClass('disabled');
-                            $('input.l__login-btn').prop('disabled', false);
                             Swal.fire(
                                 'Something went wrong!',
                                 'Incorrect Password!',
                                 'error'
                             );
-                        }
-                        else if(response == "error_verify") 
-                        {
+
                             $('input.l__login-btn').val('Login');
                             $('input.l__login-btn').removeClass('disabled');
                             $('input.l__login-btn').prop('disabled', false);
-
+                        }
+                        // else if(response === "error_verify") 
+                        else if(typeof response === "string" && response.trim() === "error_verify") 
+                        {
                             Swal.fire({
                                 title: 'Something went wrong!',
                                 text: "Please Verify Your Account!",
@@ -179,18 +179,23 @@
                                     window.location.href = "user-otp";
                                 }
                             })
-                        }
-                        else
-                        {
+
                             $('input.l__login-btn').val('Login');
                             $('input.l__login-btn').removeClass('disabled');
                             $('input.l__login-btn').prop('disabled', false);
+                        }
+                        else
+                        {
                             Swal.fire(
-                                'Login Failed!',
-                                'User Doesn\'t Exists!!',
+                                'Something went wrong',
+                                'Unable to login!',
                                 'error'
                             );
-                            alert(response);
+                            // alert(response);
+
+                            $('input.l__login-btn').val('Login');
+                            $('input.l__login-btn').removeClass('disabled');
+                            $('input.l__login-btn').prop('disabled', false);
                         }
                     }
                 });

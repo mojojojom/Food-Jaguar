@@ -365,45 +365,60 @@
 
 
         // ADD TO FAVORITE - ajax - WORKING - FINAL
-        if($_POST['action'] == 'add_to_fave') {
+        if($_POST['action'] == 'add_to_fave') 
+        {
             include('connection/connect.php');
             $d_id = mysqli_real_escape_string($db, $_POST['d_id']);
             $u_id = mysqli_real_escape_string($db, $_POST['u_id']);
             $c_id = mysqli_real_escape_string($db, $_POST['c_id']);
 
-            if(isset($_SESSION['user_id'])) {
+            if(isset($_SESSION['user_id'])) 
+            {
                 $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id' AND c_id='$c_id'");
-                if(mysqli_num_rows($check_fave) > 0) {
+                if(mysqli_num_rows($check_fave) > 0) 
+                {
                     $delete_fave = mysqli_query($db, "DELETE FROM fave_table WHERE d_id='$d_id' AND u_id='$u_id' AND c_id='$c_id'");
-                    if($delete_fave) {
+                    if($delete_fave) 
+                    {
                         echo 'removed';
-                    } else {
+                    } 
+                    else 
+                    {
                         echo 'error';
                     }
-                } else {
+                } 
+                else 
+                {
                     $insert_fave = mysqli_query($db, "INSERT INTO fave_table (u_id, d_id, c_id) VALUES('$u_id','$d_id','$c_id')");
-                    if($insert_fave) {
+                    if($insert_fave) 
+                    {
                         echo 'success';
-                    } else {
+                    } 
+                    else 
+                    {
                         echo 'error';
                     }
                 }
-            } else {
+            } 
+            else 
+            {
                 echo 'error_login';
             }
-
         }
 
         // REMOVE TO FAVORITE
-        if($_POST['action'] == 'remove_to_fave') {
+        if($_POST['action'] == 'remove_to_fave') 
+        {
             include('connection/connect.php');
             $d_id = mysqli_real_escape_string($db, $_POST['d_id']);
             $remove_fave = mysqli_query($db, "DELETE FROM fave_table WHERE u_id = '".$_SESSION['user_id']."' AND d_id = '$d_id'");
 
-            if($remove_fave) {
+            if($remove_fave) 
+            {
                 echo 'success';
             }
-            else {
+            else 
+            {
                 echo 'error'.mysqli_error($db);
             }
         }

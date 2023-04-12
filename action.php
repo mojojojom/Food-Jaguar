@@ -365,6 +365,15 @@ if(isset($_POST['action'])) {
         }
     } 
 
+
+    // SEARCH ITEM
+    if($_POST['action'] == 'search_dish')
+    {
+        include('connection/connect.php');
+        $search = mysqli_real_escape_string($db, $_POST['searchInput']);
+        echo 'success';
+    }
+
 }
 ?>
 

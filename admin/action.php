@@ -497,6 +497,9 @@ if(isset($_POST['action'])) {
         $site_name = mysqli_real_escape_string($db, $_POST['site_name']);
         $site_tag = mysqli_real_escape_string($db, $_POST['site_tag']);
         $site_desc = mysqli_real_escape_string($db, $_POST['site_desc']);
+        $site_email = mysqli_real_escape_string($db, $_POST['site_email']);
+        $site_phone = mysqli_real_escape_string($db, $_POST['site_phone']);
+        $site_best = mysqli_real_escape_string($db, $_POST['site_best']);
 
         $img_name = $_FILES['site_logo']['name'];
         $img_temp = $_FILES['site_logo']['tmp_name'];
@@ -509,7 +512,7 @@ if(isset($_POST['action'])) {
         
         if($_FILES['site_logo']['error'] === 4) 
         {
-            $update_site = mysqli_query($db, "UPDATE site_settings SET site_name ='$site_name', site_tag = '$site_tag', site_about = '$site_desc'");
+            $update_site = mysqli_query($db, "UPDATE site_settings SET site_name ='$site_name', site_tag = '$site_tag', site_about = '$site_desc', site_email = '$site_email', site_phone = '$site_phone', site_best = '$site_best'");
             if($update_site) {
                 $_SESSION['message'] = '
                 <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-center fw-bold" role="alert">
@@ -543,7 +546,7 @@ if(isset($_POST['action'])) {
                 {
                     $get_old_logo = mysqli_query($db, "SELECT site_logo FROM site_settings");
                     $old_logo = mysqli_fetch_assoc($get_old_logo)['site_logo'];
-                    $update_site = mysqli_query($db, "UPDATE site_settings SET site_name = '$site_name', site_tag = '$site_tag', site_about = '$site_desc', site_logo = '$site_logo'");
+                    $update_site = mysqli_query($db, "UPDATE site_settings SET site_name = '$site_name', site_tag = '$site_tag', site_about = '$site_desc', site_email = '$site_email', site_phone = '$site_phone', site_best = '$site_best', site_logo = '$site_logo'");
                     if($update_site) {
                         if(file_exists("images/".$old_logo)) {
                             unlink("images/".$old_logo);
@@ -592,6 +595,8 @@ if(isset($_POST['action'])) {
         $site_name = mysqli_real_escape_string($db, $_POST['site_name']);
         $site_tag = mysqli_real_escape_string($db, $_POST['site_tag']);
         $site_desc = mysqli_real_escape_string($db, $_POST['site_desc']);
+        $site_email = mysqli_real_escape_string($db, $_POST['site_email']);
+        $site_phone = mysqli_real_escape_string($db, $_POST['site_phone']);
 
         $img_name = $_FILES['site_logo']['name'];
         $img_temp = $_FILES['site_logo']['tmp_name'];
@@ -617,7 +622,7 @@ if(isset($_POST['action'])) {
             }
             else 
             {
-                $add = mysqli_query($db, "INSERT INTO site_settings(site_name, site_tag, site_about, site_logo) VALUES('$site_name','$site_tag', '$site_desc', '$site_logo')");
+                $add = mysqli_query($db, "INSERT INTO site_settings(site_name, site_tag, site_about, site_email, site_phone, site_best, site_logo) VALUES('$site_name','$site_tag', '$site_desc', '$site_email', '$site_phone', '$site_best', '$site_logo')");
                 if($add) {
                     move_uploaded_file($img_temp, $store);
                     $_SESSION['message'] = '
@@ -897,9 +902,12 @@ if(isset($_POST['action'])) {
         $phone = mysqli_real_escape_string($db, $_POST['phone']);
         $address = mysqli_real_escape_string($db, $_POST['address']);
 
-        if(!isset($id)) {
+        if(!isset($id)) 
+        {
             echo 'error';
-        } else {
+        } 
+        else 
+        {
             
             $get_canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE id='$id'");
             if(mysqli_num_rows($get_canteen) > 0) {
@@ -907,7 +915,7 @@ if(isset($_POST['action'])) {
                 
                 if(empty($password)) {
 
-                    $update_profile = mysqli_query($db, "UPDATE canteen_table SET canteen_name = '$name', c_oname='$owner', c_phone = '$phone', c_email = '$email', c_user='$username', c_address = '$address'");
+                    $update_profile = mysqli_query($db, "UPDATE canteen_table SET canteen_name = '$name', c_oname='$owner', c_phone = '$phone', c_email = '$email', c_user='$username', c_address = '$address' WHERE id='$id'");
                     if($update_profile) {
                         echo 'success';
                     } else {
@@ -916,7 +924,7 @@ if(isset($_POST['action'])) {
 
                 } else {
                     $hashedPass = password_hash($password, PASSWORD_DEFAULT);
-                    $update_profile = mysqli_query($db, "UPDATE canteen_table SET canteen_name = '$name', c_oname='$owner', c_phone = '$phone', c_email = '$email', c_user='$username', c_pass = '$hashedPass', c_address = '$address'");
+                    $update_profile = mysqli_query($db, "UPDATE canteen_table SET canteen_name = '$name', c_oname='$owner', c_phone = '$phone', c_email = '$email', c_user='$username', c_pass = '$hashedPass', c_address = '$address' WHERE id='$id'");
                 
                     if($update_profile) {
                         echo 'success';

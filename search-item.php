@@ -1,7 +1,13 @@
 <?php
     session_start();
     include('connection/connect.php');
-    $menu = mysqli_query($db, "SELECT * FROM dishes WHERE d_status = 'Post'");
+    // get the search query from the AJAX call
+    $query = $_POST['query'];
+    // retrieve the matching dishes from the database
+    $menu = mysqli_query($db, "SELECT * FROM dishes WHERE title LIKE '%$query%' AND d_status='Post'");
+    // format the response as a list of dishes
+?>
+<?php
     while($rows=mysqli_fetch_array($menu))
     {
         $query = mysqli_query($db, 'SELECT * FROM food_category WHERE f_catid="'.$rows['rs_id'].'"');
@@ -34,16 +40,16 @@
                             $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id = '".$rows['d_id']."' AND u_id = '".$_SESSION['user_id']."'");
                             if(mysqli_num_rows($check_fave) > 0) {
                     ?>
-                            <a href="#" class="m__menu-fav fave_btn active" data-canteen="<?=$rows['c_id']?>" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
+                            <a href="#" class="m__menu-fav fave_btn active" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
                     <?php
                             } else {
                     ?>
-                            <a href="#" class="m__menu-fav fave_btn" data-canteen="<?=$rows['c_id']?>" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                            <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
                     <?php
                             }
                         } else {
                     ?>
-                            <a href="#" class="m__menu-fav fave_btn" data-canteen="<?=$rows['c_id']?>" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
+                            <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
                     <?php
                         }
                     ?>
@@ -76,3 +82,6 @@
 <?php
     }
 ?>
+<div class="col-12 no_result d-none">
+    <span class="alert alert-danger fw-bold d-flex align-items-center justify-content-center">NO ITEM/S AVAILABLE</span>
+</div>

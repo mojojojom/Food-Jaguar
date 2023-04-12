@@ -1,87 +1,225 @@
 <?php
+    include("connection/connect.php");  
+    error_reporting(0);  
     session_start();
-    include('connection/connect.php');
-    // get the search query from the AJAX call
-    $query = $_POST['query'];
-    // retrieve the matching dishes from the database
-    $menu = mysqli_query($db, "SELECT * FROM dishes WHERE title LIKE '%$query%' AND d_status='Post'");
-    // format the response as a list of dishes
-?>
-<?php
-    while($rows=mysqli_fetch_array($menu))
-    {
-        $query = mysqli_query($db, 'SELECT * FROM food_category WHERE f_catid="'.$rows['rs_id'].'"');
-        $product = mysqli_fetch_array($query);
+    include('header.php');
 
-        $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
-        while($get_stock = mysqli_fetch_array($check_stock)) {
-            $stocks = $get_stock['d_stock'];
-        }
 ?>
 
-<div class="col-12 col-sm-12 col-md- 12 col-lg-6 all <?=$product['f_catname']?>">
 
-    <form id="menu_form" method="POST">
-        <div class="m__menu-list-card">
-            <input type="hidden" name="dish_id" data-product-id="<?=$rows['d_id']?>" value="<?= $rows['d_id']?>">
-
-            <div class="m__menu-list-name-wrap">
-                <img class="m__menu-list-img" src="admin/Res_img/dishes/<?=$rows['img']?>" alt="">
-                <div>
-                    <h1 class="m__menu-list-name s-font"><?=$rows['title']?></h1>
-                    <h1 class="m__menu-price s-font">₱<?=$rows['price']?></h1>
-                </div>
+    <!-- BANNER SECTION -->
+    <section class="fj__banner-wrap">
+        <div class="container h-100 d-flex align-items-center justify-content-center">
+            <div class="fj__banner-content-wrap text-center">
+                <h1 class="fj__banner-heading s-font">SEARCH RESULT</h1>
             </div>
-
-            <div class="m__menu-price-wrap text-end">
-                <div class="m__menu-fav-wrap">
-                    <?php
-                        if(isset($_SESSION['user_id'])) {
-                            $check_fave = mysqli_query($db, "SELECT * FROM fave_table WHERE d_id = '".$rows['d_id']."' AND u_id = '".$_SESSION['user_id']."'");
-                            if(mysqli_num_rows($check_fave) > 0) {
-                    ?>
-                            <a href="#" class="m__menu-fav fave_btn active" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart text-danger"></i></a>
-                    <?php
-                            } else {
-                    ?>
-                            <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
-                    <?php
-                            }
-                        } else {
-                    ?>
-                            <a href="#" class="m__menu-fav fave_btn" data-item="<?=$rows['d_id']?>" data-user="<?=$_SESSION['user_id']?>"><i class="fa-solid fa-heart"></i></a>
-                    <?php
-                        }
-                    ?>
-                </div>
-                <div class="m__menu-qty-wrap">
-                    <p class="m__menu-qty-name mb-0 me-2">Qty: </p>
-                    <input class="m__menu-qty" type="number" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required/>
-                </div>
-                <div class="m__menu-cart-wrap text-center">
-                <?php
-                    if($stocks <= 0) {
-                ?>
-                <input type="button" class="c-btn-3 c-btn-sm addCartBtn add_cart_btn disabled" disabled value="UNAVAILABLE" />
-                <?php
-                    } else {
-                ?>
-                    <input type="hidden" name="action" value="add_cart">
-                    <input type="submit" class=" c-btn-3 c-btn-sm addCartBtn add_cart_btn" name="submit" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add To Cart" />
-                <?php
-                    }
-                ?>
-                </div>
-            </div>
-
         </div>
-    </form>
+    </section>
 
-</div>
+    <!-- MENU SECTION -->
+    <section class="m__menu-wrap sec-pad">
+        <div class="container">
 
+            <div class="m__menu-content-wrap">
+
+                <div class="m__menu-list-wrap">
+
+                    <div class="row d-flex justify-content-center search-result">
+
+                        <?php
+                            if(isset($_POST['search']))
+                            {
+                                $search_term = $_POST['search'];
+                                $menu = mysqli_query($db, "SELECT * FROM dishes INNER JOIN canteen_table on dishes.c_id = canteen_table.id WHERE canteen_table.c_status = '1' AND dishes.d_status = 'Post' AND title LIKE '%".$search_term."%'");
+                                if(mysqli_num_rows($menu) > 0) {
+                                    while($rows=mysqli_fetch_array($menu))
+                                    {
+                                        $cname = $rows['canteen_name'];
+                                        $cid = $rows['id'];
+                                ?>
+                                    <div class="col-sm-6 col-md-6 col-lg-4 col-xl-3 home-food-item mb-3 <?=$rows['title']?>">
+                                        <div class="h__menu-list-box card">
+        
+                                            <div class="card-body">
+                                                <!-- TITLE -->
+                                                <div class="h__menu-list-box-name-wrap text-center">
+                                                    <h1 class="h__menu-list-box-name"><?=$rows['title']?></h1>
+                                                </div>
+        
+                                                <!-- IMAGE -->
+                                                <div class="h__menu-list-box-img-wrap">
+                                                    <img src="admin/Res_img/dishes/<?=$rows['img']?>" alt="Menu" class="h__menu-list-box-img">
+                                                </div>
+        
+                                                <!-- ADD TO CART BUTTON -->
+                                                <input type="hidden" class="m__menu-qty" id="menu_qty" type="number" name="quantity"  value="1" size="2" />
+                                                <div class="h__menu-list-btn-wrap d-flex align-items-center justify-content-center gap-2 mt-3">
+                                                    <button href="#qtyModal<?=htmlentities($rows['d_id'])?>" class="h__menu-list-btn addCartBtn" data-bs-toggle="modal" data-bs-target="#qtyModal<?=htmlentities($rows['d_id'])?>">ADD TO CART</button>
+                                                </div>
+                                            </div>
+        
+                                            <a href="/canteen.php?id=<?=$cid?>&canteen=<?=$cname?>" class="menu__canteen-name-wrap">
+                                                <span class="menu__canteen-name">
+                                                    <?=$cname?>
+                                                </span>
+                                            </a>
+        
+                                        </div>
+                                    </div>
+                                    <!-- QUANTITY MODAL -->
+                                    <div class="modal fade quantity_modal-<?=htmlentities($rows['d_id'])?>" id="qtyModal<?=htmlentities($rows['d_id'])?>" tabindex="-1" aria-labelledby="qtyModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+        
+                                                <form id="menu_form">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title fw-bold" id="qtyModalLabel">QUANTITY</h4>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body py-4">
+                                                        <input type="hidden" class="add__cart-dish-id" data-product-id="<?=$rows['d_id']?>" value="<?= $rows['d_id']?>">
+                                                        <div class="card py-2">
+                                                            <div class="card-body">
+                                                                <div class="add__cart-dish-name-wrap mb-4">
+                                                                    <h1 class="add__cart-dish-name"><?=$rows['title']?></h1>
+                                                                </div>
+        
+                                                                <div class="add__cart-dish-qty-wrap d-block text-center">
+                                                                    <input class="add__cart-dish-qty pe-0" type="number" data-product-qty="quantity" name="quantity" size="2" min="1" value="1" placeholder="1" required/>
+                                                                    <p class="mb-0 mt-2">ENTER QUANTITY</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <?php
+                                                            $check_stock = mysqli_query($db, "SELECT d_stock FROM dishes WHERE d_id='".$rows['d_id']."'");
+                                                            while($get_stock = mysqli_fetch_array($check_stock)) {
+                                                                $stocks = $get_stock['d_stock'];
+                                                            }
+                                                            
+                                                            if($stocks <= 0) {
+                                                        ?>
+                                                        <input type="button" class="c-btn-3 disabled" disabled value="OUT OF STOCK">
+                                                        <?php
+                                                            } else {
+                                                        ?>
+                                                        <input type="hidden" name="action" class="add_action" value="add_cart">
+                                                        <input type="submit" name="submit" class="c-btn-3 add_cart_btn" data-action-id="add_cart" data-dish-id="<?= $rows['d_id']?>" value="Add to Cart" data-bs-dismiss="modal">
+                                                        <?php
+                                                            }
+                                                        ?>
+                                                    </div>
+                                                </form>
+        
+                                            </div>
+                                        </div>
+                                    </div>
+                            <?php
+                                    }
+                                } 
+                                else 
+                                {
+                            ?>
+                                <span class="alert alert-danger d-flex align-items-center justify-content-center fw-bold text-center">NO ITEM FOUND. TRY SEARCHING ANOTHER ITEM.</span>
+                            <?php
+                                }
+                            }
+                            else
+                            {
+                        ?>
+                            <span class="alert alert-danger d-flex align-items-center justify-content-center fw-bold text-center">NO ITEM FOUND. TRY SEARCHING ANOTHER ITEM.</span>
+                        <?php
+                            }
+                        ?>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.title = "Search Result | Food Jaguar"
+    </script>
 <?php
-    }
+    include('footer.php');
 ?>
-<div class="col-12 no_result d-none">
-    <span class="alert alert-danger fw-bold d-flex align-items-center justify-content-center">NO ITEM/S AVAILABLE</span>
-</div>
+
+<script>
+    // ADD TO CART ORIGINAL
+    jQuery(function($) {
+        // NEWWWWW
+        $(document).on('click', '.add_cart_btn', function(e) {
+            e.preventDefault();
+            var quantity = $(this).closest('form').find('input[data-product-qty="quantity"]').val();
+            var productId = $(this).attr('data-dish-id');
+            // FIRST SECTION
+            $.ajax({
+                type: "POST",
+                url: "add_cart.php",
+                data: {quantity: quantity, dish_id: productId, action: 'add_cart'},
+                beforeSend: function() {
+                    $(this).val('Adding to Cart');
+                    $(this).addClass('disabled');
+                    $(this).prop('disabled', true);
+                },
+                success: function (response) {
+                    if(response == 'success') 
+                    {
+                        // SECOND SECTION
+
+                        // UPDATE THE CART
+                        updateCartItems();
+
+
+                        // SHOW STATUS
+                        $(this).val('Add to Cart');
+                        $(this).removeClass('disabled');
+                        $(this).prop('disabled', false);
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true
+                        })
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Added to Cart!'
+                        })
+
+                        // CHANGE THE CHECKBOX
+                        $('.cart__item-checkbox').change();
+                        // $('#cart__item-footer-checkbox').change();
+
+                        // SECOND FUNCTION - DISPLAY NEW ITEMS IN CART
+                        $.ajax({
+                            type: "GET",
+                            url: "get_cart.php",
+                            success: function (response) {
+                                $('.cart-offcanvas-body').empty().html(response);
+                            }
+                        });
+
+                        // UPDATE CART NUMBER
+                        setInterval(updateCart, 1000);
+                    }
+                    else
+                    {
+                        $(this).val('Add to Cart');
+                        $(this).removeClass('disabled');
+                        $(this).prop('disabled', false);
+                        Swal.fire(
+                            'Something Went Wrong!',
+                            'Can\'t Add to Cart!',
+                            'error'
+                        );
+                    }
+                }
+            });
+        })
+    })
+</script>
