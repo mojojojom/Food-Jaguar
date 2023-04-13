@@ -113,9 +113,16 @@
 
                     <!-- CANTEEN TABLE -->
                     <div class="card mb-4">
-                        <div class="card-header d-flex align-items-center">
-                            <i class="fas fa-table me-1"></i>
-                            <p class="mb-0 fw-bold">Canteen Table</p>
+                        <div class="card-header d-flex align-items-center justify-content-between py-3">
+                            <div class="canteen_table-title-wrap d-flex align-items-center">
+                                <i class="fas fa-table me-1"></i>
+                                <p class="mb-0 fw-bold">Canteen Table</p>
+                            </div>
+
+                            <div class="add_canteen-btn-wrap">
+                                <a href="#addCanteenModal" class="c-btn-sm c-btn-4 text-decoration-none" data-bs-toggle="modal" data-bs-target="#addCanteenModal">ADD CANTEEN</a>
+                            </div>
+
                         </div>
                         <div class="card-body">
                         <table id="canteen_table" class="table table-striped table-responsive table-bordered canteen_table">
@@ -178,13 +185,6 @@
                                                         <!-- <a href="#viewModal<?=$rows['id']?>" data-bs-toggle="modal" data-bs-target="#viewModal<?=$rows['id']?>"><i class="fas fa-eye"></i></a> -->
                                                         <a href="#editModal<?=$rows['id']?>" data-bs-toggle="modal" data-bs-target="#editModal<?=$rows['id']?>"><i class="fas fa-pen"></i></a>
                                                         <a href="#deleteModal<?=$rows['id']?>" class="delete delete_user-btn text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<?=$rows['id']?>" data-id="<?=$rows['id']?>"><i class="fas fa-trash"></i></a>
-                                                        <?php
-                                                        if($rows['c_verify'] === 'Yes'){
-                                                        ?>
-                                                        <a href="#resendModal<?=$rows['id']?>" data-bs-toggle="modal" data-bs-target="#resendModal<?=$rows['id']?>"><i class="fa-solid fa-rotate-right text-warning"></i></a>
-                                                        <?php
-                                                        }
-                                                        ?>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -403,6 +403,63 @@
                     </div>
                 </div>
             </main>
+
+            <!-- ADD CANTEEN MODAL -->
+            <div class="modal fade" id="addCanteenModal" tabindex="-1" aria-labelledby="addCanteenModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="POST" id="canteen_form" action="action.php">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5 fw-bold" id="addCanteenModalLabel">ADD CANTEEN</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+
+                                    <div class="col-12 mb-3">
+                                        <div class="fj-input-wrap">
+                                            <label for="c_name">Canteen Name</label>
+                                            <input type="text" class="fj-input" name="c_name" placeholder="Enter your canteen name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="fj-input-wrap">
+                                            <label for="c_name">Canteen Owner's Name</label>
+                                            <input type="text" class="fj-input" name="c_owner_name" placeholder="Enter canteen owner's name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="fj-input-wrap">
+                                            <label for="c_contact">Contact Number</label>
+                                            <input type="number" class="fj-input" name="c_contact" placeholder="Enter contact number" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="fj-input-wrap">
+                                            <label for="c_email">Email</label>
+                                            <input type="email" class="fj-input" name="c_email" placeholder="Enter email" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mb-3">
+                                        <div class="fj-input-wrap">
+                                            <label for="c_address">Address/Location</label>
+                                            <textarea class="fj-input" rows="3" name="c_address" placeholder="Enter canteen address/location" required></textarea>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="hidden" name="action" value="add_canteen">
+                                <button type="submit" class="c-btn-3 c-btn-sm">REGISTER</button>
+                                <button type="button" class="c-btn-6 c-btn-sm" data-bs-dismiss="modal">CANCEL</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">

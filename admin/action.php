@@ -996,5 +996,55 @@ if(isset($_POST['action'])) {
         }
     }
 
+    // ADD CANTEEN
+    if($_POST['action'] == 'add_canteen') {
+        include('../connection/connect.php');
+        $c_name = mysqli_real_escape_string($db, $_POST['c_name']);
+        $c_owner = mysqli_real_escape_string($db, $_POST['c_owner_name']);
+        $c_contact = mysqli_real_escape_string($db, $_POST['c_contact']);
+        $c_email = mysqli_real_escape_string($db, $_POST['c_email']);
+        $c_address = mysqli_real_escape_string($db, $_POST['c_address']);
+        $c_type = "canteen";
+        $c_status = 0;
+        $set_pass = $c_owner;
+        $c_pass = password_hash($set_pass, PASSWORD_DEFAULT);
+        $new_cname = strtolower($c_name);
+        $c_user = preg_replace('/\s+/', '_', $new_cname);
+        $c_verify = "Yes";
+
+        $check_canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE canteen_name = '$c_name' OR c_oname = '$c_owner'");
+        if(mysqli_num_rows($check_canteen) > 0) {
+            $_SESSION['message'] ='
+                <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center justify-content-center fw-bold" role="alert">
+                    CANTEEN ALREADY EXISTS.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            ';
+            header('Location: canteen');
+            exit();
+        } else {
+            $insert_canteen = mysqli_query($db, "INSERT INTO canteen_table(`canteen_name`, `c_oname`, `c_phone`, `c_email`, `c_user`, `c_pass`, `c_address`, `type`, `c_status`, `c_verify`, `c_email_sent`) VALUES ('$c_name', '$c_owner', '$c_contact', '$c_email', '$c_user','$c_pass','$c_address', '$c_type', '$c_status', '$c_verify', '')");
+            if($insert_canteen) {
+                $_SESSION['message'] ='
+                    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-center fw-bold" role="alert">
+                        CANTEEN HAS BEEN ADDED
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                ';
+                header('Location: canteen');
+                exit();
+            } else {
+                $_SESSION['message'] ='
+                    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center justify-content-center fw-bold" role="alert">
+                        UNABLE TO ADD CANTEEN.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                ';
+                header('Location: canteen');
+                exit();
+            }
+        }
+    }
+
 
 }

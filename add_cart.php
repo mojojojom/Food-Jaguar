@@ -451,34 +451,34 @@
 
 
         // ADD CANTEEN
-        if($_POST['action'] == 'add_canteen') {
-            include('connection/connect.php');
-            $c_name = mysqli_real_escape_string($db, $_POST['c_name']);
-            $c_owner = mysqli_real_escape_string($db, $_POST['c_owner_name']);
-            $c_contact = mysqli_real_escape_string($db, $_POST['c_contact']);
-            $c_email = mysqli_real_escape_string($db, $_POST['c_email']);
-            $c_address = mysqli_real_escape_string($db, $_POST['c_address']);
-            $c_type = "canteen";
-            $c_status = 0;
-            $c_pass= "";
-            $new_cname = strtolower($c_name);
-            $c_user = preg_replace('/\s+/', '_', $new_cname);
-            $c_verify = "No";
+        // if($_POST['action'] == 'add_canteen') {
+        //     include('connection/connect.php');
+        //     $c_name = mysqli_real_escape_string($db, $_POST['c_name']);
+        //     $c_owner = mysqli_real_escape_string($db, $_POST['c_owner_name']);
+        //     $c_contact = mysqli_real_escape_string($db, $_POST['c_contact']);
+        //     $c_email = mysqli_real_escape_string($db, $_POST['c_email']);
+        //     $c_address = mysqli_real_escape_string($db, $_POST['c_address']);
+        //     $c_type = "canteen";
+        //     $c_status = 0;
+        //     $c_pass= "";
+        //     $new_cname = strtolower($c_name);
+        //     $c_user = preg_replace('/\s+/', '_', $new_cname);
+        //     $c_verify = "No";
 
-            $check_canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE canteen_name = '$c_name' OR c_oname = '$c_owner'");
-            if(mysqli_num_rows($check_canteen) > 0) {
-                echo 'err_exists';
-            } else {
-                $insert_canteen = mysqli_query($db, "INSERT INTO canteen_table(`canteen_name`, `c_oname`, `c_phone`, `c_email`, `c_user`, `c_pass`, `c_address`, `type`, `c_status`, `c_verify`, `c_email_sent`) VALUES ('$c_name', '$c_owner', '$c_contact', '$c_email', '$c_user','$c_pass','$c_address', '$c_type', '$c_status', '$c_verify', '')");
-                if($insert_canteen) {
-                    echo 'success';
-                } else {
-                    echo 'error';
-                }
-            }
+        //     $check_canteen = mysqli_query($db, "SELECT * FROM canteen_table WHERE canteen_name = '$c_name' OR c_oname = '$c_owner'");
+        //     if(mysqli_num_rows($check_canteen) > 0) {
+        //         echo 'err_exists';
+        //     } else {
+        //         $insert_canteen = mysqli_query($db, "INSERT INTO canteen_table(`canteen_name`, `c_oname`, `c_phone`, `c_email`, `c_user`, `c_pass`, `c_address`, `type`, `c_status`, `c_verify`, `c_email_sent`) VALUES ('$c_name', '$c_owner', '$c_contact', '$c_email', '$c_user','$c_pass','$c_address', '$c_type', '$c_status', '$c_verify', '')");
+        //         if($insert_canteen) {
+        //             echo 'success';
+        //         } else {
+        //             echo 'error';
+        //         }
+        //     }
 
 
-        }
+        // }
 
     }
 ?>

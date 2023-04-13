@@ -348,7 +348,7 @@
     </div>
 
     <!-- ADD CANTEEN PROMO SECTION -->
-    <section class="h__canteen-wrap sec-pad">
+    <!-- <section class="h__canteen-wrap sec-pad">
         <div class="container">
             <div class="d-flex align-items-center justify-content-center text-center">
                 <div class="h__canteen-inner-wrap">
@@ -366,10 +366,10 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- ADD CANTEEN MODAL -->
-    <div class="modal fade" id="addCanteenModal" tabindex="-1" aria-labelledby="addCanteenModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="addCanteenModal" tabindex="-1" aria-labelledby="addCanteenModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form method="POST" id="canteen_form">
@@ -421,7 +421,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <script>
         document.title = "Food Jaguar"
