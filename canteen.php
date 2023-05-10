@@ -40,6 +40,7 @@
                                     <!-- TITLE -->
                                     <div class="h__menu-list-box-name-wrap text-center">
                                         <h1 class="h__menu-list-box-name"><?=$rows['title']?></h1>
+                                        <p class="h__menu-list-box-price">₱<?=$rows['price']?></p>
                                     </div>
 
                                     <!-- IMAGE -->

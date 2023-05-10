@@ -2,7 +2,7 @@
 .h__banner {
     &-wrap {
         // background: linear-gradient(180deg,#171C1A8C 0%,$dark-col 96%),url('../imgs/homepage-banner.jpg');
-        background: linear-gradient(0deg, rgba(19,21,21,0.85) 0%, rgba(0,0,0,0.85) 0%),url('../imgs/homepage-banner.jpg');
+        background: linear-gradient(0deg, rgba(19,21,21,0.65) 0%, rgba(0,0,0,0.65) 0%),url('../imgs/fj-banner-img.png');
         background-position: top center;
         background-repeat: no-repeat;
         background-size: cover;
@@ -230,10 +230,16 @@
                 font-size: 16px;
                 font-weight: 900;
                 text-transform: uppercase;
+                margin-bottom: 0;
                 &-wrap
                 {
                     min-height: 50px;
                 }
+            }
+            &-price
+            {
+                color: $desc-col;
+                font-weight: 600;
             }
             &-img
             {

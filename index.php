@@ -147,6 +147,7 @@
                                                 <!-- TITLE -->
                                                 <div class="h__menu-list-box-name-wrap text-center">
                                                     <h1 class="h__menu-list-box-name"><?=$row['title']?></h1>
+                                                    <p class="h__menu-list-box-price">₱<?=$row['price']?></p>
                                                 </div>
 
                                                 <!-- IMAGE -->
@@ -212,7 +213,7 @@
                                                             <div class="card-body">
                                                                 <div class="add__cart-dish-name-wrap mb-4">
                                                                     <h1 class="add__cart-dish-name"><?=$row['title']?></h1>
-                                                                    <h5 class="fw-bold text-center"><?=$row['price']?>/order</h5>
+                                                                    <h5 class="fw-bold text-center">₱<?=$row['price']?>/order</h5>
                                                                 </div>
 
                                                                 <div class="add__cart-dish-qty-wrap d-block text-center">
